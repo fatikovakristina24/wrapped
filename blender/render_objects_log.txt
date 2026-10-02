@@ -1,0 +1,29 @@
+== hero 01:08:55
+02:26.025  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/hero_vinyl.png'
+03:03.780  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/hero_vinyl_front.png'
+== ring365 01:12:00
+04:03.617  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/ring365_vinyl.png'
+06:23.532  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/ring365_vinyl_front.png'
+== history 01:18:25
+01:13.583  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/history_2015.png'
+02:03.890  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/history_2016.png'
+02:33.693  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/history_now.png'
+== data 01:20:59
+00:54.830  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/data_minutes.png'
+01:50.506  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/data_tracks.png'
+02:33.817  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/data_artists.png'
+03:16.597  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/data_genres.png'
+== lab 01:24:17
+00:48.435  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/lab_speaker.png'
+== story 01:25:07
+01:31.377  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/story_tape.png'
+== social 01:26:39
+01:55.832  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/social_mic.png'
+== algo 01:28:36
+02:04.393  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/algo_cassette.png'
+== final 01:30:41
+03:02.284  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/final_glass_vinyl.png'
+== swatches 01:33:45
+01:16.210  render           | Saved: '/Users/oleg/Desktop/спотик/renders/objects/token_materials.png'
+== exports 01:35:03
+ALL DONE 01:35:05

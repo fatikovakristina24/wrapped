@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spotify Wrapped — как музыка превращается в историю года</title>
+<meta name="description" content="Цифровой лонгрид: как 365 дней музыки превращаются в данные, данные — в Wrapped, а Wrapped — в воспоминание. Автор — Фатикова Кристина.">
+<meta name="theme-color" content="#0A0A0B">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%2215%22 fill=%22%230A0A0B%22/%3E%3Ccircle cx=%2216%22 cy=%2216%22 r=%226%22 fill=%22%231F2BFF%22/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&family=Unbounded:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/style.css">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
+  "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.mjs"
+} }
+</script>
+</head>
+<script>if(/[?&]desk/.test(location.search))document.documentElement.classList.add('desk')</script>
+<body>
+<div id="loader" aria-hidden="true">
+  <div class="ld-row"><span class="ld-label">Собираем музыку года</span><span class="ld-num">000</span></div>
+  <div class="ld-bar"><i></i></div>
+</div>
+<canvas id="gl" aria-hidden="true"></canvas>
+<div id="track"></div>
+<main id="chapters">
+<!--CHAPTERS-->
+</main>
+<div id="hud" aria-hidden="true"><span class="hud-num">00</span><span class="hud-of"> / 08</span></div>
+<div id="grain" aria-hidden="true"></div>
+<noscript><style>.ch .stage{position:relative}.rv{opacity:1!important;transform:none!important}#loader,#gl{display:none}</style></noscript>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

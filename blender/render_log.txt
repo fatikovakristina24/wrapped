@@ -1,0 +1,11 @@
+== hero 00:20:03
+02:26.120  render           | Saved: '/Users/oleg/Desktop/спотик/renders/hero_ring.webp'
+04:04.848  render           | Saved: '/Users/oleg/Desktop/спотик/renders/hero_ring_front.webp'
+== ring365 00:24:10
+03:54.053  render           | Saved: '/Users/oleg/Desktop/спотик/renders/ring365.webp'
+06:30.446  render           | Saved: '/Users/oleg/Desktop/спотик/renders/ring365_front.webp'
+== history 00:30:41
+00:35.594  render           | Saved: '/Users/oleg/Desktop/спотик/renders/history_2015.webp'
+01:33.264  render           | Saved: '/Users/oleg/Desktop/спотик/renders/history_2016.webp'
+04:11.061  render           | Saved: '/Users/oleg/Desktop/спотик/renders/history_now.webp'
+== data 00:34:54
