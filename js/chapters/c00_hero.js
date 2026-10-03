@@ -29,7 +29,7 @@ export class Hero extends Chapter {
     this.t += dt;
     const b = this.box('hero'); if (!b) return;
     const W = this.world, P = W.pointer, D = this.grab('hero'), kick = W.kick;
-    const R = b.w * 0.36;
+    const R = Math.min(b.w * 0.36, this.viewport().w * 0.5);   // on a phone the record fits the screen width
     const intro = clamp((performance.now() - this.t0 - 250) / 2600);
     // turntable spin — faster with scroll speed
     this.spin += dt * (0.45 + p * 3.5 + kick * 6);
