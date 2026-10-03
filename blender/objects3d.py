@@ -458,25 +458,24 @@ def c_data():
         vinyl_fast(M_of(Vector((0, 0, -7 + k * 0.2)) + off, Euler((0, 0, a)).to_matrix().to_4x4(), 1.6), 'ultra_matte' if k % 10 == 9 else 'black_matte')
     camera((0, -26, 4.5), (0, 0, 0.0), 55)
     render('data_minutes')
-    # TRACKS — grid of cassette stacks
+    # TRACKS — cassettes drifting across the whole width, behind the text
     reset(); MATS.clear(); VCACHE.clear()
-    setup(1800, 1500, 96, glass=True, env_strength=0.5); rig(0.6)
-    for gx in range(4):
-        for gy in range(3):
-            h = int(1 + 6 * (0.5 + 0.5 * noise.noise(Vector((gx * .5, gy * .5, .3)))))
-            for k in range(h):
-                cassette(None, loc=(gx * 2.4 - 3.6, gy * 1.6 - 1.6, k * 0.26), rot=(0, 0, 0), scale=1.0, name='c%d%d%d' % (gx, gy, k), with_tape=k == h - 1)
-    camera((9.5, -11, 9.5), (0, 0, 0.6), 50)
+    setup(2400, 1280, 110, glass=True, env_strength=0.5); rig(0.6)
+    rng = random.Random(8); FW = 21.6; FH = FW * 1280 / 2400
+    for i in range(16):
+        x = (rng.random() - .5) * .9 * FW; z = (rng.random() - .5) * .82 * FH; y = rng.uniform(0, 4)
+        cassette(None, loc=(x, y, z), rot=(math.radians(90) + rng.uniform(-.45, .45), rng.uniform(-.6, .6), rng.uniform(-.5, .5)), scale=rng.uniform(.6, 1.0), name='c%d' % i, with_tape=False)
+    camera((0, -30, 0), (0, 0, 0), 50)
     render('data_tracks')
-    # ARTISTS — a planet of records
+    # ARTISTS — records drifting across the whole width
     reset(); MATS.clear(); VCACHE.clear()
-    setup(1600, 1600, 110, env_strength=0.2); rig(0.6)
-    rng = random.Random(8); n = 140; ga = math.pi * (3 - math.sqrt(5))
-    for i in range(n):
-        y = 1 - 2 * (i + .5) / n; rr = math.sqrt(1 - y * y); th = ga * i
-        d = Vector((math.cos(th) * rr, y, math.sin(th) * rr)); big = rng.random() < 0.05
-        vinyl_fast(M_of(d * 3.1, basis(d), 0.9 if big else 0.5), 'white' if big else ('ultra_matte' if rng.random() < .5 else 'black_matte'))
-    camera((0, -12, 2.5), (0, 0, 0), 50)
+    setup(2400, 1070, 110, env_strength=0.2); rig(0.6)
+    rng = random.Random(9); FH = FW * 1070 / 2400
+    for i in range(28):
+        x = (rng.random() - .5) * .92 * FW; z = (rng.random() - .5) * .85 * FH; y = rng.uniform(0, 4)
+        d = Vector((rng.uniform(-.5, .5), -1, rng.uniform(-.6, .6)))
+        vinyl_fast(M_of((x, y, z), basis(d), rng.uniform(.42, .9)), 'white' if i % 4 == 0 else ('black_matte' if i % 3 == 0 else 'ultra_matte'))
+    camera((0, -30, 0), (0, 0, 0), 50)
     render('data_artists')
     # GENRES — ring of record stacks, height = share
     reset(); MATS.clear(); VCACHE.clear()
