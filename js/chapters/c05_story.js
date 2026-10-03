@@ -37,7 +37,7 @@ export class Story extends Chapter {
     this.tape.animate((i, base, out) => {
       const tail = clamp(1 - (shown - i) / 120);
       const w = Math.sin(i * 0.045 - T * 3.0) * flutter + Math.sin(i * 0.11 + T * 1.7) * 0.05;
-      out.set(base.x, base.y + w + tail * Math.sin(T * 5 + i * 0.3) * 0.25, base.z + Math.cos(i * 0.035 - T * 2.2) * flutter * 0.8 + tail * Math.cos(T * 4 + i * 0.2) * 0.2);
+      out.set(base.x, base.y + w + tail * Math.sin(T * 2.5 + i * 0.05) * 0.07, base.z + Math.cos(i * 0.035 - T * 2.2) * flutter * 0.8 + tail * Math.cos(T * 2 + i * 0.04) * 0.05);
     });
     this.x = damp(this.x, -clamp(sp / 4.5) * 7.2 * u, 3, dt);
     this.group.position.set(-Math.max(vp.w, vp.h * 1.2) * 0.42 + this.x, -vp.h * 0.34 + Math.sin(T * 0.8) * u * 0.08, 0);
