@@ -75,7 +75,7 @@ export class World {
     const rt = new THREE.WebGLRenderTarget(1, 1, { type: THREE.HalfFloatType, samples: 4 });
     this.composer = new EffectComposer(this.renderer, rt);
     this.composer.addPass(new LayersPass(this));
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.42, 0.65, 0.86);
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.14, 0.18, 0.96);
     this.composer.addPass(this.bloom);
     this.composer.addPass(new OutputPass());
     this.resize();
