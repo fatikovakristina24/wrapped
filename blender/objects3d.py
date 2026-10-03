@@ -77,8 +77,28 @@ def principled(name, **kw):
     for k, v in kw.items(): b.inputs[k.replace('_', ' ')].default_value = v
     return m
 
+TEX = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'tex')
+def textured(name, image, base_color, rough, size, emit=0.0):
+    """Printed material: image (object-space planar) tinted by base_color."""
+    m = bpy.data.materials.new(name); nt = m.node_tree; b = nt.nodes['Principled BSDF']
+    tc = nt.nodes.new('ShaderNodeTexCoord'); mp = nt.nodes.new('ShaderNodeMapping')
+    mp.inputs['Scale'].default_value = (1 / size[0], 1 / size[1], 1); mp.inputs['Location'].default_value = (0.5, 0.5, 0)
+    im = nt.nodes.new('ShaderNodeTexImage'); im.image = bpy.data.images.load(os.path.join(TEX, image)); im.extension = 'CLIP'
+    mix = nt.nodes.new('ShaderNodeMix'); mix.data_type = 'RGBA'; mix.blend_type = 'MULTIPLY'; mix.inputs['Factor'].default_value = 1.0
+    mix.inputs[6].default_value = base_color
+    nt.links.new(tc.outputs['Object'], mp.inputs['Vector']); nt.links.new(mp.outputs['Vector'], im.inputs['Vector'])
+    nt.links.new(im.outputs['Color'], mix.inputs[7]); nt.links.new(mix.outputs[2], b.inputs['Base Color'])
+    b.inputs['Roughness'].default_value = rough
+    if emit: b.inputs['Emission Color'].default_value = base_color; b.inputs['Emission Strength'].default_value = emit
+    return m
+
 def mat(name):
     if name in MATS: return MATS[name]
+    if name.startswith('lbl_'):            # printed record label in the colour of the base material
+        base = name[4:]; col = {'ultra': lin(ULTRA), 'ultra_matte': lin(ULTRA), 'white': lin(WHITE), 'black_matte': lin('#2a2a30'), 'clay': lin('#D3D6D8'), 'clay_dark': lin('#8E959A')}.get(base, lin(WHITE))
+        MATS[name] = textured(name, 'label.png', col, 0.45, (0.67, 0.67)); return MATS[name]
+    if name == 'sticker': MATS[name] = textured(name, 'sticker.png', (1, 1, 1, 1), 0.4, (1.7, 0.22)); return MATS[name]
+    if name == 'sticker_low': MATS[name] = textured(name, 'sticker_low.png', (1, 1, 1, 1), 0.4, (1.7, 0.12)); return MATS[name]
     if name == 'chrome': m = principled(name, Base_Color=lin('#E9EAEC'), Metallic=1, Roughness=0.06)
     elif name == 'chrome_brushed': m = principled(name, Base_Color=lin('#D6D8DA'), Metallic=1, Roughness=0.25, Anisotropic=0.8)
     elif name == 'ultra': m = principled(name, Base_Color=lin(ULTRA), Roughness=0.25, Coat_Weight=1, Coat_Roughness=0.03)
@@ -230,7 +250,7 @@ def vinyl(parent=None, label='ultra', m='vinyl', loc=(0, 0, 0), rot=(0, 0, 0), s
     body = lathe(name + '_body', prof, 160, m, root)
     for pl in body.data.polygons: pl.use_smooth = abs(pl.normal.z) < 0.9   # flat faces stay flat, only the rim is soft
     lab_m = label if isinstance(label, str) else 'ultra'
-    cyl(name + '_label', 0.335, 0.026, lab_m + ('' if lab_m != 'ultra' else '_matte') if lab_m in ('ultra',) else lab_m, (0, 0, 0), root, 96)
+    cyl(name + '_label', 0.335, 0.026, 'lbl_' + lab_m, (0, 0, 0), root, 96)
     cyl(name + '_hole', 0.025, 0.03, 'chrome', (0, 0, 0), root, 32)
     return root
 
@@ -238,9 +258,9 @@ def cassette(parent=None, shell='smoke', tape='tape', loc=(0, 0, 0), rot=(0, 0, 
     root = empty(name, loc, rot, scale); root.parent = parent
     W, H, D = 2.0, 1.26, 0.24
     box(name + '_shell', (W, H, D), shell, (0, 0, 0), root, bevel=0.03)
-    box(name + '_label', (1.7, 0.22, 0.006), 'white', (0, 0.47, D / 2 + 0.004), root, bevel=0.002)
+    box(name + '_label', (1.7, 0.22, 0.006), 'sticker', (0, 0.47, D / 2 + 0.004), root, bevel=0.002)
     box(name + '_label_band', (1.7, 0.07, 0.007), 'ultra', (0, 0.38, D / 2 + 0.006), root, bevel=0.002)
-    box(name + '_label_low', (1.7, 0.12, 0.006), 'white', (0, -0.3, D / 2 + 0.004), root, bevel=0.002)
+    box(name + '_label_low', (1.7, 0.12, 0.006), 'sticker_low', (0, -0.3, D / 2 + 0.004), root, bevel=0.002)
     for sx in (-0.5, 0.5):
         reel = cyl(name + '_reel', 0.16, 0.12, 'white', (sx, 0.12, 0), root, 48)
         cyl(name + '_hub', 0.07, 0.14, 'chrome', (sx, 0.12, 0), root, 6)
@@ -353,7 +373,7 @@ def vinyl_fast(M, label='ultra_matte', body='vinyl'):
         key = (part, body, label)
         if key not in VCACHE:
             m2 = me.copy(); m2.materials.clear()
-            m2.materials.append(mat({'body': body, 'label': label, 'hole': 'chrome'}[part])); VCACHE[key] = m2
+            m2.materials.append(mat({'body': body, 'label': 'lbl_' + label, 'hole': 'chrome'}[part])); VCACHE[key] = m2
         ob = bpy.data.objects.new('rec_' + part, VCACHE[key]); link(ob); ob.matrix_world = M; out.append(ob)
     return out
 
