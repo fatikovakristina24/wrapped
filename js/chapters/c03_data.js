@@ -62,10 +62,10 @@ export class Data extends Chapter {
         if (f.key !== key) continue;
         const k = clamp((T - f.t0) / 1.2), e2 = easeInOut(k), arc = Math.sin(k * Math.PI);
         f.at.lerpVectors(f.from, f.to, e2);
-        const dx = Math.sin(T * f.sp + f.ph) * 0.025, dy = Math.cos(T * f.sp * 0.8 + f.ph * 1.3) * 0.04;
+        const dx = Math.sin(T * f.sp * 1.6 + f.ph) * 0.06 + Math.sin(T * 0.23 + f.ph * 2) * 0.03, dy = Math.cos(T * f.sp * 1.3 + f.ph * 1.3) * 0.09;
         const S = f.size * U * (key === 'tracks' ? 120 : 110);
         f.m.position.set((f.at.x + dx) * vp.w, c.y + (f.at.y + dy) * H, f.z * S + arc * S * 2.5);
-        this.e.set(f.e.x + Math.sin(T * f.w + f.ph) * 0.25, key === 'artists' ? f.e.y + T * f.w * 1.5 : f.e.y + Math.sin(T * f.w * 0.7) * 0.3, f.e.z + Math.sin(T * f.w * 0.5 + f.ph) * 0.2, 'XZY'); f.m.quaternion.setFromEuler(this.e);
+        this.e.set(f.e.x + Math.sin(T * f.w * 1.4 + f.ph) * 0.45, key === 'artists' ? f.e.y + T * f.w * 2.2 : f.e.y + Math.sin(T * f.w) * 0.5, f.e.z + Math.sin(T * f.w * 0.8 + f.ph) * 0.4, 'XZY'); f.m.quaternion.setFromEuler(this.e);
         if (k > 0 && k < 1) { this.qf.setFromAxisAngle(f.flip, e2 * Math.PI * 2); f.m.quaternion.premultiply(this.qf); }
         f.m.scale.setScalar(Math.max(S * v, 1e-4));
       }
