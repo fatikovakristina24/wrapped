@@ -56,11 +56,11 @@ function labelTexture() {
   g.fillStyle = '#ffffff'; g.fillRect(0, 0, S, S);
   g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 3;
   for (const k of [0.97, 0.9, 0.62]) { g.beginPath(); g.arc(c, c, k * c, 0, Math.PI * 2); g.stroke(); }
-  g.fillStyle = 'rgba(10,10,20,.62)'; g.font = '500 44px Unbounded, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
-  const txt = 'SPOTIFY WRAPPED · 2026 · SIDE A · 33⅓ RPM · SPOTIFY WRAPPED · 2026 · SIDE A · 33⅓ RPM · ';
+  g.fillStyle = 'rgba(10,10,20,.62)'; g.font = '500 34px Unbounded, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  const txt = 'SPOTIFY WRAPPED · 2026 · SIDE A · 33 1/3 RPM · SPOTIFY WRAPPED · 2026 · SIDE A · 33 1/3 RPM · ';
   const R = 0.78 * c, step = (Math.PI * 2) / txt.length;
   for (let i = 0; i < txt.length; i++) { const a = -Math.PI / 2 + i * step; g.save(); g.translate(c + Math.cos(a) * R, c + Math.sin(a) * R); g.rotate(a + Math.PI / 2); g.fillText(txt[i], 0, 0); g.restore(); }
-  g.fillStyle = 'rgba(10,10,20,.8)'; g.font = '900 96px Unbounded, sans-serif'; g.fillText('WRAPPED', c, c - 150);
+  g.fillStyle = 'rgba(10,10,20,.8)'; g.font = '900 78px Unbounded, sans-serif'; g.fillText('WRAPPED', c, c - 150);
   g.font = '300 64px Unbounded, sans-serif'; g.fillText('2026', c, c + 150);
   g.font = '500 26px Unbounded, sans-serif'; g.fillStyle = 'rgba(10,10,20,.55)'; g.fillText('ФАТИКОВА КРИСТИНА', c, c + 230);
   const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
