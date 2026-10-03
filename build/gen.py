@@ -165,5 +165,14 @@ for idx, name in enumerate(ORDER):
 
 template = open(os.path.join(HERE, 'template.html'), encoding='utf-8').read()
 out = template.replace('<!--CHAPTERS-->', '\n'.join(sections))
+
+# cache-busting: every module / stylesheet gets ?v=<content hash>, so a deploy never mixes old and new files
+import hashlib
+def ver(rel):
+    return hashlib.md5(open(os.path.join(SITE, rel), 'rb').read()).hexdigest()[:8]
+mods = sorted(glob.glob(os.path.join(SITE, 'js', '**', '*.js'), recursive=True))
+entries = ',\n'.join(f'  "./{os.path.relpath(m, SITE)}": "./{os.path.relpath(m, SITE)}?v={ver(os.path.relpath(m, SITE))}"' for m in mods)
+out = out.replace('"lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.mjs"', '"lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.mjs",\n' + entries)
+out = out.replace('href="css/style.css"', f'href="css/style.css?v={ver("css/style.css")}"')
 open(os.path.join(SITE, 'index.html'), 'w', encoding='utf-8').write(out)
 print('index.html', len(out) // 1024, 'KB,', len(sections), 'chapters')

@@ -23,7 +23,7 @@ export class Algo extends Chapter {
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('algo'); if (!b) return;
-    const W = this.world, P = W.pointer, D = this.spin('algo'), T = this.t * 0.5;     // half speed
+    const W = this.world, P = W.pointer, D = this.grab('algo'), T = this.t * 0.5;     // half speed
     const u = b.w * 0.24;
     this.group.position.set(b.x - b.w * 0.08, b.y + b.h * 0.22 + Math.sin(T * 0.8) * u * 0.05, 0);
     this.group.scale.setScalar(u);

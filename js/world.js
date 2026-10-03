@@ -107,7 +107,7 @@ export class Chapter {
       top: r.top, bottom: r.bottom, vis: range01((this.world.h - r.top) / (this.world.h * 0.75)) };
   }
   /** Mouse spin of one object (zero unless the user grabbed exactly this one). */
-  spin(key) { return this.world.spins[key] || ZERO; }
+  grab(key) { return this.world.spins[key] || ZERO; }
   viewport() { const cam = this.camera, d = cam.position.z, H = 2 * d * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)); return { w: H * cam.aspect, h: H }; }
   /** p: 0..1 chapter progress, info: { travel, sp (states) }, dt: seconds */
   update() {}

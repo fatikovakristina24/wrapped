@@ -24,7 +24,7 @@ export class Story extends Chapter {
   }
   update(p, info, dt) {
     this.t += dt;
-    const W = this.world, P = W.pointer, D = this.spin('story'), kick = W.kick, T = this.t;
+    const W = this.world, P = W.pointer, D = this.grab('story'), kick = W.kick, T = this.t;
     const sp = info.sp ?? 0;
     const vp = this.viewport();
     const u = Math.max(vp.w, vp.h * 1.6) / 13;
@@ -56,7 +56,7 @@ export class Story extends Chapter {
     if (b) {
       const R = Math.min(b.w, b.h) * 0.4, q = new THREE.Quaternion(), pos = new THREE.Vector3(), tan = new THREE.Vector3();
       this.ring.group.position.set(b.x, b.y + Math.sin(T) * R * 0.04, 0);
-      const DR = this.spin('result');
+      const DR = this.grab('result');
       this.ring.group.rotation.set(0.6 + Math.sin(T * 0.6) * 0.15 + DR.y, T * 0.6 + DR.x, 0);
       for (let i = 0; i < 120; i++) {
         const th = Math.PI * 2 * i / 120, k = easeOut(clamp((res * 1.2 - i / 120) / 0.2));

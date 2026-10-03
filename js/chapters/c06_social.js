@@ -26,7 +26,7 @@ export class Social extends Chapter {
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('social'); if (!b) return;
-    const W = this.world, P = W.pointer, D = this.spin('social'), kick = W.kick, T = this.t;
+    const W = this.world, P = W.pointer, D = this.grab('social'), kick = W.kick, T = this.t;
     const v = range(b.vis, 0.1, 1);
     const beat = Math.pow(Math.max(0, Math.sin(T * 7.5)), 5);
     // microphone: full turns, faster when scrolling

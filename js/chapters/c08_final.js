@@ -21,7 +21,7 @@ export class Final extends Chapter {
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('final'); if (!b) return;
-    const W = this.world, P = W.pointer, D = this.spin('final'), kick = W.kick, T = this.t;
+    const W = this.world, P = W.pointer, D = this.grab('final'), kick = W.kick, T = this.t;
     const R = b.w * 0.37, v = easeOut(range(b.vis, 0, 0.9));
     this.spin += dt * (0.2 + kick * 2);
     this.turn = damp(this.turn, easeInOut(range(p, 0.05, 0.85)) * Math.PI * 2, 2, dt);

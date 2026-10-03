@@ -10,12 +10,25 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Onest:wght@400;500&family=Unbounded:wght@200;300;400;500;700;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=ada39e40">
 <script type="importmap">
 { "imports": {
   "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
-  "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.mjs"
+  "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.mjs",
+  "./js/chapters/c00_hero.js": "./js/chapters/c00_hero.js?v=d3c09ff1",
+  "./js/chapters/c01_ring.js": "./js/chapters/c01_ring.js?v=75fd9789",
+  "./js/chapters/c02_history.js": "./js/chapters/c02_history.js?v=b122e80d",
+  "./js/chapters/c03_data.js": "./js/chapters/c03_data.js?v=b8c0e0b1",
+  "./js/chapters/c04_lab.js": "./js/chapters/c04_lab.js?v=7bf34a81",
+  "./js/chapters/c05_story.js": "./js/chapters/c05_story.js?v=901931bb",
+  "./js/chapters/c06_social.js": "./js/chapters/c06_social.js?v=b74c1f07",
+  "./js/chapters/c07_algo.js": "./js/chapters/c07_algo.js?v=8ac17598",
+  "./js/chapters/c08_final.js": "./js/chapters/c08_final.js?v=4cdb653a",
+  "./js/lib/kit.js": "./js/lib/kit.js?v=cf828ce2",
+  "./js/main.js": "./js/main.js?v=0d2bb498",
+  "./js/scroll.js": "./js/scroll.js?v=4436a6fd",
+  "./js/world.js": "./js/world.js?v=e9f57693"
 } }
 </script>
 </head>
@@ -317,6 +330,6 @@ Onest — текст</div>
 <div id="hud" aria-hidden="true"><span class="hud-num">00</span><span class="hud-of"> / 08</span></div>
 <div id="grain" aria-hidden="true"></div>
 <noscript><style>.ch .stage{position:relative}.rv{opacity:1!important;transform:none!important}#loader,#gl{display:none}</style></noscript>
-<script type="module" src="js/main.js"></script>
+<script type="module">import "./js/main.js";</script>
 </body>
 </html>

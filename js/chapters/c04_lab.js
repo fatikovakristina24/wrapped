@@ -21,7 +21,7 @@ export class Lab extends Chapter {
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('lab'); if (!b) return;
-    const W = this.world, P = W.pointer, D = this.spin('lab'), T = this.t;
+    const W = this.world, P = W.pointer, D = this.grab('lab'), T = this.t;
     const target = easeInOut(range(p, 0.1, 0.48)) - 0.6 * easeInOut(range(p, 0.72, 1));
     this.e = damp(this.e, target, 3, dt);
     this.turn = damp(this.turn, easeInOut(range(p, 0.05, 0.95)) * Math.PI * 2, 3, dt);
