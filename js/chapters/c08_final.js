@@ -16,20 +16,17 @@ export class Final extends Chapter {
       return { m, a: r() * 6.28, rx: 0.75 + r() * 0.55, ry: 0.3 + r() * 0.4, z: -1 - r() * 3, s: 0.08 + r() * 0.12, w: (0.12 + r() * 0.2) * (i % 2 ? 1 : -1), q: new THREE.Euler(r() * 6, r() * 6, 0), sp: 0.4 + r() * 1.2 };
     });
     this.spin = 0; this.turn = 0;
-    // memory: glowing orbit threads with sparks running along them
+    // memory: glowing points drifting on invisible orbits around the record
     const dot = document.createElement('canvas'); dot.width = dot.height = 64;
     const g = dot.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
     gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(200,206,255,.6)'); gr.addColorStop(1, 'rgba(169,178,255,0)');
     g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
     const glow = new THREE.CanvasTexture(dot);
-    this.threads = Array.from({ length: 5 }, (_, i) => {
-      const curve = new THREE.EllipseCurve(0, 0, 1.25 + i * 0.16, 0.55 + i * 0.1, 0, Math.PI * 2);
-      const pts = curve.getPoints(160).map(p => new THREE.Vector3(p.x, 0, p.y));
-      const line = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 220, 0.0035, 6, true), new THREE.MeshBasicMaterial({ color: 0xa9b2ff, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }));
+    this.threads = Array.from({ length: 40 }, (_, i) => {
       const spark = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffffff }));
-      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: 0xc9ceff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); halo.scale.setScalar(0.16);
-      const grp = new THREE.Group(); grp.add(line, spark, halo); grp.rotation.set(0.3 + i * 0.35, i * 1.1, (i - 2) * 0.25); this.scene.add(grp);
-      return { grp, spark, halo, rx: 1.25 + i * 0.16, rz: 0.55 + i * 0.1, sp: (0.25 + i * 0.07) * (i % 2 ? 1 : -1), ph: i * 1.3 };
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: glow, color: 0xc9ceff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); halo.scale.setScalar(0.1 + r() * 0.14);
+      const grp = new THREE.Group(); grp.add(spark, halo); grp.rotation.set(r() * 3, r() * 6.28, (r() - 0.5) * 1.2); spark.scale.setScalar(0.5 + r() * 0.9); this.scene.add(grp);
+      return { grp, spark, halo, rx: 0.9 + r() * 1.1, rz: 0.4 + r() * 0.8, sp: (0.15 + r() * 0.35) * (i % 2 ? 1 : -1), ph: r() * 6.28 };
     });
     this.last = [...el.querySelectorAll('.t')].find(t => t.textContent === 'ПАМЯТЬ');
   }
@@ -55,7 +52,7 @@ export class Final extends Chapter {
       th.grp.position.set(b.x, b.y, 0); th.grp.scale.setScalar(R * 1.35 * v);
       th.grp.rotation.y += 0.0015 * Math.sign(th.sp);
       const a = th.ph + T * th.sp; th.spark.position.set(Math.cos(a) * th.rx, 0, Math.sin(a) * th.rz); th.halo.position.copy(th.spark.position);
-      th.halo.material.opacity = 0.6 + Math.sin(T * 3 + th.ph) * 0.4;
+      th.halo.material.opacity = 0.55 + Math.sin(T * 2.4 + th.ph * 3) * 0.45;
     });
     if (this.last) this.last.style.transform = `translate3d(0, ${(1 - p) * 40}px, 0)`;
   }

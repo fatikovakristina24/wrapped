@@ -553,11 +553,10 @@ def c_final():
     sb.inputs['Emission Color'].default_value = (1, 1, 1, 1); sb.inputs['Emission Strength'].default_value = 25
     MATS['glow'] = glow; MATS['spark'] = spark
     rr = random.Random(8)
-    for k in range(5):
-        t = torus('thread%d' % k, 1.0, 0.0022, 'glow')
-        t.scale = (4.2 + k * 0.55, 1.9 + k * 0.35, 1); t.rotation_euler = (math.radians(70 + k * 12), math.radians(k * 25 - 40), math.radians(k * 63))
-        a = rr.uniform(0, 6.28); sp = Matrix.Rotation(t.rotation_euler.z, 4, 'Z') @ Matrix.Rotation(t.rotation_euler.y, 4, 'Y') @ Matrix.Rotation(t.rotation_euler.x, 4, 'X') @ Vector((math.cos(a) * t.scale.x, math.sin(a) * t.scale.y, 0, 1))
-        bpy.ops.mesh.primitive_uv_sphere_add(radius=0.07, location=sp.xyz); assign(bpy.context.active_object, 'spark')
+    for k in range(42):                                   # glowing points floating around the record
+        a = rr.uniform(0, 6.28); r = rr.uniform(3.4, 7.5)
+        loc = (math.cos(a) * r, rr.uniform(-2, 6), math.sin(a) * r * 0.55 + rr.uniform(-1, 1))
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=rr.uniform(0.035, 0.09), location=loc); assign(bpy.context.active_object, 'spark' if k % 3 else 'glow')
     rng = random.Random(4)
     for i in range(9):
         loc = Vector((rng.uniform(-8, 8), rng.uniform(1, 9), rng.uniform(-4, 4)))
