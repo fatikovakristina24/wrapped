@@ -17,6 +17,7 @@ export class Scroller {
     let y = 0;
     this.secs.forEach((s, i) => {
       s.innerH = s.inner.offsetHeight;
+      s.base = s.inner.getBoundingClientRect().top - (s.inner._ty || 0);   // inner top without its translate
       s.travel = Math.max(0, s.innerH - vh);
       s.hs = i === 0 ? 0 : vh * 0.1;                     // a breath after the wipe
       s.statesLen = s.states.length ? s.states.length * vh * 0.95 : 0;
@@ -70,7 +71,9 @@ export class Scroller {
       st.style.clipPath = clip;
       let introFade = 1, introShift = 0;
       if (f.sp !== null && f.sp > -1) { const k = clamp(f.sp + 0.35); introFade = 1 - k; introShift = -k * vh * 0.25; }
-      f.s.inner.style.transform = `translate3d(0, ${(-f.innerY + shift + introShift).toFixed(2)}px, 0)`;
+      const ty = -f.innerY + shift + introShift;
+      f.s.inner._ty = ty;                                // read by reveal / 3D anchors instead of getBoundingClientRect
+      f.s.inner.style.transform = `translate3d(0, ${ty.toFixed(2)}px, 0)`;
       f.s.inner.style.opacity = introFade;
       if (f.s.states.length) this.applyStates(f.s, f.sp, shift);
     }

@@ -131,11 +131,29 @@ export class Chapter {
     this.rimB = add(cold ? 0xb9c3cc : 0xa9b2ff, cold ? 2 : 6, 12, 12, [11, -7, -6]);
     const d = new THREE.DirectionalLight(0xffffff, 0.7); d.position.set(4, 6, 10); this.scene.add(d);
   }
-  resize() { this.camera.aspect = this.world.w / this.world.h; this.camera.updateProjectionMatrix(); }
+  resize() {
+    this.camera.aspect = this.world.w / this.world.h; this.camera.updateProjectionMatrix();
+    // cache each anchor's box relative to the chapter's inner column: per frame only the column's translate changes
+    const inner = this.el.querySelector('.inner'); this.inner = inner; if (!inner) return;
+    const ir = inner.getBoundingClientRect(), ty = inner._ty || 0;
+    this.rel = {};
+    for (const [k, a] of Object.entries(this.anchors)) {
+      if (a.closest('.state') || !inner.contains(a)) continue;                    // anchors inside story states move on their own: measured live
+      const r = a.getBoundingClientRect();
+      this.rel[k] = { left: r.left, top: r.top - ir.top, w: r.width, h: r.height };
+    }
+    this.innerBase = ir.top - ty;
+  }
+  rect(key) {
+    const c = this.rel && this.rel[key];
+    if (!c) return this.anchors[key].getBoundingClientRect();
+    const top = this.innerBase + (this.inner._ty || 0) + c.top;
+    return { left: c.left, top, width: c.w, height: c.h, right: c.left + c.w, bottom: top + c.h };
+  }
   /** Screen box of a DOM anchor -> world placement on the z=0 plane. */
   box(key) {
     const el = this.anchors[key]; if (!el) return null;
-    const r = el.getBoundingClientRect();
+    const r = this.rect(key);
     const cam = this.camera, d = cam.position.z;
     const H = 2 * d * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)), k = H / this.world.h;
     return { x: (r.left + r.width / 2 - this.world.w / 2) * k, y: -(r.top + r.height / 2 - this.world.h / 2) * k, w: r.width * k, h: r.height * k, k,
