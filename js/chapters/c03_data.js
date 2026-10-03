@@ -1,5 +1,5 @@
-// 03 — maximal structure, constantly alive: an hourglass of falling records (minutes), floating stacks
-// of cassettes (tracks), a breathing planet of records (artists), a pulsing ring of stacks (genres).
+// 03 — maximal structure, constantly alive: an hourglass of falling records (minutes), cassettes (tracks)
+// and records (artists) drifting behind the text — click one and it flies somewhere else — and a pulsing ring of stacks (genres).
 import * as THREE from 'three';
 import { Chapter } from '../world.js';
 import { model, Records, rng, clamp, range, easeOut, easeOutBack, easeInOut, C } from '../lib/kit.js';
@@ -10,28 +10,27 @@ export class Data extends Chapter {
     super(world, el);
     const r = rng(8);
     this.hg = new Hourglass(); this.scene.add(this.hg.group);
-    this.cGroup = new THREE.Group(); this.scene.add(this.cGroup);
-    const H = [3, 6, 2, 5, 4, 1, 6, 3, 2, 5, 3, 4];
-    this.cas = []; let order = 0;
-    for (let gx = 0; gx < 4; gx++) for (let gz = 0; gz < 3; gz++) {
-      const h = H[gx * 3 + gz];
-      for (let k = 0; k < h; k++) {
-        const m = model('cassette'); m.userData.home = new THREE.Vector3((gx - 1.5) * 1.18, k * 0.15, (gz - 1) * 0.8);
-        m.userData.o = order++; m.userData.col = gx * 3 + gz; m.userData.k = k; m.userData.ry = (r() - 0.5) * 0.12;
-        this.cGroup.add(m); this.cas.push(m);
-      }
-    }
-    this.casN = order;
-    this.sphere = new Records(140); this.scene.add(this.sphere.group);
-    this.sph = [];
-    const ga = Math.PI * (3 - Math.sqrt(5));
-    for (let i = 0; i < 140; i++) {
-      const y = 1 - 2 * (i + 0.5) / 140, rr = Math.sqrt(1 - y * y), th = ga * i;
-      const d = new THREE.Vector3(Math.cos(th) * rr, y, Math.sin(th) * rr);
-      const big = r() < 0.05;
-      this.sph.push({ d, big, from: new THREE.Vector3((r() - 0.5) * 8, (r() - 0.5) * 8, (r() - 0.5) * 6), s: big ? 0.3 : 0.16 + r() * 0.06, q: new THREE.Quaternion().setFromUnitVectors(new THREE.Vector3(0, 1, 0), d), ph: r() * 6 });
-      this.sphere.color(i, big ? C.white : r() < 0.55 ? C.ultra : 0x18181c);
-    }
+    // background floaters: each one drifts on its own; a click sends it flying to a new spot
+    const spot = () => new THREE.Vector2((r() - 0.5) * 0.96, (r() - 0.5) * 0.9);
+    const floater = (m, key, size) => { const h = spot(), f = { m, key, size, at: h.clone(), from: h.clone(), to: h.clone(), t0: -9, z: -1 - r() * 2.5, ph: r() * 6.283, sp: 0.15 + r() * 0.25, e: new THREE.Euler(1.35 + (r() - 0.5) * 0.9, (r() - 0.5) * 1.0, (r() - 0.5) * 1.3, 'XZY'), w: 0.3 + r() * 0.5, flip: new THREE.Vector3(r() - 0.5, r() - 0.5, r() - 0.5).normalize(), spot };
+      m.traverse(o => { o.userData.fl = f; }); this.scene.add(m); return f; };
+    this.floaters = [
+      ...Array.from({ length: 16 }, () => floater(model('cassette'), 'tracks', 0.7 + r() * 0.5)),
+      ...Array.from({ length: 28 }, (_, i) => floater(model('vinyl', i % 4 === 0 ? { ultra_matte: 'white' } : i % 3 === 0 ? { ultra_matte: 'black_matte' } : {}), 'artists', 0.55 + r() * 0.6)),
+    ];
+    this.ray = new THREE.Raycaster(); this.ndc = new THREE.Vector2(); this.qf = new THREE.Quaternion();
+    let down = null;
+    addEventListener('pointerdown', ev => { down = [ev.clientX, ev.clientY]; });
+    addEventListener('pointerup', ev => {
+      if (!down || Math.abs(ev.clientX - down[0]) + Math.abs(ev.clientY - down[1]) > 6) return;
+      if (!(this.world.layers || []).some(l => l.chapter === this)) return;
+      this.ndc.set(ev.clientX / innerWidth * 2 - 1, -(ev.clientY / innerHeight) * 2 + 1);
+      this.ray.setFromCamera(this.ndc, this.camera);
+      const hit = this.ray.intersectObjects(this.floaters.map(f => f.m), true)[0];
+      const f = hit && hit.object.userData.fl; if (!f) return;
+      let to; do { to = f.spot(); } while (to.distanceTo(f.at) < 0.35);
+      f.from.copy(f.at); f.to.copy(to); f.t0 = this.t;
+    });
     const shares = Array.from({ length: 18 }, () => Math.pow(r(), 2.2)).sort((a, b) => b - a);
     this.gen = []; let total = 0;
     shares.forEach((s, i) => { const h = Math.max(1, Math.round(14 * Math.pow(s / shares[0], 0.7))); this.gen.push({ i, h, start: total }); total += h; });
@@ -54,41 +53,22 @@ export class Data extends Chapter {
       this.hg.group.rotation.set(0.12 + P.y * 0.05 + D.y, T * 0.25 + D.x, easeInOut(range(a.vis, 0.1, 0.9)) * Math.PI * 2);
       this.hg.update(T, v, 1 + kick * 3);
     }
-    // cassettes — drop in, then the stacks breathe and the block turns a full circle
-    const b = this.box('tracks');
-    if (b) {
-      D = this.grab('tracks');
-      this.cGroup.position.set(b.x, b.y - b.h * 0.12 + Math.sin(T * 0.9) * b.h * 0.02, 0);
-      this.cGroup.scale.setScalar(b.w * 0.25);
-      this.cGroup.rotation.set(0.62 + Math.sin(T * 0.5) * 0.08 + P.y * 0.06 + D.y, -0.62 + Math.sin(T * 0.35) * 0.35 + D.x, Math.sin(T * 0.4) * 0.05);
-      const v = range(b.vis, 0.05, 1), B = this.burst('tracks');
-      for (const m of this.cas) {
-        const u = m.userData, k = easeOutBack(clamp((v * 1.2 - u.o / this.casN) / 0.15));
-        const lift = Math.max(0, Math.sin(T * 2.2 - u.col * 0.7)) ** 3 * 0.08 * (u.k + 1) * (1 + kick * 2);
-        m.position.copy(u.home); m.position.y += (1 - k) * 3 + lift;
-        if (B) { m.position.x += u.home.x * 2.2 * B + Math.sin(u.o * 3.1) * B; m.position.z += u.home.z * 2.4 * B + Math.cos(u.o * 2.3) * B; m.position.y += (0.6 + u.k * 0.5) * B * 2; }
-        m.scale.setScalar(Math.max(clamp(k * 2), 1e-4));
-        m.rotation.set((1 - k) * 0.8 + Math.sin(T * 1.7 + u.o) * 0.03 + B * Math.sin(u.o) * 3, u.ry + Math.sin(T * 1.1 + u.o * 0.5) * 0.06 + B * u.o * 0.4, B * Math.cos(u.o) * 2);
+    // cassettes and records drifting behind the text; a clicked one arcs over to its new spot, flipping once
+    const vp = this.viewport(), U = vp.w / 1440;
+    for (const key of ['tracks', 'artists']) {
+      const c = this.box(key); if (!c) continue;
+      const v = easeOut(range(c.vis, 0.05, 0.9)), H = c.h * 1.15;
+      for (const f of this.floaters) {
+        if (f.key !== key) continue;
+        const k = clamp((T - f.t0) / 1.2), e2 = easeInOut(k), arc = Math.sin(k * Math.PI);
+        f.at.lerpVectors(f.from, f.to, e2);
+        const dx = Math.sin(T * f.sp + f.ph) * 0.025, dy = Math.cos(T * f.sp * 0.8 + f.ph * 1.3) * 0.04;
+        const S = f.size * U * (key === 'tracks' ? 120 : 110);
+        f.m.position.set((f.at.x + dx) * vp.w, c.y + (f.at.y + dy) * H, f.z * S + arc * S * 2.5);
+        this.e.set(f.e.x + Math.sin(T * f.w + f.ph) * 0.25, key === 'artists' ? f.e.y + T * f.w * 1.5 : f.e.y + Math.sin(T * f.w * 0.7) * 0.3, f.e.z + Math.sin(T * f.w * 0.5 + f.ph) * 0.2, 'XZY'); f.m.quaternion.setFromEuler(this.e);
+        if (k > 0 && k < 1) { this.qf.setFromAxisAngle(f.flip, e2 * Math.PI * 2); f.m.quaternion.premultiply(this.qf); }
+        f.m.scale.setScalar(Math.max(S * v, 1e-4));
       }
-    }
-    // planet — assembles from chaos, spins 360° with the scroll and breathes like a speaker
-    const c = this.box('artists');
-    if (c) {
-      D = this.grab('artists');
-      const R = c.w * 0.38, v = easeOut(range(c.vis, 0.05, 0.95)), B = this.burst('artists'), vp = this.viewport();
-      this.sphere.group.position.set(c.x, c.y, 0);
-      this.sphere.group.rotation.set(0.2 + Math.sin(T * 0.4) * 0.2 + D.y, T * 0.45 + p * Math.PI * 2 + D.x, Math.sin(T * 0.3) * 0.1);
-      this.sph.forEach((s, i) => {
-        const breathe = 1 + Math.sin(T * 2.6 + s.d.y * 4 + s.ph * 0.2) * (0.05 + kick * 0.12) + (s.big ? 0.06 : 0);
-        pos.copy(s.from).lerp(s.d, v).multiplyScalar(R * breathe);
-        if (B > 0) {                                           // click: like the cassettes — each disc shoots straight out from the centre, then snaps back
-          const far = vp.w * 0.5 / R * (0.55 + 0.6 * ((i * 37) % 23) / 22);
-          pos.multiplyScalar(1 + B * far);
-        }
-        this.q2.setFromAxisAngle(s.d, T * 0.8 + s.ph + B * Math.sin(s.ph) * 3); q.copy(s.q).premultiply(this.q2);
-        this.sphere.set(i, pos, q, R * s.s * clamp(v * 1.4) * (1 + B * 0.7));
-      });
-      this.sphere.commit();
     }
     // genre ring — stacks rise, then pulse like an equaliser while the ring turns
     const d = this.box('genres');
