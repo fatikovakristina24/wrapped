@@ -30,20 +30,31 @@ function drawBulk(b, t, amt = 1) {
     for (let i = 0; i < 365; i++) {
       const v = VALS[i], live = 0.72 + 0.28 * Math.sin(t * 2.4 + i * 0.35) * Math.sin(t * 0.9 + i * 0.05);
       const h = (0.1 + v * 0.9) * H * live, x = i / 365 * W;
-      g.fillStyle = v > 0.82 ? '#A9B2FF' : 'rgba(138,143,152,.55)';
+      g.fillStyle = 'rgba(138,143,152,.55)';
       g.fillRect(x, H - h, Math.max(1, b.d), h);
     }
-  } else if (b.kind === 'strip') {                 // 01: the loop unrolled, grows with the ring
-    const top = VALS.indexOf(Math.max(...VALS)), n = Math.round(365 * amt), base = H * 0.8;
+  } else if (b.kind === 'strip') {                 // 01: the year unrolled — month bands, bars, weekly average
+    const n = Math.round(365 * amt), base = H * 0.84, md = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334, 365];
+    const months = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'];
+    for (let m = 0; m < 12; m++) if (m % 2 === 0) { g.fillStyle = 'rgba(243,243,240,.035)'; g.fillRect(md[m] / 365 * W, 0, (md[m + 1] - md[m]) / 365 * W, base); }
+    const bw = W / 365;
     for (let i = 0; i < n; i++) {
-      const v = VALS[i], h = (0.05 + v * 0.95) * base * 0.95, x = i / 365 * W;
-      g.fillStyle = i === top ? '#F3F3F0' : v > 0.82 ? '#1F2BFF' : 'rgba(138,143,152,.6)';
-      g.fillRect(x, base - h, Math.max(1.5, 2 * b.d), h);
+      const v = VALS[i], h = (0.05 + v * 0.95) * base * 0.92, x = i * bw;
+      const grad = g.createLinearGradient(0, base - h, 0, base);
+      if (v > 0.82) { grad.addColorStop(0, '#1F2BFF'); grad.addColorStop(1, 'rgba(31,43,255,.35)'); }
+      else { grad.addColorStop(0, 'rgba(201,204,209,.75)'); grad.addColorStop(1, 'rgba(138,143,152,.15)'); }
+      g.fillStyle = grad; g.fillRect(x + bw * 0.18, base - h, bw * 0.64, h);
     }
+    g.strokeStyle = '#A9B2FF'; g.lineWidth = 1.6 * b.d; g.beginPath();      // weekly average
+    for (let i = 0; i < n; i++) {
+      let s = 0, c = 0; for (let k = Math.max(0, i - 3); k <= Math.min(364, i + 3); k++) { s += VALS[k]; c++; }
+      const y = base - (0.05 + s / c * 0.95) * base * 0.92, x = (i + 0.5) * bw;
+      i ? g.lineTo(x, y) : g.moveTo(x, y);
+    }
+    g.stroke();
     g.fillStyle = 'rgba(138,143,152,.5)'; g.fillRect(0, base, W, b.d);
-    const months = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'], md = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
     g.font = `${10 * b.d}px Unbounded`; g.fillStyle = '#8A8F98';
-    md.forEach((d, i) => { const x = d / 365 * W; g.fillRect(x, base + 2 * b.d, b.d, 8 * b.d); g.fillText(months[i], x + 4 * b.d, base + 18 * b.d); });
+    for (let i = 0; i < 12; i++) { const x = md[i] / 365 * W; g.fillRect(x, base, b.d, 6 * b.d); g.fillText(months[i], x + 4 * b.d, base + 18 * b.d); }
   } else if (b.kind === 'emblem') {                // 08: the year closes, dot by dot
     const n = Math.round(365 * amt), cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.4;
     for (let d = 0; d < 365; d++) {

@@ -37,7 +37,7 @@ export class Data extends Chapter {
     shares.forEach((s, i) => { const h = Math.max(1, Math.round(14 * Math.pow(s / shares[0], 0.7))); this.gen.push({ i, h, start: total }); total += h; });
     this.genre = new Records(total); this.scene.add(this.genre.group);
     this.gen.forEach(g => { for (let k = 0; k < g.h; k++) this.genre.color(g.start + k, g.i < 3 ? C.ultra : g.i < 5 ? C.white : 0x18181c); });
-    this.Y = new THREE.Vector3(0, 1, 0); this.q = new THREE.Quaternion(); this.q2 = new THREE.Quaternion(); this.e = new THREE.Euler(); this.pos = new THREE.Vector3();
+    this.tmp = new THREE.Vector3(); this.Y = new THREE.Vector3(0, 1, 0); this.q = new THREE.Quaternion(); this.q2 = new THREE.Quaternion(); this.e = new THREE.Euler(); this.pos = new THREE.Vector3();
   }
   update(p, info, dt) {
     this.t += dt;
@@ -75,14 +75,20 @@ export class Data extends Chapter {
     const c = this.box('artists');
     if (c) {
       D = this.grab('artists');
-      const R = c.w * 0.38, v = easeOut(range(c.vis, 0.05, 0.95)), B = this.burst('artists');
+      const R = c.w * 0.38, v = easeOut(range(c.vis, 0.05, 0.95)), B = this.burst('artists', 0.7, 2.6, 1.5), bt = this.burstTime('artists'), vp = this.viewport();
       this.sphere.group.position.set(c.x, c.y, 0);
-      this.sphere.group.rotation.set(0.2 + Math.sin(T * 0.4) * 0.2 + D.y, T * 0.45 + p * Math.PI * 2 + D.x, Math.sin(T * 0.3) * 0.1);
+      const keep = 1 - B;                                      // during the fly-around the cloud lives in the screen plane
+      this.sphere.group.rotation.set((0.2 + Math.sin(T * 0.4) * 0.2 + D.y) * keep, (T * 0.45 + p * Math.PI * 2 + D.x) * keep, Math.sin(T * 0.3) * 0.1 * keep);
       this.sph.forEach((s, i) => {
         const breathe = 1 + Math.sin(T * 2.6 + s.d.y * 4 + s.ph * 0.2) * (0.05 + kick * 0.12) + (s.big ? 0.06 : 0);
-        pos.copy(s.from).lerp(s.d, v).multiplyScalar(R * breathe * (1 + B * (1.2 + (i % 7) * 0.25)));
-        this.q2.setFromAxisAngle(s.d, T * 0.8 + s.ph + B * 6); q.copy(s.q).premultiply(this.q2);
-        this.sphere.set(i, pos, q, R * s.s * clamp(v * 1.4));
+        pos.copy(s.from).lerp(s.d, v).multiplyScalar(R * breathe);
+        if (B > 0) {                                           // click: fly out over the whole screen and circle around its centre
+          const ring = 0.35 + 0.65 * ((i * 37) % 23) / 22, a = i * 2.399 + bt * (0.9 - ring * 0.45) * (i % 2 ? 1 : 0.85);
+          this.tmp.set(-c.x + Math.cos(a) * vp.w * 0.47 * ring, -c.y + Math.sin(a) * vp.h * 0.44 * ring, Math.sin(a * 2 + i) * R * 0.8);
+          pos.lerp(this.tmp, B);
+        }
+        this.q2.setFromAxisAngle(s.d, T * 0.8 + s.ph + B * bt * 4); q.copy(s.q).premultiply(this.q2);
+        this.sphere.set(i, pos, q, R * s.s * clamp(v * 1.4) * (1 + B * 0.7));
       });
       this.sphere.commit();
     }

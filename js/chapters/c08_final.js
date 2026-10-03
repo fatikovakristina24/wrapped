@@ -16,13 +16,32 @@ export class Final extends Chapter {
       return { m, a: r() * 6.28, rx: 0.75 + r() * 0.55, ry: 0.3 + r() * 0.4, z: -1 - r() * 3, s: 0.08 + r() * 0.12, w: (0.12 + r() * 0.2) * (i % 2 ? 1 : -1), q: new THREE.Euler(r() * 6, r() * 6, 0), sp: 0.4 + r() * 1.2 };
     });
     this.spin = 0; this.turn = 0;
+    // memory: soft light dust drifting around + glowing orbit threads with sparks running along them
+    const dot = document.createElement('canvas'); dot.width = dot.height = 64;
+    const g = dot.getContext('2d'), gr = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    gr.addColorStop(0, 'rgba(255,255,255,1)'); gr.addColorStop(0.25, 'rgba(200,206,255,.6)'); gr.addColorStop(1, 'rgba(169,178,255,0)');
+    g.fillStyle = gr; g.fillRect(0, 0, 64, 64);
+    const N = 700, pos = new Float32Array(N * 3), col = new Float32Array(N * 3);
+    this.dust = Array.from({ length: N }, (_, i) => { const c = r() < 0.35 ? [1, 1, 1] : [0.66, 0.7, 1]; col.set(c, i * 3); return { a: r() * 6.283, rad: 0.55 + r() * 1.6, y: (r() - 0.5) * 1.6, sp: 0.03 + r() * 0.08, ph: r() * 6 }; });
+    this.dustGeo = new THREE.BufferGeometry(); this.dustGeo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); this.dustGeo.setAttribute('color', new THREE.BufferAttribute(col, 3));
+    this.dustMat = new THREE.PointsMaterial({ size: 0.06, map: new THREE.CanvasTexture(dot), vertexColors: true, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, sizeAttenuation: true });
+    this.points = new THREE.Points(this.dustGeo, this.dustMat); this.points.frustumCulled = false; this.scene.add(this.points);
+    this.threads = Array.from({ length: 5 }, (_, i) => {
+      const curve = new THREE.EllipseCurve(0, 0, 1.25 + i * 0.16, 0.55 + i * 0.1, 0, Math.PI * 2);
+      const pts = curve.getPoints(160).map(p => new THREE.Vector3(p.x, 0, p.y));
+      const line = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts, true), 220, 0.0035, 6, true), new THREE.MeshBasicMaterial({ color: 0xa9b2ff, transparent: true, opacity: 0.45, blending: THREE.AdditiveBlending, depthWrite: false }));
+      const spark = new THREE.Mesh(new THREE.SphereGeometry(0.018, 16, 12), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+      const halo = new THREE.Sprite(new THREE.SpriteMaterial({ map: this.dustMat.map, color: 0xc9ceff, transparent: true, blending: THREE.AdditiveBlending, depthWrite: false })); halo.scale.setScalar(0.16);
+      const grp = new THREE.Group(); grp.add(line, spark, halo); grp.rotation.set(0.3 + i * 0.35, i * 1.1, (i - 2) * 0.25); this.scene.add(grp);
+      return { grp, spark, halo, rx: 1.25 + i * 0.16, rz: 0.55 + i * 0.1, sp: (0.25 + i * 0.07) * (i % 2 ? 1 : -1), ph: i * 1.3 };
+    });
     this.last = [...el.querySelectorAll('.t')].find(t => t.textContent === 'ПАМЯТЬ');
   }
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('final'); if (!b) return;
     const W = this.world, P = W.pointer, D = this.grab('final'), kick = W.kick, T = this.t;
-    const R = b.w * 0.37, v = easeOut(range(b.vis, 0, 0.9));
+    const R = b.w * 0.27, v = easeOut(range(b.vis, 0, 0.9));
     this.spin += dt * (0.2 + kick * 2);
     this.turn = damp(this.turn, easeInOut(range(p, 0.05, 0.85)) * Math.PI * 2, 2, dt);
     this.disc.rotation.y = this.spin;
@@ -34,6 +53,16 @@ export class Final extends Chapter {
       o.m.position.set(b.x + Math.cos(a) * R * 1.6 * o.rx, b.y + Math.sin(a) * R * 1.3 * o.ry + Math.sin(T + o.a) * R * 0.05, o.z * R * 0.4 + Math.sin(a) * R * 0.3);
       o.m.scale.setScalar(R * 2 * o.s * v);
       o.m.rotation.set(o.q.x + T * o.sp, o.q.y + T * o.sp * 0.7, a);
+    });
+    // dust + threads live around the record, scaled to it
+    const P2 = this.dustGeo.attributes.position.array;
+    this.dust.forEach((d, i) => { const a = d.a + T * d.sp; P2[i * 3] = b.x + Math.cos(a) * d.rad * R * 1.5; P2[i * 3 + 1] = b.y + (d.y + Math.sin(T * 0.3 + d.ph) * 0.08) * R; P2[i * 3 + 2] = Math.sin(a) * d.rad * R * 0.8; });
+    this.dustGeo.attributes.position.needsUpdate = true; this.dustMat.size = R * 0.035; this.dustMat.opacity = v;
+    this.threads.forEach(th => {
+      th.grp.position.set(b.x, b.y, 0); th.grp.scale.setScalar(R * 1.35 * v);
+      th.grp.rotation.y += 0.0015 * Math.sign(th.sp);
+      const a = th.ph + T * th.sp; th.spark.position.set(Math.cos(a) * th.rx, 0, Math.sin(a) * th.rz); th.halo.position.copy(th.spark.position);
+      th.halo.material.opacity = 0.6 + Math.sin(T * 3 + th.ph) * 0.4;
     });
     if (this.last) this.last.style.transform = `translate3d(0, ${(1 - p) * 40}px, 0)`;
   }

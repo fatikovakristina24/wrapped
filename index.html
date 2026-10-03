@@ -19,17 +19,17 @@
   "./js/chapters/c00_hero.js": "./js/chapters/c00_hero.js?v=d3c09ff1",
   "./js/chapters/c01_ring.js": "./js/chapters/c01_ring.js?v=22615780",
   "./js/chapters/c02_history.js": "./js/chapters/c02_history.js?v=cf9b9a67",
-  "./js/chapters/c03_data.js": "./js/chapters/c03_data.js?v=70c94e33",
+  "./js/chapters/c03_data.js": "./js/chapters/c03_data.js?v=deebef0a",
   "./js/chapters/c04_lab.js": "./js/chapters/c04_lab.js?v=3a282fbf",
-  "./js/chapters/c05_story.js": "./js/chapters/c05_story.js?v=e69f1f8b",
+  "./js/chapters/c05_story.js": "./js/chapters/c05_story.js?v=1e4505a7",
   "./js/chapters/c06_social.js": "./js/chapters/c06_social.js?v=cdd999a7",
-  "./js/chapters/c07_algo.js": "./js/chapters/c07_algo.js?v=8ac17598",
-  "./js/chapters/c08_final.js": "./js/chapters/c08_final.js?v=4cdb653a",
-  "./js/lib/kit.js": "./js/lib/kit.js?v=cf828ce2",
-  "./js/lib/objects.js": "./js/lib/objects.js?v=f015b485",
-  "./js/main.js": "./js/main.js?v=0d2bb498",
+  "./js/chapters/c07_algo.js": "./js/chapters/c07_algo.js?v=141e9c97",
+  "./js/chapters/c08_final.js": "./js/chapters/c08_final.js?v=6d0a726d",
+  "./js/lib/kit.js": "./js/lib/kit.js?v=bcd0b8d1",
+  "./js/lib/objects.js": "./js/lib/objects.js?v=15e5d6e6",
+  "./js/main.js": "./js/main.js?v=76cc6721",
   "./js/scroll.js": "./js/scroll.js?v=4436a6fd",
-  "./js/world.js": "./js/world.js?v=633442cd"
+  "./js/world.js": "./js/world.js?v=0e572ff6"
 } }
 </script>
 </head>
@@ -58,7 +58,7 @@
 </div></div>
 </section>
 <section class="ch" id="chapter-01" data-ch="1" aria-label="Глава 01">
-<div class="stage"><div class="inner" style="--h:2050">
+<div class="stage"><div class="inner" style="--h:1800">
 <div class="it t fO rv wrap" style="--x:732;--y:140;--w:660;--z:30;--mz:21px;--lh:1.3;--ls:-0.01em;font-weight:400;color:#f3f3f0">За год мы слушаем сотни песен: на прогулке, в дороге, дома или на учёбе. Обычно мы не замечаем, как из этих прослушиваний складывается наш музыкальный год. В декабре Spotify собирает их в одну персональную историю — Wrapped.</div>
 <div class="it t fU rv up" style="--x:48;--y:150;--w:20;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#a9b2ff">01</div>
 <div class="it t fU rv up" style="--x:84;--y:151;--w:200;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Вступление / 365 дней</div>
@@ -70,9 +70,16 @@
 <div class="it t fU rv up" style="--x:1236;--y:1068;--w:92;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">Пик года</div>
 <div class="it t fU rv up" style="--x:300;--y:1090;--w:73;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">1 января</div>
 <div class="it t fU rv up" style="--x:960;--y:1090;--w:94;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">31 декабря</div>
-<div class="it t fU rv up" style="--x:1236;--y:1090;--w:88;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">312 минут</div>
-<div class="it bulk" data-bulk="strip" style="--x:48;--y:1700;--w:1344;--h:200"><canvas></canvas></div>
-<div class="it t fO rv wrap" style="--x:48;--y:1930;--w:546;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Пластинка года: 365 столбиков — 365 дней. Высота = минуты музыки за этот день. Внизу тот же год, развёрнутый в линию.</div>
+<div class="it t fU rv up" style="--x:1236;--y:1090;--w:88;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">350 минут</div>
+<div class="it t fU rv up" style="--x:48;--y:1236;--w:300;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Твой год по дням</div>
+<div class="it t fU rv cnt" style="--x:48;--y:1272;--w:300;--z:72;--mz:44px;--lh:0.9;--ls:-0.04em;font-weight:300;color:#f3f3f0" data-to="130" data-pre="" data-suf="" data-sep="0">130</div>
+<div class="it t fU rv" style="--x:444;--y:1272;--w:300;--z:72;--mz:44px;--lh:0.9;--ls:-0.04em;font-weight:300;color:#a9b2ff">30.12</div>
+<div class="it t fU rv" style="--x:840;--y:1272;--w:300;--z:72;--mz:44px;--lh:0.9;--ls:-0.04em;font-weight:300;color:#f3f3f0">365/365</div>
+<div class="it t fU rv up" style="--x:48;--y:1350;--w:300;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">минут в среднем в день</div>
+<div class="it t fU rv up" style="--x:444;--y:1350;--w:300;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">пик года — 350 минут</div>
+<div class="it t fU rv up" style="--x:840;--y:1350;--w:300;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">дней с музыкой</div>
+<div class="it bulk" data-bulk="strip" style="--x:48;--y:1440;--w:1344;--h:240"><canvas></canvas></div>
+<div class="it t fO rv wrap" style="--x:48;--y:1712;--w:660;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Пластинка года: 365 столбиков — 365 дней, высота — минуты музыки за день. Ниже тот же год, развёрнутый в линию; светлая линия — среднее за неделю.</div>
 </div></div>
 </section>
 <section class="ch" id="chapter-02" data-ch="2" aria-label="Глава 02">
@@ -253,7 +260,7 @@
 <div class="it t fU rv up" style="--x:390;--y:672;--w:160;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">Birds of a Feather</div>
 <div class="it shape hair" style="--x:48;--y:710;--w:660;--h:1;background:rgba(243,243,240,0.2)"></div>
 <div class="it t fU rv cnt" style="--x:48;--y:718;--w:69;--z:40;--mz:26px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="1" data-pre="" data-suf="%" data-sep="0">1%</div>
-<div class="it t fU rv up" style="--x:390;--y:734;--w:102;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">Billie Eilish</div><div class="it a3d result" data-a3d="result" style="--x:620;--y:40;--w:840;--h:630"><img class="poster" src="assets/posters/year_record.png" alt="" loading="lazy" decoding="async"></div></div></div></div>
+<div class="it t fU rv up" style="--x:390;--y:734;--w:102;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">Billie Eilish</div><div class="it a3d result" data-a3d="result" style="--x:620;--y:40;--w:840;--h:630"><img class="poster" src="assets/posters/gift_2026.png" alt="" loading="lazy" decoding="async"></div></div></div></div>
 </section>
 <section class="ch" id="chapter-06" data-ch="6" aria-label="Глава 06">
 <div class="stage"><div class="inner" style="--h:2200">

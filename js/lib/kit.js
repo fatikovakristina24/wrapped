@@ -35,19 +35,50 @@ export function yearValues(n = 365, seed = 7) {
 
 // ---------- vinyl grooves (procedural bump, Blender had them as a shader) ----------
 function groovesTexture() {
-  const s = 1024, cv = document.createElement('canvas'); cv.width = cv.height = s;
-  const g = cv.getContext('2d'); g.fillStyle = '#808080'; g.fillRect(0, 0, s, s);
+  const S = 2048, cv = document.createElement('canvas'); cv.width = cv.height = S;
+  const g = cv.getContext('2d'); g.fillStyle = '#808080'; g.fillRect(0, 0, S, S);
   const r = rng(3);
-  for (let i = 0; i < 420; i++) {
-    const rad = (0.36 + 0.62 * i / 420) * s / 2;
-    const v = 100 + Math.floor(r() * 60) + (i % 2 ? 40 : 0);
-    g.strokeStyle = `rgb(${v},${v},${v})`; g.lineWidth = 0.9;
-    g.beginPath(); g.arc(s / 2, s / 2, rad, 0, Math.PI * 2); g.stroke();
+  for (let i = 0; i < 900; i++) {                         // tight spiral of grooves, tracks separated by smooth bands
+    const t = i / 900, rad = (0.36 + 0.615 * t) * S / 2, track = Math.floor(t * 7);
+    const band = (t * 7) % 1 < 0.035;
+    const v = band ? 150 : 90 + Math.floor(r() * 70) + (i % 2 ? 30 : 0) + track * 3;
+    g.strokeStyle = `rgb(${v},${v},${v})`; g.lineWidth = band ? 2.4 : 1.1;
+    g.beginPath(); g.arc(S / 2, S / 2, rad, 0, Math.PI * 2); g.stroke();
   }
-  // run-out groove + label edge
-  g.strokeStyle = '#303030'; g.lineWidth = 3;
-  g.beginPath(); g.arc(s / 2, s / 2, 0.355 * s / 2, 0, Math.PI * 2); g.stroke();
-  const t = new THREE.CanvasTexture(cv); t.anisotropy = 8; return t;
+  g.strokeStyle = '#202020'; g.lineWidth = 6; g.beginPath(); g.arc(S / 2, S / 2, 0.355 * S / 2, 0, Math.PI * 2); g.stroke();
+  const t = new THREE.CanvasTexture(cv); t.anisotropy = 16; return t;
+}
+
+/** Printed record label (grayscale, tinted by the label colour). */
+function labelTexture() {
+  const S = 1024, cv = document.createElement('canvas'); cv.width = cv.height = S;
+  const g = cv.getContext('2d'), c = S / 2;
+  g.fillStyle = '#ffffff'; g.fillRect(0, 0, S, S);
+  g.strokeStyle = 'rgba(0,0,0,.45)'; g.lineWidth = 3;
+  for (const k of [0.97, 0.9, 0.62]) { g.beginPath(); g.arc(c, c, k * c, 0, Math.PI * 2); g.stroke(); }
+  g.fillStyle = 'rgba(10,10,20,.62)'; g.font = '500 44px Unbounded, sans-serif'; g.textAlign = 'center'; g.textBaseline = 'middle';
+  const txt = 'SPOTIFY WRAPPED · 2026 · SIDE A · 33⅓ RPM · SPOTIFY WRAPPED · 2026 · SIDE A · 33⅓ RPM · ';
+  const R = 0.78 * c, step = (Math.PI * 2) / txt.length;
+  for (let i = 0; i < txt.length; i++) { const a = -Math.PI / 2 + i * step; g.save(); g.translate(c + Math.cos(a) * R, c + Math.sin(a) * R); g.rotate(a + Math.PI / 2); g.fillText(txt[i], 0, 0); g.restore(); }
+  g.fillStyle = 'rgba(10,10,20,.8)'; g.font = '900 96px Unbounded, sans-serif'; g.fillText('WRAPPED', c, c - 150);
+  g.font = '300 64px Unbounded, sans-serif'; g.fillText('2026', c, c + 150);
+  g.font = '500 26px Unbounded, sans-serif'; g.fillStyle = 'rgba(10,10,20,.55)'; g.fillText('ФАТИКОВА КРИСТИНА', c, c + 230);
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
+}
+
+/** Printed cassette sticker. */
+function stickerTexture(low) {
+  const W = 2048, H = low ? 160 : 270, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+  const g = cv.getContext('2d'); g.fillStyle = '#f3f3f0'; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#0a0a0b'; g.textBaseline = 'middle';
+  if (low) { g.font = '500 60px Unbounded, sans-serif'; g.textAlign = 'center'; g.globalAlpha = 0.7; g.fillText('CHROME · TYPE II · HIGH BIAS · 90', W / 2, H / 2); }
+  else {
+    g.font = '900 120px Unbounded, sans-serif'; g.textAlign = 'left'; g.fillText('A', 60, H / 2);
+    g.font = '700 92px Unbounded, sans-serif'; g.textAlign = 'center'; g.fillText('WRAPPED 2026', W / 2, H / 2 - 10);
+    g.font = '500 56px Unbounded, sans-serif'; g.textAlign = 'right'; g.globalAlpha = 0.7; g.fillText('90 MIN', W - 60, H / 2);
+    g.globalAlpha = 0.25; g.fillRect(260, H - 40, W - 520, 4);
+  }
+  const t = new THREE.CanvasTexture(cv); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 8; return t;
 }
 
 // ---------- materials (glTF materials are replaced by name) ----------
@@ -57,11 +88,13 @@ export function materials() {
   const P = o => new THREE.MeshPhysicalMaterial(o);
   const grooves = groovesTexture();
   MATS = {
-    vinyl: P({ color: 0x050506, roughness: 0.3, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.18, bumpMap: grooves, bumpScale: 1.2, sheen: 0.4, sheenColor: new THREE.Color(0x2a2f5a) }),
-    chrome: P({ color: 0xe9eaec, metalness: 1, roughness: 0.07 }),
+    vinyl: P({ color: 0x050506, roughness: 0.26, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.12, bumpMap: grooves, bumpScale: 0.9, sheen: 0.55, sheenRoughness: 0.35, sheenColor: new THREE.Color(0x3a42a0) }),
+    chrome: P({ color: 0xeef0f3, metalness: 1, roughness: 0.05, clearcoat: 0.4 }),
     chrome_brushed: P({ color: 0xd6d8da, metalness: 1, roughness: 0.26 }),
     ultra: P({ color: C.ultra, roughness: 0.24, clearcoat: 1, clearcoatRoughness: 0.04, emissive: C.ultra, emissiveIntensity: 0.18 }),
-    ultra_matte: P({ color: C.ultra, roughness: 0.55, emissive: C.ultra, emissiveIntensity: 0.12 }),
+    ultra_matte: P({ color: C.ultra, roughness: 0.5, emissive: C.ultra, emissiveIntensity: 0.1, map: labelTexture() }),
+    sticker: P({ color: 0xffffff, roughness: 0.45, map: stickerTexture(false) }),
+    sticker_low: P({ color: 0xffffff, roughness: 0.45, map: stickerTexture(true) }),
     white: P({ color: C.white, roughness: 0.3, clearcoat: 0.6 }),
     black_gloss: P({ color: 0x0b0b0c, roughness: 0.14, clearcoat: 1, clearcoatRoughness: 0.03 }),
     black_matte: P({ color: 0x141416, roughness: 0.7 }),
@@ -77,6 +110,12 @@ export function materials() {
   return MATS;
 }
 
+function planarUV(geo, ax = 'x', ay = 'z') {   // fit a flat part (label / sticker) into 0..1
+  geo.computeBoundingBox(); const b = geo.boundingBox, p = geo.attributes.position, uv = new Float32Array(p.count * 2);
+  const g = { x: 'getX', y: 'getY', z: 'getZ' };
+  for (let i = 0; i < p.count; i++) { uv[i * 2] = (p[g[ax]](i) - b.min[ax]) / (b.max[ax] - b.min[ax] || 1); uv[i * 2 + 1] = 1 - (p[g[ay]](i) - b.min[ay]) / (b.max[ay] - b.min[ay] || 1); }
+  geo.setAttribute('uv', new THREE.BufferAttribute(uv, 2));
+}
 function discUV(geo) { // planar UVs across the record face (disc radius 1 in XZ after glTF Y-up)
   const p = geo.attributes.position, uv = new Float32Array(p.count * 2);
   for (let i = 0; i < p.count; i++) { uv[i * 2] = p.getX(i) * 0.5 + 0.5; uv[i * 2 + 1] = p.getZ(i) * 0.5 + 0.5; }
@@ -88,7 +127,10 @@ export function restyle(root, swap = {}) {
   root.traverse(o => {
     if (!o.isMesh) return;
     const name = (o.material && o.material.name) || '';
-    const key = swap[name] || name;
+    let key = swap[name] || name;
+    if (/cassette_label$/.test(o.name) && key === 'white') { key = 'sticker'; planarUV(o.geometry); }
+    if (/cassette_label_low$/.test(o.name) && key === 'white') { key = 'sticker_low'; planarUV(o.geometry); }
+    if (/_label$/.test(o.name) && key === 'ultra_matte' && !o.geometry.attributes.uv) planarUV(o.geometry);
     if (M[key]) o.material = M[key];
     if (key === 'vinyl' || key === 'glass') { if (!o.geometry.attributes.uv) discUV(o.geometry); }
     o.frustumCulled = true;
@@ -109,6 +151,7 @@ export async function loadModels(onProgress) {
   const parts = {};
   MODELS.vinyl.traverse(o => { if (o.isMesh) parts[o.name.replace('vinyl_', '')] = o.geometry; });
   parts.body && discUV(parts.body);
+  parts.label && planarUV(parts.label);
   MODELS.vinylParts = parts;
   return MODELS;
 }
@@ -135,7 +178,7 @@ export const find = (root, prefix) => { const r = []; root.traverse(o => { if (o
 export class Records {
   constructor(n, { body = 'vinyl', label = 'ultra_matte' } = {}) {
     const P = MODELS.vinylParts, M = materials();
-    const lab = M[label].clone(); lab.color.set(0xffffff); lab.emissive.set(0x000000);
+    const lab = M[label].clone(); lab.color.set(0xffffff); lab.emissive.set(0x000000); lab.map = M.ultra_matte.map;
     this.body = new THREE.InstancedMesh(P.body, M[body], n);
     this.label = new THREE.InstancedMesh(P.label, lab, n);
     this.hole = new THREE.InstancedMesh(P.hole, M.chrome, n);
