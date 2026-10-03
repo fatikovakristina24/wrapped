@@ -75,19 +75,17 @@ export class Data extends Chapter {
     const c = this.box('artists');
     if (c) {
       D = this.grab('artists');
-      const R = c.w * 0.38, v = easeOut(range(c.vis, 0.05, 0.95)), B = this.burst('artists', 0.55, 0.9, 1.1), vp = this.viewport();
+      const R = c.w * 0.38, v = easeOut(range(c.vis, 0.05, 0.95)), B = this.burst('artists'), vp = this.viewport();
       this.sphere.group.position.set(c.x, c.y, 0);
-      const keep = 1 - B;                                      // while scattered the cloud lives in the screen plane
-      this.sphere.group.rotation.set((0.2 + Math.sin(T * 0.4) * 0.2 + D.y) * keep, (T * 0.45 + p * Math.PI * 2 + D.x) * keep, Math.sin(T * 0.3) * 0.1 * keep);
+      this.sphere.group.rotation.set(0.2 + Math.sin(T * 0.4) * 0.2 + D.y, T * 0.45 + p * Math.PI * 2 + D.x, Math.sin(T * 0.3) * 0.1);
       this.sph.forEach((s, i) => {
         const breathe = 1 + Math.sin(T * 2.6 + s.d.y * 4 + s.ph * 0.2) * (0.05 + kick * 0.12) + (s.big ? 0.06 : 0);
         pos.copy(s.from).lerp(s.d, v).multiplyScalar(R * breathe);
-        if (B > 0) {                                           // click: every disc flies straight to its own spot on the screen, then back
-          const hx = Math.sin(i * 12.9898) * 43758.5453, hy = Math.sin(i * 78.233) * 12345.6789;
-          this.tmp.set(-c.x + (hx - Math.floor(hx) - 0.5) * vp.w * 0.94, -c.y + (hy - Math.floor(hy) - 0.5) * vp.h * 0.9, ((i * 37) % 23 / 22 - 0.5) * R);
-          pos.lerp(this.tmp, B);
+        if (B > 0) {                                           // click: like the cassettes — each disc shoots straight out from the centre, then snaps back
+          const far = vp.w * 0.5 / R * (0.55 + 0.6 * ((i * 37) % 23) / 22);
+          pos.multiplyScalar(1 + B * far);
         }
-        this.q2.setFromAxisAngle(s.d, T * 0.8 + s.ph + B * 2); q.copy(s.q).premultiply(this.q2);
+        this.q2.setFromAxisAngle(s.d, T * 0.8 + s.ph + B * Math.sin(s.ph) * 3); q.copy(s.q).premultiply(this.q2);
         this.sphere.set(i, pos, q, R * s.s * clamp(v * 1.4) * (1 + B * 0.7));
       });
       this.sphere.commit();
