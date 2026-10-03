@@ -32,7 +32,7 @@ export class Social extends Chapter {
     // microphone: full turns, faster when scrolling
     this.spin += dt * (0.5 + kick * 4);
     this.mic.position.set(b.x, b.y - b.h * 0.02 + Math.sin(T * 1.1) * b.h * 0.015, 2);
-    this.mic.scale.setScalar(b.h * 0.62 * (1 + beat * 0.02));
+    this.mic.scale.setScalar(b.h * 0.42 * (1 + beat * 0.02));
     this.mic.rotation.set(0.1 + Math.sin(T * 0.7) * 0.12 + P.y * 0.1 + D.y, this.spin + p * Math.PI * 2 + D.x, -0.22 + Math.sin(T * 0.5) * 0.08);
     // speakers: burst out, then orbit the microphone
     const unit = b.w / 34, orbit = T * (1 + kick * 3) + p * 3;

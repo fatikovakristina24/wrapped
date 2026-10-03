@@ -17,18 +17,19 @@
   "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/",
   "lenis": "https://cdn.jsdelivr.net/npm/lenis@1.1.18/dist/lenis.mjs",
   "./js/chapters/c00_hero.js": "./js/chapters/c00_hero.js?v=d3c09ff1",
-  "./js/chapters/c01_ring.js": "./js/chapters/c01_ring.js?v=75fd9789",
-  "./js/chapters/c02_history.js": "./js/chapters/c02_history.js?v=b122e80d",
-  "./js/chapters/c03_data.js": "./js/chapters/c03_data.js?v=b8c0e0b1",
-  "./js/chapters/c04_lab.js": "./js/chapters/c04_lab.js?v=7bf34a81",
-  "./js/chapters/c05_story.js": "./js/chapters/c05_story.js?v=ffd6cbe2",
-  "./js/chapters/c06_social.js": "./js/chapters/c06_social.js?v=b74c1f07",
+  "./js/chapters/c01_ring.js": "./js/chapters/c01_ring.js?v=22615780",
+  "./js/chapters/c02_history.js": "./js/chapters/c02_history.js?v=cf9b9a67",
+  "./js/chapters/c03_data.js": "./js/chapters/c03_data.js?v=70c94e33",
+  "./js/chapters/c04_lab.js": "./js/chapters/c04_lab.js?v=3a282fbf",
+  "./js/chapters/c05_story.js": "./js/chapters/c05_story.js?v=e69f1f8b",
+  "./js/chapters/c06_social.js": "./js/chapters/c06_social.js?v=cdd999a7",
   "./js/chapters/c07_algo.js": "./js/chapters/c07_algo.js?v=8ac17598",
   "./js/chapters/c08_final.js": "./js/chapters/c08_final.js?v=4cdb653a",
   "./js/lib/kit.js": "./js/lib/kit.js?v=cf828ce2",
+  "./js/lib/objects.js": "./js/lib/objects.js?v=f015b485",
   "./js/main.js": "./js/main.js?v=0d2bb498",
   "./js/scroll.js": "./js/scroll.js?v=4436a6fd",
-  "./js/world.js": "./js/world.js?v=e9f57693"
+  "./js/world.js": "./js/world.js?v=633442cd"
 } }
 </script>
 </head>
@@ -61,12 +62,9 @@
 <div class="it t fO rv wrap" style="--x:732;--y:140;--w:660;--z:30;--mz:21px;--lh:1.3;--ls:-0.01em;font-weight:400;color:#f3f3f0">За год мы слушаем сотни песен: на прогулке, в дороге, дома или на учёбе. Обычно мы не замечаем, как из этих прослушиваний складывается наш музыкальный год. В декабре Spotify собирает их в одну персональную историю — Wrapped.</div>
 <div class="it t fU rv up" style="--x:48;--y:150;--w:20;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#a9b2ff">01</div>
 <div class="it t fU rv up" style="--x:84;--y:151;--w:200;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Вступление / 365 дней</div>
-<div class="it a3d " data-a3d="ring" style="--x:-170;--y:330;--w:1780;--h:1335"><img class="poster" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy" decoding="async"></div>
+<div class="it a3d " data-a3d="ring" style="--x:-170;--y:330;--w:1780;--h:1335"><img class="poster" src="assets/posters/year_record.png" alt="" loading="lazy" decoding="async"></div>
 <div class="it t fU rv cnt" style="--x:20;--y:470;--w:1209;--z:560;--mz:140px;--lh:0.78;--ls:-0.07em;font-weight:200;color:#f3f3f0" data-to="365" data-pre="" data-suf="" data-sep="0">365</div>
 <div class="it t fU rv title" style="--x:928;--y:917;--w:301;--z:96;--mz:44px;--lh:0.94;--ls:-0.04em;font-weight:700;color:#a9b2ff"><span class="ln"><span>дней</span></span></div>
-<div class="it shape hair" style="--x:300;--y:1030;--w:1;--h:32;background:#a9b2ff"></div>
-<div class="it shape hair" style="--x:960;--y:1030;--w:1;--h:32;background:#a9b2ff"></div>
-<div class="it shape hair" style="--x:1236;--y:1030;--w:1;--h:32;background:#a9b2ff"></div>
 <div class="it t fU rv up" style="--x:300;--y:1068;--w:87;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">День 001</div>
 <div class="it t fU rv up" style="--x:960;--y:1068;--w:89;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">День 365</div>
 <div class="it t fU rv up" style="--x:1236;--y:1068;--w:92;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">Пик года</div>
@@ -74,7 +72,7 @@
 <div class="it t fU rv up" style="--x:960;--y:1090;--w:94;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">31 декабря</div>
 <div class="it t fU rv up" style="--x:1236;--y:1090;--w:88;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">312 минут</div>
 <div class="it bulk" data-bulk="strip" style="--x:48;--y:1700;--w:1344;--h:200"><canvas></canvas></div>
-<div class="it t fO rv wrap" style="--x:48;--y:1930;--w:546;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Кольцо из 365 пластинок: одна пластинка — один день. Размер = минуты музыки за этот день. Внизу тот же год, развёрнутый в линию. </div>
+<div class="it t fO rv wrap" style="--x:48;--y:1930;--w:546;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Пластинка года: 365 столбиков — 365 дней. Высота = минуты музыки за этот день. Внизу тот же год, развёрнутый в линию.</div>
 </div></div>
 </section>
 <section class="ch" id="chapter-02" data-ch="2" aria-label="Глава 02">
@@ -85,15 +83,15 @@
 <div class="it t fO rv wrap" style="--x:960;--y:196;--w:432;--z:20;--mz:17px;--lh:1.52;--ls:0.0em;font-weight:400;color:#f3f3f0">В 2015 году Spotify впервые показал пользователям персональные итоги прослушиваний. Уже в 2016 появился Spotify Wrapped. Постепенно обычная статистика превратилась в яркую интерактивную историю и ежегодное событие, которого пользователи ждут каждый декабрь.</div>
 <div class="it a3d " data-a3d="h2015" style="--x:800;--y:430;--w:620;--h:620"><img class="poster" src="assets/posters/history_2015.png" alt="" loading="lazy" decoding="async"></div>
 <div class="it t fU rv cnt" style="--x:-14;--y:540;--w:636;--z:240;--mz:76px;--lh:0.82;--ls:-0.06em;font-weight:300;color:#8a8f98" data-to="2015" data-pre="" data-suf="" data-sep="0">2015</div>
-<div class="it t fU rv up" style="--x:48;--y:800;--w:196;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">2015 · первые итоги</div>
+<div class="it t fU rv up" style="--x:48;--y:800;--w:196;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">2015 первые итоги</div>
 <div class="it t fO rv wrap" style="--x:48;--y:826;--w:432;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Кассета: первые персональные итоги — пока просто статистика.</div>
 <div class="it a3d " data-a3d="h2016" style="--x:-80;--y:930;--w:700;--h:700"><img class="poster" src="assets/posters/history_2016.png" alt="" loading="lazy" decoding="async"></div>
 <div class="it t fU rv cnt" style="--x:540;--y:1030;--w:648;--z:240;--mz:76px;--lh:0.82;--ls:-0.06em;font-weight:300;color:#f3f3f0" data-to="2016" data-pre="" data-suf="" data-sep="0">2016</div>
-<div class="it t fU rv up" style="--x:618;--y:1290;--w:227;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#a9b2ff">2016 · Spotify Wrapped</div>
+<div class="it t fU rv up" style="--x:618;--y:1290;--w:227;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#a9b2ff">2016 Spotify Wrapped</div>
 <div class="it a3d " data-a3d="hnow" style="--x:660;--y:1290;--w:880;--h:880"><img class="poster" src="assets/posters/history_now.png" alt="" loading="lazy" decoding="async"></div>
 <div class="it t fO rv wrap" style="--x:618;--y:1316;--w:432;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Стопка пластинок: итоги получают свой формат.</div>
 <div class="it t fU rv" style="--x:-10;--y:1560;--w:1066;--z:240;--mz:76px;--lh:0.82;--ls:-0.06em;font-weight:300;color:#a9b2ff">сегодня</div>
-<div class="it t fU rv up" style="--x:48;--y:1830;--w:325;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">→ сегодня · ежегодное событие</div>
+<div class="it t fU rv up" style="--x:48;--y:1830;--w:325;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">→ сегодня ежегодное событие</div>
 <div class="it t fO rv wrap" style="--x:48;--y:1856;--w:432;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Наушники: ежегодное событие эпохи стриминга.</div>
 </div></div>
 </section>
@@ -103,7 +101,7 @@
 <div class="it t fU rv up" style="--x:88;--y:141;--w:137;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Сборка данных</div>
 <div class="it t fU rv title" style="--x:48;--y:190;--w:904;--z:96;--mz:44px;--lh:0.94;--ls:-0.04em;font-weight:700;color:#f3f3f0"><span class="ln"><span>Как</span></span><span class="ln"><span>собирается</span></span><span class="ln"><span>твой Wrapped?</span></span></div>
 <div class="it t fO rv wrap" style="--x:1074;--y:196;--w:318;--z:20;--mz:17px;--lh:1.52;--ls:0.0em;font-weight:400;color:#f3f3f0">В течение года Spotify анализирует твою историю прослушиваний: любимые треки, исполнителей, жанры и количество минут с музыкой. Затем эти данные объединяются в персональный итог. Поэтому каждый Wrapped получается своим и отражает музыкальные привычки конкретного пользователя.</div>
-<div class="it a3d " data-a3d="minutes" style="--x:1040;--y:580;--w:370;--h:740"><img class="poster" src="assets/posters/data_minutes.png" alt="" loading="lazy" decoding="async"></div>
+<div class="it a3d " data-a3d="minutes" style="--x:1040;--y:580;--w:370;--h:740"><img class="poster" src="assets/posters/hourglass.png" alt="" loading="lazy" decoding="async"></div>
 <div class="it t fU rv up" style="--x:48;--y:654;--w:171;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Минуты с музыкой</div>
 <div class="it t fU rv cnt" style="--x:30;--y:700;--w:907;--z:240;--mz:76px;--lh:0.82;--ls:-0.06em;font-weight:300;color:#f3f3f0" data-to="47382" data-pre="" data-suf="" data-sep="1">47 382</div>
 <div class="it shape vbar" style="--x:730;--y:990;--w:40;--h:150;background:#1f2bff"></div>
@@ -130,7 +128,7 @@
 <div class="it t fU rv up" style="--x:620;--y:1148;--w:11;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">О</div>
 <div class="it t fU rv up" style="--x:682;--y:1148;--w:11;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">Н</div>
 <div class="it t fU rv up" style="--x:744;--y:1148;--w:12;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">Д</div>
-<div class="it t fO rv wrap" style="--x:48;--y:1215;--w:660;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Минуты складываются в башню из пластинок; каждая десятая подсвечена. Декабрь — самый плотный месяц.</div>
+<div class="it t fO rv wrap" style="--x:48;--y:1215;--w:660;--z:13;--mz:12px;--lh:1.38;--ls:0.01em;font-weight:500;color:#8a8f98">Минуты сыплются, как песок: в часах вместо песчинок — пластинки. Декабрь — самый плотный месяц.</div>
 <div class="it a3d " data-a3d="tracks" style="--x:-60;--y:1330;--w:800;--h:667"><img class="poster" src="assets/posters/data_tracks.png" alt="" loading="lazy" decoding="async"></div>
 <div class="it t fU rv up" style="--x:48;--y:1334;--w:51;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Треки</div>
 <div class="it t fU rv cnt" style="--x:732;--y:1380;--w:349;--z:112;--mz:44px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="1284" data-pre="" data-suf="" data-sep="1">1 284</div>
@@ -164,8 +162,6 @@
 <div class="it t fU rv up" style="--x:48;--y:2546;--w:103;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">The Weeknd</div>
 <div class="it t fU rv up" style="--x:560;--y:2546;--w:25;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">8%</div>
 <div class="it shape hbar" style="--x:230;--y:2548;--w:320;--h:10;background:#f3f3f0"></div>
-<div class="it shape hair" style="--x:880;--y:2560;--w:1;--h:32;background:#a9b2ff"></div>
-<div class="it shape hair" style="--x:1150;--y:2560;--w:1;--h:32;background:#a9b2ff"></div>
 <div class="it t fU rv up" style="--x:48;--y:2572;--w:80;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Земфира</div>
 <div class="it t fU rv up" style="--x:440;--y:2572;--w:24;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#8a8f98">5%</div>
 <div class="it shape hbar" style="--x:230;--y:2574;--w:200;--h:10;background:#f3f3f0"></div>
@@ -204,7 +200,7 @@
 <div class="it t fU rv up" style="--x:88;--y:141;--w:158;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Визуальный язык</div>
 <div class="it t fU rv title" style="--x:48;--y:190;--w:750;--z:96;--mz:44px;--lh:0.94;--ls:-0.04em;font-weight:700;color:#f3f3f0"><span class="ln"><span>Что</span></span><span class="ln"><span>превращает</span></span><span class="ln"><span>цифры</span></span><span class="ln"><span>в историю?</span></span></div>
 <div class="it t fO rv wrap" style="--x:960;--y:196;--w:432;--z:20;--mz:17px;--lh:1.52;--ls:0.0em;font-weight:400;color:#f3f3f0">Сами по себе минуты, проценты и списки артистов выглядят как обычная статистика. Wrapped превращает их в яркие карточки с крупной типографикой, графикой, цветом и движением. Благодаря дизайну цифры становятся частью визуальной истории.</div>
-<div class="it a3d " data-a3d="lab" style="--x:340;--y:560;--w:760;--h:912"><img class="poster" src="assets/posters/lab_speaker.png" alt="" loading="lazy" decoding="async"></div>
+<div class="it a3d " data-a3d="lab" style="--x:340;--y:560;--w:760;--h:912"><img class="poster" src="assets/posters/lab_vortex.png" alt="" loading="lazy" decoding="async"></div>
 <div class="it t fU rv up" style="--x:48;--y:1580;--w:158;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#8a8f98">ДО: СТАТИСТИКА</div>
 <div class="it t fU rv up" style="--x:618;--y:1580;--w:161;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#a9b2ff">ПОСЛЕ: ИСТОРИЯ</div>
 <div class="it card" style="--x:618;--y:1620;--w:774;--h:500;background:#141416"><div class="it t fU rv cnt" style="--x:32;--y:82;--w:458;--z:112;--mz:44px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#1f2bff" data-to="47382" data-pre="" data-suf="" data-sep="1">47 382</div><div class="it t fU rv" style="--x:32;--y:212;--w:426;--z:44;--mz:26px;--lh:1.08;--ls:-0.03em;font-weight:500;color:#f3f3f0">минуты музыки</div><div class="it t fU rv up" style="--x:32;--y:312;--w:67;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#a9b2ff">ТОП-1%</div><div class="it t fO rv wrap" style="--x:32;--y:342;--w:520;--z:30;--mz:21px;--lh:1.3;--ls:-0.01em;font-weight:400;color:#f3f3f0">«Birds of a Feather» звучал у тебя 214 раз</div><div class="card-bar"></div></div>
@@ -257,7 +253,7 @@
 <div class="it t fU rv up" style="--x:390;--y:672;--w:160;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">Birds of a Feather</div>
 <div class="it shape hair" style="--x:48;--y:710;--w:660;--h:1;background:rgba(243,243,240,0.2)"></div>
 <div class="it t fU rv cnt" style="--x:48;--y:718;--w:69;--z:40;--mz:26px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="1" data-pre="" data-suf="%" data-sep="0">1%</div>
-<div class="it t fU rv up" style="--x:390;--y:734;--w:102;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">Billie Eilish</div><div class="it a3d result" data-a3d="result" style="--x:620;--y:40;--w:840;--h:630"><img class="poster" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy" decoding="async"></div></div></div></div>
+<div class="it t fU rv up" style="--x:390;--y:734;--w:102;--z:11;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">Billie Eilish</div><div class="it a3d result" data-a3d="result" style="--x:620;--y:40;--w:840;--h:630"><img class="poster" src="assets/posters/year_record.png" alt="" loading="lazy" decoding="async"></div></div></div></div>
 </section>
 <section class="ch" id="chapter-06" data-ch="6" aria-label="Глава 06">
 <div class="stage"><div class="inner" style="--h:2200">
@@ -266,9 +262,9 @@
 <div class="it t fU rv title" style="--x:48;--y:190;--w:664;--z:96;--mz:44px;--lh:0.94;--ls:-0.04em;font-weight:700;color:#f3f3f0"><span class="ln"><span>Почему мы</span></span><span class="ln"><span>делимся</span></span><span class="ln"><span>Wrapped?</span></span></div>
 <div class="it t fO rv wrap" style="--x:960;--y:196;--w:432;--z:20;--mz:17px;--lh:1.52;--ls:0.0em;font-weight:400;color:#f3f3f0">Музыкальные итоги становятся простым способом рассказать о себе другим. Любимый артист, главный трек года или попадание в 1% слушателей воспринимаются как что-то личное. А готовый визуальный формат позволяет сразу поделиться результатом в соцсетях.</div>
 <div class="it a3d " data-a3d="social" style="--x:-260;--y:420;--w:1960;--h:1497"><img class="poster" src="assets/posters/social_mic.png" alt="" loading="lazy" decoding="async"></div>
-<div class="it share" style="--cx:1259;--cy:809;--w:230;--h:409;--rot:-7deg;background:#f3f3f0"><img class="it share-img" style="--x:-36;--y:178;--w:345;--h:259" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy"><div class="it t fU up" style="--x:13;--y:10;--w:99;--z:8.8;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#1f2bff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:14;--y:29;--w:205;--z:50;--mz:30px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#0a0a0b" data-to="47382" data-pre="" data-suf="" data-sep="1">47 382</div><div class="it t fU up" style="--x:14;--y:75;--w:50;--z:9.6;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#0a0a0b">минут</div></div>
+<div class="it share" style="--cx:1259;--cy:809;--w:230;--h:409;--rot:-7deg;background:#f3f3f0"><img class="it share-img" style="--x:-36;--y:178;--w:345;--h:259" src="assets/posters/year_record.png" alt="" loading="lazy"><div class="it t fU up" style="--x:13;--y:10;--w:99;--z:8.8;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#1f2bff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:14;--y:29;--w:205;--z:50;--mz:30px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#0a0a0b" data-to="47382" data-pre="" data-suf="" data-sep="1">47 382</div><div class="it t fU up" style="--x:14;--y:75;--w:50;--z:9.6;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#0a0a0b">минут</div></div>
 <div class="it t fU rv up" style="--x:520;--y:940;--w:28;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">×12</div>
-<div class="it share" style="--cx:137;--cy:942;--w:190;--h:338;--rot:9deg;background:#0a0a0b"><img class="it share-img" style="--x:-69;--y:133;--w:285;--h:214" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy"><div class="it t fU up" style="--x:10;--y:14;--w:82;--z:7.3;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:5;--y:31;--w:71;--z:41.3;--mz:26px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="1" data-pre="" data-suf="%" data-sep="0">1%</div><div class="it t fU up" style="--x:5;--y:70;--w:107;--z:7.9;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">топ слушателей</div></div>
+<div class="it share" style="--cx:137;--cy:942;--w:190;--h:338;--rot:9deg;background:#0a0a0b"><img class="it share-img" style="--x:-69;--y:133;--w:285;--h:214" src="assets/posters/year_record.png" alt="" loading="lazy"><div class="it t fU up" style="--x:10;--y:14;--w:82;--z:7.3;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:5;--y:31;--w:71;--z:41.3;--mz:26px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="1" data-pre="" data-suf="%" data-sep="0">1%</div><div class="it t fU up" style="--x:5;--y:70;--w:107;--z:7.9;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">топ слушателей</div></div>
 <div class="it t fU rv up" style="--x:1000;--y:980;--w:39;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">×156</div>
 <div class="it t fU rv up" style="--x:716;--y:1120;--w:16;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">×1</div>
 <div class="it shape dot hbar" style="--x:693;--y:1143;--w:14;--h:14;background:#f3f3f0"></div>
@@ -280,12 +276,12 @@
 <div class="it link" style="--x:700;--y:1150;--w:813;--r:64.9deg"></div>
 <div class="it link" style="--x:700;--y:1150;--w:1125;--r:59.6deg"></div>
 <div class="it t fU rv up" style="--x:980;--y:1470;--w:62;--z:13;--mz:12px;--lh:1.2;--ls:0.08em;font-weight:500;color:#f3f3f0">×2 048</div>
-<div class="it share" style="--cx:1360;--cy:1506;--w:260;--h:462;--rot:14deg;background:#0a0a0b"><img class="it share-img" style="--x:-110;--y:173;--w:390;--h:293" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy"><div class="it t fU up" style="--x:9;--y:15;--w:112;--z:10;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:9;--y:32;--w:150;--z:56.5;--mz:30px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="214" data-pre="" data-suf="×" data-sep="0">214×</div><div class="it t fU up" style="--x:9;--y:83;--w:158;--z:10.8;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Birds of a Feather</div></div>
-<div class="it share" style="--cx:92;--cy:1544;--w:240;--h:427;--rot:-12deg;background:#e3e6ff"><img class="it share-img" style="--x:-21;--y:188;--w:360;--h:270" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy"><div class="it t fU up" style="--x:14;--y:9;--w:103;--z:9.2;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#1f2bff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:16;--y:27;--w:130;--z:52.2;--mz:30px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#0a0a0b" data-to="62" data-pre="" data-suf=" ч" data-sep="0">62 ч</div><div class="it t fU up" style="--x:16;--y:75;--w:93;--z:10;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#0a0a0b">Billie Eilish</div></div>
-<div class="it share" style="--cx:554;--cy:1717;--w:170;--h:302;--rot:4deg;background:#f3f3f0"><img class="it share-img" style="--x:-51;--y:124;--w:255;--h:191" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy"><div class="it t fU up" style="--x:11;--y:13;--w:78;--z:7;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#1f2bff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:8;--y:31;--w:121;--z:37;--mz:26px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#0a0a0b" data-to="2026" data-pre="" data-suf="" data-sep="0">2026</div><div class="it t fU up" style="--x:8;--y:66;--w:51;--z:7.1;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#0a0a0b">твой год</div></div>
-<div class="it share" style="--cx:1097;--cy:1845;--w:210;--h:373;--rot:-18deg;background:#0a0a0b"><img class="it share-img" style="--x:-2;--y:165;--w:315;--h:236" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy"><div class="it t fU up" style="--x:15;--y:8;--w:90;--z:8.1;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:15;--y:25;--w:77;--z:45.7;--mz:30px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="86" data-pre="" data-suf="" data-sep="0">86</div><div class="it t fU up" style="--x:15;--y:66;--w:56;--z:8.8;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">жанров</div></div>
+<div class="it share" style="--cx:1360;--cy:1506;--w:260;--h:462;--rot:14deg;background:#0a0a0b"><img class="it share-img" style="--x:-110;--y:173;--w:390;--h:293" src="assets/posters/year_record.png" alt="" loading="lazy"><div class="it t fU up" style="--x:9;--y:15;--w:112;--z:10;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:9;--y:32;--w:150;--z:56.5;--mz:30px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="214" data-pre="" data-suf="×" data-sep="0">214×</div><div class="it t fU up" style="--x:9;--y:83;--w:158;--z:10.8;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">Birds of a Feather</div></div>
+<div class="it share" style="--cx:92;--cy:1544;--w:240;--h:427;--rot:-12deg;background:#e3e6ff"><img class="it share-img" style="--x:-21;--y:188;--w:360;--h:270" src="assets/posters/year_record.png" alt="" loading="lazy"><div class="it t fU up" style="--x:14;--y:9;--w:103;--z:9.2;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#1f2bff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:16;--y:27;--w:130;--z:52.2;--mz:30px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#0a0a0b" data-to="62" data-pre="" data-suf=" ч" data-sep="0">62 ч</div><div class="it t fU up" style="--x:16;--y:75;--w:93;--z:10;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#0a0a0b">Billie Eilish</div></div>
+<div class="it share" style="--cx:554;--cy:1717;--w:170;--h:302;--rot:4deg;background:#f3f3f0"><img class="it share-img" style="--x:-51;--y:124;--w:255;--h:191" src="assets/posters/year_record.png" alt="" loading="lazy"><div class="it t fU up" style="--x:11;--y:13;--w:78;--z:7;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#1f2bff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:8;--y:31;--w:121;--z:37;--mz:26px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#0a0a0b" data-to="2026" data-pre="" data-suf="" data-sep="0">2026</div><div class="it t fU up" style="--x:8;--y:66;--w:51;--z:7.1;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#0a0a0b">твой год</div></div>
+<div class="it share" style="--cx:1097;--cy:1845;--w:210;--h:373;--rot:-18deg;background:#0a0a0b"><img class="it share-img" style="--x:-2;--y:165;--w:315;--h:236" src="assets/posters/year_record.png" alt="" loading="lazy"><div class="it t fU up" style="--x:15;--y:8;--w:90;--z:8.1;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#a9b2ff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:15;--y:25;--w:77;--z:45.7;--mz:30px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#f3f3f0" data-to="86" data-pre="" data-suf="" data-sep="0">86</div><div class="it t fU up" style="--x:15;--y:66;--w:56;--z:8.8;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#f3f3f0">жанров</div></div>
 <div class="it t fU rv cnt" style="--x:30;--y:1930;--w:923;--z:240;--mz:76px;--lh:0.82;--ls:-0.06em;font-weight:300;color:#f3f3f0" data-to="2048" data-pre="×" data-suf="" data-sep="1">×2 048</div>
-<div class="it share" style="--cx:1247;--cy:2131;--w:180;--h:320;--rot:8deg;background:#e3e6ff"><img class="it share-img" style="--x:-63;--y:127;--w:270;--h:203" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy"><div class="it t fU up" style="--x:10;--y:14;--w:78;--z:7;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#1f2bff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:6;--y:31;--w:67;--z:39.1;--mz:26px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#0a0a0b" data-to="1" data-pre="" data-suf="%" data-sep="0">1%</div><div class="it t fU up" style="--x:6;--y:68;--w:101;--z:7.5;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#0a0a0b">топ слушателей</div></div>
+<div class="it share" style="--cx:1247;--cy:2131;--w:180;--h:320;--rot:8deg;background:#e3e6ff"><img class="it share-img" style="--x:-63;--y:127;--w:270;--h:203" src="assets/posters/year_record.png" alt="" loading="lazy"><div class="it t fU up" style="--x:10;--y:14;--w:78;--z:7;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#1f2bff">WRAPPED 2026</div><div class="it t fU cnt" style="--x:6;--y:31;--w:67;--z:39.1;--mz:26px;--lh:0.9;--ls:-0.04em;font-weight:500;color:#0a0a0b" data-to="1" data-pre="" data-suf="%" data-sep="0">1%</div><div class="it t fU up" style="--x:6;--y:68;--w:101;--z:7.5;--mz:11px;--lh:1.3;--ls:0.12em;font-weight:400;color:#0a0a0b">топ слушателей</div></div>
 </div></div>
 </section>
 <section class="ch" id="chapter-07" data-ch="7" aria-label="Глава 07">

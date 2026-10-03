@@ -2,7 +2,8 @@
 // The tape is alive: waves run along it, it flutters with scroll speed; the cassette turns with each beat.
 import * as THREE from 'three';
 import { Chapter } from '../world.js';
-import { model, find, Records, Ribbon, clamp, range, easeOut, easeInOut, lerp, damp, C } from '../lib/kit.js';
+import { model, find, Ribbon, yearValues, clamp, range, easeOut, easeInOut, lerp, damp, C } from '../lib/kit.js';
+import { YearRecord } from '../lib/objects.js';
 
 export class Story extends Chapter {
   constructor(world, el) {
@@ -18,8 +19,7 @@ export class Story extends Chapter {
     this.tapeMat = new THREE.MeshPhysicalMaterial({ color: C.ultra, metalness: 0, roughness: 0.42, sheen: 0.8, sheenColor: new THREE.Color(0xa9b2ff), side: THREE.DoubleSide, emissive: C.ultra, emissiveIntensity: 0.55 });
     this.tape = new Ribbon(pts, 0.62, Math.PI * 7, this.tapeMat); this.group.add(this.tape.mesh);
     this.idx = this.tape.geo.index.count; this.N = N;
-    this.ring = new Records(120); this.scene.add(this.ring.group);
-    for (let i = 0; i < 120; i++) this.ring.color(i, i % 9 === 0 ? C.white : C.ultra);
+    this.year = new YearRecord(yearValues()); this.scene.add(this.year.group);
     this.f = 0; this.x = 0; this.Y = new THREE.Vector3(0, 1, 0);
   }
   update(p, info, dt) {
@@ -54,18 +54,12 @@ export class Story extends Chapter {
     this.tapeMat.opacity = 1 - res * 0.85; this.tapeMat.transparent = res > 0;
     const b = this.box('result');
     if (b) {
-      const R = Math.min(b.w, b.h) * 0.4, q = new THREE.Quaternion(), pos = new THREE.Vector3(), tan = new THREE.Vector3();
-      this.ring.group.position.set(b.x, b.y + Math.sin(T) * R * 0.04, 0);
-      const DR = this.grab('result');
-      this.ring.group.rotation.set(0.6 + Math.sin(T * 0.6) * 0.15 + DR.y, T * 0.6 + DR.x, 0);
-      for (let i = 0; i < 120; i++) {
-        const th = Math.PI * 2 * i / 120, k = easeOut(clamp((res * 1.2 - i / 120) / 0.2));
-        const wave = Math.sin(th * 4 - T * 3);
-        pos.set(Math.cos(th) * R, (1 - k) * R + wave * R * 0.04, Math.sin(th) * R);
-        tan.set(-Math.sin(th), 0, Math.cos(th)); q.setFromUnitVectors(this.Y, tan);
-        this.ring.set(i, pos, q, Math.max(R * 0.16 * (0.6 + 0.4 * Math.sin(i * 1.7) ** 2) * (1 + wave * 0.2) * k, 1e-4));
-      }
-      this.ring.commit();
+      const DR = this.grab('result'), R = Math.min(b.w, b.h) * 0.45;
+      const g = this.year.group;
+      g.position.set(b.x, b.y - b.h * 0.05 + Math.sin(T) * R * 0.03, 0);
+      g.scale.setScalar(Math.max(R * easeOut(res), 1e-4));
+      g.rotation.set(0.55 + Math.sin(T * 0.6) * 0.1 + DR.y, (1 - res) * Math.PI * 2 + T * 0.2 + DR.x, 0);
+      this.year.update(dt, T, res, kick, this.burst('result'));
     }
   }
 }

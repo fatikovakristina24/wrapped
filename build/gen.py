@@ -16,9 +16,9 @@ ANCHORS = [('hero_ring (back)', 'hero'), ('ring365 (back)', 'ring'), ('history_2
            ('history_now', 'hnow'), ('data_minutes', 'minutes'), ('data_tracks', 'tracks'), ('data_artists', 'artists'),
            ('data_genres', 'genres'), ('lab_speaker', 'lab'), ('story_path (intro', 'story'), ('social_spread', 'social'),
            ('algo_broken', 'algo'), ('final_memory', 'final')]
-POSTER = {'hero': 'hero_vinyl', 'ring': 'ring365_vinyl', 'h2015': 'history_2015', 'h2016': 'history_2016', 'hnow': 'history_now',
-          'minutes': 'data_minutes', 'tracks': 'data_tracks', 'artists': 'data_artists', 'genres': 'data_genres', 'lab': 'lab_speaker',
-          'story': 'story_tape', 'social': 'social_mic', 'algo': 'algo_cassette', 'final': 'final_glass_vinyl', 'result': 'ring365_vinyl'}
+POSTER = {'hero': 'hero_vinyl', 'ring': 'year_record', 'h2015': 'history_2015', 'h2016': 'history_2016', 'hnow': 'history_now',
+          'minutes': 'hourglass', 'tracks': 'data_tracks', 'artists': 'data_artists', 'genres': 'data_genres', 'lab': 'lab_vortex',
+          'story': 'story_tape', 'social': 'social_mic', 'algo': 'algo_cassette', 'final': 'final_glass_vinyl', 'result': 'year_record'}
 BULK = {'Year signal': 'signal', 'Year strip': 'strip', 'Emblem': 'emblem'}
 COUNTER = re.compile(r'^(×)?(\d[\d ]*)(×|%| ч)?$')
 
@@ -129,7 +129,7 @@ def render_items(items, chapter):
             kids = []
             for k in it['kids']:
                 if k['t'] == 'P':
-                    kids.append(f'<img class="it share-img" style="--x:{k["x"]};--y:{k["y"]};--w:{k["w"]};--h:{k["h"]}" src="assets/posters/ring365_vinyl.png" alt="" loading="lazy">')
+                    kids.append(f'<img class="it share-img" style="--x:{k["x"]};--y:{k["y"]};--w:{k["w"]};--h:{k["h"]}" src="assets/posters/year_record.png" alt="" loading="lazy">')
                 else:
                     kids.append(text(k).replace(' rv', ''))
             out.append(f'<div class="it share" style="--cx:{it["cx"]};--cy:{it["cy"]};--w:{it["w"]};--h:{it["h"]};--rot:{-it["rot"]}deg;background:{color(it["c"])}">{"".join(kids)}</div>')
