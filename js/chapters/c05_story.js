@@ -3,7 +3,7 @@
 import * as THREE from 'three';
 import { Chapter } from '../world.js';
 import { model, find, Ribbon, yearValues, clamp, range, easeOut, easeInOut, lerp, damp, C } from '../lib/kit.js';
-import { YearRecord } from '../lib/objects.js';
+import { GiftBox } from '../lib/objects.js';
 
 export class Story extends Chapter {
   constructor(world, el) {
@@ -19,7 +19,7 @@ export class Story extends Chapter {
     this.tapeMat = new THREE.MeshPhysicalMaterial({ color: C.ultra, metalness: 0, roughness: 0.42, sheen: 0.8, sheenColor: new THREE.Color(0xa9b2ff), side: THREE.DoubleSide, emissive: C.ultra, emissiveIntensity: 0.55 });
     this.tape = new Ribbon(pts, 0.62, Math.PI * 7, this.tapeMat); this.group.add(this.tape.mesh);
     this.idx = this.tape.geo.index.count; this.N = N;
-    this.year = new YearRecord(yearValues()); this.scene.add(this.year.group);
+    this.gift = new GiftBox(); this.scene.add(this.gift.group);
     this.f = 0; this.x = 0; this.Y = new THREE.Vector3(0, 1, 0);
   }
   update(p, info, dt) {
@@ -53,13 +53,13 @@ export class Story extends Chapter {
     const res = easeOut(range(sp, 4.05, 4.9));
     this.tapeMat.opacity = 1 - res * 0.85; this.tapeMat.transparent = res > 0;
     const b = this.box('result');
-    if (b) {
-      const DR = this.grab('result'), R = Math.min(b.w, b.h) * 0.45;
-      const g = this.year.group;
-      g.position.set(b.x, b.y - b.h * 0.05 + Math.sin(T) * R * 0.03, 0);
-      g.scale.setScalar(Math.max(R * easeOut(res), 1e-4));
-      g.rotation.set(0.55 + Math.sin(T * 0.6) * 0.1 + DR.y, (1 - res) * Math.PI * 2 + T * 0.2 + DR.x, 0);
-      this.year.update(dt, T, res, kick, this.burst('result'));
+    if (b) {                                   // the year, wrapped — the tape becomes the gift ribbon
+      const DR = this.grab('result'), S = Math.min(b.w, b.h) * 0.62;
+      const g = this.gift.group;
+      g.position.set(b.x, b.y - b.h * 0.12, 0);
+      g.scale.setScalar(Math.max(S * easeOut(clamp(res * 3)), 1e-4));
+      g.rotation.set(0.32 + Math.sin(T * 0.6) * 0.06 + DR.y, -0.55 + T * 0.35 + (1 - res) * Math.PI * 2 + DR.x, Math.sin(T * 0.5) * 0.04);
+      this.gift.update(T, res, kick, this.burst('result', 0.4, 0.9, 1.2));
     }
   }
 }

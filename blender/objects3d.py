@@ -527,7 +527,22 @@ def c_final():
     setup(2400, 2000, 200, transparent=False, env_strength=0.06, cam_bg='#0A0A0B')
     area((0, 9, 3), (0, 0, 0), 900, ULTRA_L, 9); area((-9, 2, 2), (0, 0, 0), 250, '#FFFFFF', 2, 12)
     area((8, -2, -4), (0, 0, 0), 700, ULTRA, 5); area((-6, 6, 7), (0, 0, 0), 500, '#FFFFFF', 3)
-    rec = vinyl(None, m='glass', label='ultra', rot=(math.radians(64), math.radians(-8), math.radians(22)), scale=4.6, name='memory')
+    rec = vinyl(None, m='glass', label='ultra', rot=(math.radians(64), math.radians(-8), math.radians(22)), scale=3.3, name='memory')
+    glow = bpy.data.materials.new('glow'); gb = glow.node_tree.nodes['Principled BSDF']
+    gb.inputs['Emission Color'].default_value = lin(ULTRA_L); gb.inputs['Emission Strength'].default_value = 1.3; gb.inputs['Base Color'].default_value = lin(ULTRA_L)
+    spark = bpy.data.materials.new('spark'); sb = spark.node_tree.nodes['Principled BSDF']
+    sb.inputs['Emission Color'].default_value = (1, 1, 1, 1); sb.inputs['Emission Strength'].default_value = 25
+    MATS['glow'] = glow; MATS['spark'] = spark
+    rr = random.Random(8)
+    for k in range(5):
+        t = torus('thread%d' % k, 1.0, 0.0022, 'glow')
+        t.scale = (4.2 + k * 0.55, 1.9 + k * 0.35, 1); t.rotation_euler = (math.radians(70 + k * 12), math.radians(k * 25 - 40), math.radians(k * 63))
+        a = rr.uniform(0, 6.28); sp = Matrix.Rotation(t.rotation_euler.z, 4, 'Z') @ Matrix.Rotation(t.rotation_euler.y, 4, 'Y') @ Matrix.Rotation(t.rotation_euler.x, 4, 'X') @ Vector((math.cos(a) * t.scale.x, math.sin(a) * t.scale.y, 0, 1))
+        bpy.ops.mesh.primitive_uv_sphere_add(radius=0.07, location=sp.xyz); assign(bpy.context.active_object, 'spark')
+    for i in range(260):
+        a = rr.uniform(0, 6.28); r = rr.uniform(2.2, 7.5)
+        bpy.ops.mesh.primitive_ico_sphere_add(radius=rr.uniform(0.012, 0.04), subdivisions=1, location=(math.cos(a) * r, math.sin(a) * r * 0.6 + rr.uniform(-1, 1), rr.uniform(-2.5, 2.5)))
+        assign(bpy.context.active_object, 'spark' if rr.random() < .4 else 'glow')
     rng = random.Random(4)
     for i in range(9):
         loc = Vector((rng.uniform(-8, 8), rng.uniform(1, 9), rng.uniform(-4, 4)))
@@ -568,7 +583,7 @@ def c_yearrec():
         a = math.pi / 2 - 2 * math.pi * i / 365
         v = vals[i]; h = 0.2 + v * 2.1
         m = 'pearl_bar' if i == top else ('ultra' if v > 0.55 else 'chrome')
-        b = box('bar%d' % i, (0.05, 0.13, h), 'white' if i == top else ('ultra' if v > 0.55 else 'chrome'), (R0 * math.cos(a), R0 * math.sin(a), 0.06 + h / 2), root, bevel=0.01)
+        b = box('bar%d' % i, (0.05, 0.13, h), 'ultra' if v > 0.55 else 'chrome', (R0 * math.cos(a), R0 * math.sin(a), 0.06 + h / 2), root, bevel=0.01)
         b.rotation_euler = (0, 0, a)
     # tonearm
     base = cyl('arm_base', 0.42, 0.35, 'chrome_brushed', (5.6, 3.2, 0.2), root, 64, bevel=0.03)
@@ -621,5 +636,51 @@ def c_lab2():
     camera((0, -18, 1.0), (0, 0, 0), 50)
     render('lab_vortex')
 
-SCENES = dict(yearrec=c_yearrec, hourglass=c_hourglass, lab2=c_lab2, minutes=c_minutes, hero=c_hero, ring365=c_ring365, history=c_history, data=c_data, lab=c_lab, story=c_story, social=c_social, algo=c_algo, final=c_final, swatches=c_swatches, exports=c_exports, vinyl=p_vinyl, cassette=p_cassette, speaker=p_speaker, mic=p_mic, headphones=p_headphones)
+def c_gift():
+    """05 result — the year, wrapped: a pearl gift box tied with ultramarine tape, records escaping."""
+    setup(2880, 2160, 140, env_strength=0.45); rig(0.62)
+    root = empty('gift', (0, 0, -0.3), (math.radians(18), 0, math.radians(-28)), 1.0)
+    box('body', (3.0, 3.0, 2.2), 'white', (0, 0, 0), root, bevel=0.12)
+    lid = empty('lid', (0, 0, 1.35), (math.radians(-9), math.radians(5), 0), 1.0); lid.parent = root
+    box('lid_top', (3.25, 3.25, 0.55), 'white', (0, 0, 0), lid, bevel=0.1)
+    for rot in (0, 90):
+        b = box('band', (0.42, 3.08, 2.22), 'ultra', (0, 0, 0), root, bevel=0.03); b.rotation_euler = (0, 0, math.radians(rot))
+        l = box('lidband', (0.44, 3.32, 0.58), 'ultra', (0, 0, 0), lid, bevel=0.03); l.rotation_euler = (0, 0, math.radians(rot))
+    for sgn in (-1, 1):
+        t = torus('bow', 0.55, 0.16, 'ultra', (sgn * 0.5, 0, 0.55), lid); t.rotation_euler = (math.radians(90), math.radians(sgn * 30), 0); t.scale = (1, 0.55, 1)
+    cyl('knot', 0.24, 0.3, 'ultra', (0, 0, 0.42), lid, 32, bevel=0.06)
+    rng = random.Random(14)
+    for i in range(16):
+        a = rng.uniform(0, 6.28); r = 2.6 + rng.random() * 2.2
+        loc = Vector((math.cos(a) * r, math.sin(a) * r * 0.6, 1.6 + rng.uniform(-1.2, 2.6)))
+        vinyl_fast(M_of(loc, Euler((rng.uniform(0, 6), rng.uniform(0, 6), 0)).to_matrix().to_4x4(), rng.uniform(0.35, 0.65)), 'ultra_matte' if rng.random() < .7 else 'white')
+    camera((0, -15.5, 6.8), (0, 0, 0.6), 40)
+    render('gift_2026')
+
+def c_algo2():
+    """07 — a smoky grey cassette being scanned; smooth tape spills out; data pixels rise out of it."""
+    setup(2880, 2000, 128, glass=True, env_strength=0.6); rig(0.6, cold=True)
+    cas = cassette(None, loc=(-1.0, 0, 1.4), rot=(math.radians(68), math.radians(-10), math.radians(-14)), scale=2.6, shell='smoke', tape='clay_dark', name='grey')
+    for o in cas.children:
+        if o.data and o.data.materials and o.data.materials[0].name in ('ultra', 'white'):
+            o.data.materials.clear(); o.data.materials.append(mat('clay'))
+    pts = []
+    for i in range(900):
+        t = i / 899; a = t * math.pi * 7; r = 0.4 + 3.4 * t
+        pts.append((-1.0 + math.cos(a) * r * 1.2, -0.4 + math.sin(a * 0.8) * r * 0.5, 0.3 - 4.6 * t + 0.5 * math.sin(a * 1.3)))
+    ribbon('tape', pts, 0.26, 'chrome_brushed', up=(0, 0, 1), thick=0.006)
+    rng = random.Random(3)
+    for i in range(170):
+        h = rng.random(); a = rng.uniform(0, 6.28); r = (0.6 + rng.random() * 4) * (0.35 + h)
+        s = (0.05 + rng.random() * 0.11) * math.sin(h * math.pi)
+        b = box('px%d' % i, (s, s, s), 'clay' if rng.random() < .55 else ('white' if rng.random() < .3 else 'clay_dark'), (-1.0 + math.cos(a) * r, math.sin(a) * r * 0.6, 1.0 + h * 6.5))
+        b.rotation_euler = (rng.uniform(0, 6), rng.uniform(0, 6), 0)
+    frame = []
+    for (x, y) in ((-3.6, -2.4), (3.6, -2.4), (3.6, 2.4), (-3.6, 2.4), (-3.6, -2.4)):
+        frame.append((-1.0 + x, y, 2.0))
+    tube('scan', frame, 0.018, 'white')
+    camera((-1.5, -14.5, 6.5), (0.0, 0, 0.6), 42)
+    render('algo_cassette')
+
+SCENES = dict(algo2=c_algo2, gift=c_gift, yearrec=c_yearrec, hourglass=c_hourglass, lab2=c_lab2, minutes=c_minutes, hero=c_hero, ring365=c_ring365, history=c_history, data=c_data, lab=c_lab, story=c_story, social=c_social, algo=c_algo, final=c_final, swatches=c_swatches, exports=c_exports, vinyl=p_vinyl, cassette=p_cassette, speaker=p_speaker, mic=p_mic, headphones=p_headphones)
 reset(); SCENES[SCENE]()

@@ -18,7 +18,7 @@ ANCHORS = [('hero_ring (back)', 'hero'), ('ring365 (back)', 'ring'), ('history_2
            ('algo_broken', 'algo'), ('final_memory', 'final')]
 POSTER = {'hero': 'hero_vinyl', 'ring': 'year_record', 'h2015': 'history_2015', 'h2016': 'history_2016', 'hnow': 'history_now',
           'minutes': 'hourglass', 'tracks': 'data_tracks', 'artists': 'data_artists', 'genres': 'data_genres', 'lab': 'lab_vortex',
-          'story': 'story_tape', 'social': 'social_mic', 'algo': 'algo_cassette', 'final': 'final_glass_vinyl', 'result': 'year_record'}
+          'story': 'story_tape', 'social': 'social_mic', 'algo': 'algo_cassette', 'final': 'final_glass_vinyl', 'result': 'gift_2026'}
 BULK = {'Year signal': 'signal', 'Year strip': 'strip', 'Emblem': 'emblem'}
 COUNTER = re.compile(r'^(×)?(\d[\d ]*)(×|%| ч)?$')
 
