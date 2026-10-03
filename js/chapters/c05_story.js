@@ -24,7 +24,7 @@ export class Story extends Chapter {
   }
   update(p, info, dt) {
     this.t += dt;
-    const W = this.world, P = W.pointer, D = W.drag, kick = W.kick, T = this.t;
+    const W = this.world, P = W.pointer, D = this.spin('story'), kick = W.kick, T = this.t;
     const sp = info.sp ?? 0;
     const vp = this.viewport();
     const u = Math.max(vp.w, vp.h * 1.6) / 13;
@@ -40,13 +40,13 @@ export class Story extends Chapter {
       out.set(base.x, base.y + w + tail * Math.sin(T * 5 + i * 0.3) * 0.25, base.z + Math.cos(i * 0.035 - T * 2.2) * flutter * 0.8 + tail * Math.cos(T * 4 + i * 0.2) * 0.2);
     });
     this.x = damp(this.x, -clamp(sp / 4.5) * 7.2 * u, 3, dt);
-    this.group.position.set(-Math.max(vp.w, vp.h * 1.2) * 0.42 + this.x, -vp.h * 0.17 + Math.sin(T * 0.8) * u * 0.08, 0);
+    this.group.position.set(-Math.max(vp.w, vp.h * 1.2) * 0.42 + this.x, -vp.h * 0.34 + Math.sin(T * 0.8) * u * 0.08, 0);
     this.group.scale.setScalar(u);
-    this.group.rotation.set(0.18 + Math.sin(T * 0.5) * 0.08 + P.y * 0.06 + D.y, P.x * 0.1 + D.x * 0.3, Math.sin(T * 0.4) * 0.03);
+    this.group.rotation.set(0.18 + Math.sin(T * 0.5) * 0.08 + P.y * 0.06, P.x * 0.1, Math.sin(T * 0.4) * 0.03);
     // the cassette turns with every beat — more than a full circle through the five states
     this.cas.position.set(-0.2, -0.05 + Math.sin(T * 1.3) * 0.08, 0);
     this.cas.scale.setScalar(1.6);
-    this.cas.rotation.set(1.2 + Math.sin(T * 0.9) * 0.1, easeInOut(clamp(sp / 5)) * Math.PI * 2.5 + D.x, -0.35 + Math.sin(T * 0.7) * 0.08);
+    this.cas.rotation.set(1.2 + Math.sin(T * 0.9) * 0.1 + D.y, easeInOut(clamp(sp / 5)) * Math.PI * 2.5 + D.x, -0.35 + Math.sin(T * 0.7) * 0.08);
     for (const r of this.reels) r.rotation.y -= dt * (2 + kick * 16);
     const flash = Math.max(0, 1 - Math.abs(sp - 3.5) * 2);
     this.tapeMat.emissiveIntensity = 0.55 + flash * (1.8 + Math.sin(T * 12) * 0.6);
@@ -56,7 +56,8 @@ export class Story extends Chapter {
     if (b) {
       const R = Math.min(b.w, b.h) * 0.4, q = new THREE.Quaternion(), pos = new THREE.Vector3(), tan = new THREE.Vector3();
       this.ring.group.position.set(b.x, b.y + Math.sin(T) * R * 0.04, 0);
-      this.ring.group.rotation.set(0.6 + Math.sin(T * 0.6) * 0.15 + D.y, T * 0.6 + D.x, 0);
+      const DR = this.spin('result');
+      this.ring.group.rotation.set(0.6 + Math.sin(T * 0.6) * 0.15 + DR.y, T * 0.6 + DR.x, 0);
       for (let i = 0; i < 120; i++) {
         const th = Math.PI * 2 * i / 120, k = easeOut(clamp((res * 1.2 - i / 120) / 0.2));
         const wave = Math.sin(th * 4 - T * 3);

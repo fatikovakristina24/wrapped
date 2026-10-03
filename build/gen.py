@@ -65,7 +65,8 @@ def text(it, extra_cls=''):
     if extra_cls:
         cls.append(extra_cls)
     style = (f"--x:{it['x']};--y:{it['y']};--w:{it['w']};--z:{z};--mz:{mobile_px(z)}px;"
-             f"--lh:{it['lh'] / 100 if it['lh'] else 1.2};--ls:{it['ls'] / 100}em;font-weight:{WEIGHT.get(sty, 400)};color:{color(it.get('c'))}")
+             f"--lh:{it['lh'] / 100 if it['lh'] else 1.2};--ls:{it['ls'] / 100}em;font-weight:{WEIGHT.get(sty, 400)};color:{color(it.get('c'))}"
+             + (f";text-align:{it['al'].lower()};width:calc({it['w']} * var(--u))" if it.get('al') in ('CENTER', 'RIGHT') else ''))
     if it.get('st'):  # outlined, dashed type (ПАМЯТЬ) -> svg text
         dash = ' '.join(str(d) for d in (it.get('dash') or []))
         return (f'<svg class="it outline rv" style="{style}" viewBox="0 0 {it["w"]} {it["h"]}" aria-label="{esc(s)}">'

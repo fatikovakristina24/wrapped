@@ -41,11 +41,13 @@ export class Data extends Chapter {
   }
   update(p, info, dt) {
     this.t += dt;
-    const W = this.world, P = W.pointer, D = W.drag, kick = W.kick, T = this.t;
+    const W = this.world, P = W.pointer, kick = W.kick, T = this.t;
+    let D;
     const q = this.q, pos = this.pos, e = this.e;
     // tower — records fall in, then the whole column dances like a spine
     const a = this.box('minutes');
     if (a) {
+      D = this.spin('minutes');
       const R = a.w * 0.36, step = a.h * 0.9 / 70, v = range(a.vis, 0.05, 1);
       this.tower.group.position.set(a.x, a.y - a.h * 0.45, 0);
       this.tower.group.rotation.set(0.32 + P.y * 0.05 + D.y, T * 0.4 + D.x, 0.04);
@@ -61,6 +63,7 @@ export class Data extends Chapter {
     // cassettes — drop in, then the stacks breathe and the block turns a full circle
     const b = this.box('tracks');
     if (b) {
+      D = this.spin('tracks');
       this.cGroup.position.set(b.x, b.y - b.h * 0.12 + Math.sin(T * 0.9) * b.h * 0.02, 0);
       this.cGroup.scale.setScalar(b.w * 0.25);
       this.cGroup.rotation.set(0.62 + Math.sin(T * 0.5) * 0.08 + P.y * 0.06 + D.y, -0.62 + Math.sin(T * 0.35) * 0.35 + D.x, Math.sin(T * 0.4) * 0.05);
@@ -76,6 +79,7 @@ export class Data extends Chapter {
     // planet — assembles from chaos, spins 360° with the scroll and breathes like a speaker
     const c = this.box('artists');
     if (c) {
+      D = this.spin('artists');
       const R = c.w * 0.38, v = easeOut(range(c.vis, 0.05, 0.95));
       this.sphere.group.position.set(c.x, c.y, 0);
       this.sphere.group.rotation.set(0.2 + Math.sin(T * 0.4) * 0.2 + D.y, T * 0.45 + p * Math.PI * 2 + D.x, Math.sin(T * 0.3) * 0.1);
@@ -90,6 +94,7 @@ export class Data extends Chapter {
     // genre ring — stacks rise, then pulse like an equaliser while the ring turns
     const d = this.box('genres');
     if (d) {
+      D = this.spin('genres');
       const R = d.w * 0.33, v = easeOut(range(d.vis, 0.05, 0.9));
       this.genre.group.position.set(d.x, d.y - d.h * 0.06, 0);
       this.genre.group.rotation.set(0.62 + Math.sin(T * 0.5) * 0.1 + D.y, T * 0.35 + D.x, 0);

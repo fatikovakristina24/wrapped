@@ -26,7 +26,7 @@ export class Social extends Chapter {
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('social'); if (!b) return;
-    const W = this.world, P = W.pointer, D = W.drag, kick = W.kick, T = this.t;
+    const W = this.world, P = W.pointer, D = this.spin('social'), kick = W.kick, T = this.t;
     const v = range(b.vis, 0.1, 1);
     const beat = Math.pow(Math.max(0, Math.sin(T * 7.5)), 5);
     // microphone: full turns, faster when scrolling
@@ -41,7 +41,7 @@ export class Social extends Chapter {
       const a = u.a + orbit * u.sp;
       m.position.set(b.x + Math.cos(a) * u.rad * unit * e, b.y + Math.sin(a) * u.rad * unit * 0.85 * e, u.z * e + Math.sin(T + i) * 0.5);
       m.scale.setScalar(unit * u.s * Math.max(e, 0.001) * (1 + beat * 0.06));
-      m.rotation.set(u.rot.x + Math.sin(T * 0.9 + i) * 0.25, u.rot.y + T * 0.4 * (i % 2 ? 1 : -1) + D.x * 0.5, u.rot.z + Math.sin(T * 0.6 + i) * 0.2);
+      m.rotation.set(u.rot.x + Math.sin(T * 0.9 + i) * 0.25, u.rot.y + T * 0.4 * (i % 2 ? 1 : -1), u.rot.z + Math.sin(T * 0.6 + i) * 0.2);
       for (const c of u.cones) c.scale.y = 1 + beat * 1.2;
     });
     // records swirl around in a slow vortex

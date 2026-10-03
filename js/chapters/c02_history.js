@@ -20,10 +20,12 @@ export class History extends Chapter {
   }
   update(p, info, dt) {
     this.t += dt;
-    const W = this.world, P = W.pointer, D = W.drag, kick = W.kick, T = this.t;
+    const W = this.world, P = W.pointer, kick = W.kick, T = this.t;
+    let D;
     // cassette: tumbles in with a full turn, reels race with the scroll, comes apart on exit
     const a = this.box('h2015');
     if (a) {
+      D = this.spin('h2015');
       const v = easeOut(a.vis), out = easeInOut(clamp((W.h * 0.2 - a.bottom) / (W.h * 0.5)));
       this.cas.position.set(a.x, a.y + Math.sin(T * 1.1) * a.h * 0.03, 0);
       this.cas.scale.setScalar(a.w * 0.92 * lerp(0.6, 1, v));
@@ -34,6 +36,7 @@ export class History extends Chapter {
     // stack: records drop in, then the stack fans and breathes
     const s = this.box('h2016');
     if (s) {
+      D = this.spin('h2016');
       const R = s.w * 0.33;
       this.stack.group.position.set(s.x - s.w * 0.02, s.y - s.h * 0.08, 0);
       this.stack.group.rotation.set(0.5 + Math.sin(T * 0.6) * 0.1 + P.y * 0.06 + D.y, T * 0.35 + D.x + (1 - easeOut(s.vis)) * Math.PI * 2, Math.sin(T * 0.8) * 0.08);
@@ -49,6 +52,7 @@ export class History extends Chapter {
     // headphones: assemble, then keep turning — a full 360° every few seconds
     const h = this.box('hnow');
     if (h) {
+      D = this.spin('hnow');
       const v = h.vis;
       this.hp.position.set(h.x + h.w * 0.02, h.y + h.h * 0.04 + Math.sin(T * 1.2) * h.h * 0.025, 0);
       this.hp.scale.setScalar(h.w * 0.78);

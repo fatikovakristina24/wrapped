@@ -109,6 +109,7 @@ async function start() {
   catch (e) { console.error(e); goStatic(); return; }
 
   const C = [Hero, Ring, History, Data, Lab, Story, Social, Algo, Final].map((K, i) => new K(world, sections[i]));
+  window.__wrapped = { world };                                  // handy for debugging in the console
   const scroller = new Scroller(sections);
   const layout = () => { world.resize(); C.forEach(c => c.resize()); scroller.layout(); bulks.forEach(sizeCanvas); };
   layout();

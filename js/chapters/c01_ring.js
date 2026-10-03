@@ -20,7 +20,7 @@ export class Ring extends Chapter {
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('ring'); if (!b) return;
-    const W = this.world, P = W.pointer, D = W.drag, kick = W.kick;
+    const W = this.world, P = W.pointer, D = this.spin('ring'), kick = W.kick;
     const R = b.w * 0.36;
     this.a = damp(this.a, easeOut(range(p, 0.02, 0.62)), 4, dt);
     this.rot = damp(this.rot, easeInOut(range(p, 0.05, 1)) * Math.PI * 2, 3, dt);   // full turn through the chapter

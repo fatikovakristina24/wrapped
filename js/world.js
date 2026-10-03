@@ -17,14 +17,20 @@ export class World {
     const pmrem = new THREE.PMREMGenerator(this.renderer);
     this.env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 };
-    // drag anywhere with the mouse: spin the chapter's object 360° with inertia
-    const d = this.drag = { x: 0, y: 0, vx: 0, vy: 0, down: false, lx: 0, ly: 0 };
+    // grab an object with the mouse and spin it 360° with inertia — only the object under the cursor turns
+    const d = this.drag = { key: null, down: false, lx: 0, ly: 0 };
+    this.spins = {};                                           // per 3D anchor: { x, y, vx, vy }
     this.vel = 0; this.kick = 0;
     addEventListener('pointermove', e => {
       this.pointer.tx = e.clientX / innerWidth * 2 - 1; this.pointer.ty = e.clientY / innerHeight * 2 - 1;
-      if (d.down) { d.vx += (e.clientX - d.lx) * 0.0045; d.vy += (e.clientY - d.ly) * 0.003; d.lx = e.clientX; d.ly = e.clientY; }
+      if (d.down && d.key) { const s = this.spins[d.key]; s.vx += (e.clientX - d.lx) * 0.0045; s.vy += (e.clientY - d.ly) * 0.003; d.lx = e.clientX; d.ly = e.clientY; }
     }, { passive: true });
-    addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button !== 0) return; d.down = true; d.lx = e.clientX; d.ly = e.clientY; document.body.classList.add('dragging'); });
+    addEventListener('pointerdown', e => {
+      if (e.pointerType !== 'mouse' || e.button !== 0) return;
+      d.key = this.pick(e.clientX, e.clientY); if (!d.key) return;
+      this.spins[d.key] ||= { x: 0, y: 0, vx: 0, vy: 0 };
+      d.down = true; d.lx = e.clientX; d.ly = e.clientY; document.body.classList.add('dragging');
+    });
     addEventListener('pointerup', () => { d.down = false; document.body.classList.remove('dragging'); });
     this.resize();
   }
@@ -35,11 +41,22 @@ export class World {
   tick(dt, scrollVel = 0) {
     const p = this.pointer, k = 1 - Math.exp(-dt * 4);
     p.x += (p.tx - p.x) * k; p.y += (p.ty - p.y) * k;
-    const d = this.drag, f = Math.pow(0.9, dt * 60);
-    d.x += d.vx; d.y += d.vy; d.vx *= f; d.vy *= f;
-    if (!d.down) d.y *= Math.pow(0.95, dt * 60);              // pitch springs back, yaw keeps the full turn
+    const f = Math.pow(0.9, dt * 60), back = Math.pow(0.95, dt * 60);
+    for (const [key, s] of Object.entries(this.spins)) {
+      s.x += s.vx; s.y += s.vy; s.vx *= f; s.vy *= f;
+      if (!(this.drag.down && this.drag.key === key)) s.y *= back;  // pitch springs back, yaw keeps the full turn
+    }
     this.vel += (scrollVel - this.vel) * (1 - Math.exp(-dt * 6));
     this.kick = Math.min(1, Math.abs(this.vel) / 60);          // 0..1 — how hard the page is being scrolled
+  }
+  /** The 3D anchor under the cursor (smallest box wins when boxes overlap). */
+  pick(x, y) {
+    let best = null, area = Infinity;
+    for (const el of document.querySelectorAll('.stage.on [data-a3d]')) {
+      const r = el.getBoundingClientRect();
+      if (x >= r.left && x <= r.right && y >= r.top && y <= r.bottom && r.width * r.height < area) { best = el.dataset.a3d; area = r.width * r.height; }
+    }
+    return best;
   }
   /** layers: [{ chapter, top, bottom }] in screen fractions (0 = top). */
   render(layers) {
@@ -89,8 +106,11 @@ export class Chapter {
     return { x: (r.left + r.width / 2 - this.world.w / 2) * k, y: -(r.top + r.height / 2 - this.world.h / 2) * k, w: r.width * k, h: r.height * k, k,
       top: r.top, bottom: r.bottom, vis: range01((this.world.h - r.top) / (this.world.h * 0.75)) };
   }
+  /** Mouse spin of one object (zero unless the user grabbed exactly this one). */
+  spin(key) { return this.world.spins[key] || ZERO; }
   viewport() { const cam = this.camera, d = cam.position.z, H = 2 * d * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)); return { w: H * cam.aspect, h: H }; }
   /** p: 0..1 chapter progress, info: { travel, sp (states) }, dt: seconds */
   update() {}
 }
+const ZERO = Object.freeze({ x: 0, y: 0 });
 const range01 = v => Math.min(1, Math.max(0, v));

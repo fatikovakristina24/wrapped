@@ -28,7 +28,7 @@ export class Hero extends Chapter {
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('hero'); if (!b) return;
-    const W = this.world, P = W.pointer, D = W.drag, kick = W.kick;
+    const W = this.world, P = W.pointer, D = this.spin('hero'), kick = W.kick;
     const R = b.w * 0.36;
     const intro = clamp((performance.now() - this.t0 - 250) / 2600);
     // turntable spin — faster with scroll speed
