@@ -18,20 +18,24 @@ export class World {
     this.env = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
     this.pointer = { x: 0, y: 0, tx: 0, ty: 0 };
     // grab an object with the mouse and spin it 360° with inertia — only the object under the cursor turns
-    const d = this.drag = { key: null, down: false, lx: 0, ly: 0 };
+    const d = this.drag = { key: null, down: false, lx: 0, ly: 0, moved: 0 };
+    this.bursts = {};                                          // per 3D anchor: time of the last click
     this.spins = {};                                           // per 3D anchor: { x, y, vx, vy }
     this.vel = 0; this.kick = 0;
     addEventListener('pointermove', e => {
       this.pointer.tx = e.clientX / innerWidth * 2 - 1; this.pointer.ty = e.clientY / innerHeight * 2 - 1;
-      if (d.down && d.key) { const s = this.spins[d.key]; s.vx += (e.clientX - d.lx) * 0.0045; s.vy += (e.clientY - d.ly) * 0.003; d.lx = e.clientX; d.ly = e.clientY; }
+      if (d.down && d.key) { const s = this.spins[d.key]; d.moved += Math.abs(e.clientX - d.lx) + Math.abs(e.clientY - d.ly); s.vx += (e.clientX - d.lx) * 0.0045; s.vy += (e.clientY - d.ly) * 0.003; d.lx = e.clientX; d.ly = e.clientY; }
     }, { passive: true });
     addEventListener('pointerdown', e => {
       if (e.pointerType !== 'mouse' || e.button !== 0) return;
       d.key = this.pick(e.clientX, e.clientY); if (!d.key) return;
       this.spins[d.key] ||= { x: 0, y: 0, vx: 0, vy: 0 };
-      d.down = true; d.lx = e.clientX; d.ly = e.clientY; document.body.classList.add('dragging');
+      d.down = true; d.moved = 0; d.lx = e.clientX; d.ly = e.clientY; document.body.classList.add('dragging');
     });
-    addEventListener('pointerup', () => { d.down = false; document.body.classList.remove('dragging'); });
+    addEventListener('pointerup', () => {
+      if (d.down && d.key && d.moved < 6) this.bursts[d.key] = performance.now();   // a click (not a drag): blow it apart
+      d.down = false; document.body.classList.remove('dragging');
+    });
     this.resize();
   }
   resize() {
@@ -105,6 +109,15 @@ export class Chapter {
     const H = 2 * d * Math.tan(THREE.MathUtils.degToRad(cam.fov / 2)), k = H / this.world.h;
     return { x: (r.left + r.width / 2 - this.world.w / 2) * k, y: -(r.top + r.height / 2 - this.world.h / 2) * k, w: r.width * k, h: r.height * k, k,
       top: r.top, bottom: r.bottom, vis: range01((this.world.h - r.top) / (this.world.h * 0.75)) };
+  }
+  /** Click explosion of one object: 0 → 1 (fly apart) → hold → 0 (reassemble). */
+  burst(key) {
+    const t0 = this.world.bursts[key]; if (!t0) return 0;
+    const t = (performance.now() - t0) / 1000;
+    if (t < 0.35) { const k = t / 0.35; return 1 - Math.pow(1 - k, 3); }
+    if (t < 0.85) return 1;
+    if (t < 2.0) { const k = (t - 0.85) / 1.15; return 1 - (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2); }
+    return 0;
   }
   /** Mouse spin of one object (zero unless the user grabbed exactly this one). */
   grab(key) { return this.world.spins[key] || ZERO; }

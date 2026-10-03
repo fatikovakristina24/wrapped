@@ -1,15 +1,15 @@
-// 03 — maximal structure, constantly alive: a dancing tower of records (minutes), floating stacks
+// 03 — maximal structure, constantly alive: an hourglass of falling records (minutes), floating stacks
 // of cassettes (tracks), a breathing planet of records (artists), a pulsing ring of stacks (genres).
 import * as THREE from 'three';
 import { Chapter } from '../world.js';
-import { model, Records, rng, clamp, range, easeOut, easeOutBack, C } from '../lib/kit.js';
+import { model, Records, rng, clamp, range, easeOut, easeOutBack, easeInOut, C } from '../lib/kit.js';
+import { Hourglass } from '../lib/objects.js';
 
 export class Data extends Chapter {
   constructor(world, el) {
     super(world, el);
     const r = rng(8);
-    this.tower = new Records(70); this.scene.add(this.tower.group);
-    for (let k = 0; k < 70; k++) this.tower.color(k, k % 10 === 9 ? C.white : C.ultra);
+    this.hg = new Hourglass(); this.scene.add(this.hg.group);
     this.cGroup = new THREE.Group(); this.scene.add(this.cGroup);
     const H = [3, 6, 2, 5, 4, 1, 6, 3, 2, 5, 3, 4];
     this.cas = []; let order = 0;
@@ -44,21 +44,15 @@ export class Data extends Chapter {
     const W = this.world, P = W.pointer, kick = W.kick, T = this.t;
     let D;
     const q = this.q, pos = this.pos, e = this.e;
-    // tower — records fall in, then the whole column dances like a spine
+    // hourglass — tiny records fall like sand; it turns a full circle as it scrolls in
     const a = this.box('minutes');
     if (a) {
       D = this.grab('minutes');
-      const R = a.w * 0.36, step = a.h * 0.9 / 70, v = range(a.vis, 0.05, 1);
-      this.tower.group.position.set(a.x, a.y - a.h * 0.45, 0);
-      this.tower.group.rotation.set(0.32 + P.y * 0.05 + D.y, T * 0.4 + D.x, 0.04);
-      for (let k = 0; k < 70; k++) {
-        const kk = easeOutBack(clamp((v * 1.15 - k / 70) / 0.12));
-        const sway = Math.sin(k * 0.16 - T * 2.2) * (0.07 + kick * 0.1);
-        pos.set(Math.sin(k * 0.19 + T * 1.5) * R * sway, k * step + (1 - kk) * a.h * 0.3, Math.cos(k * 0.19 + T * 1.5) * R * sway);
-        e.set(Math.sin(k * 0.3 - T * 2.4) * 0.22, k * 0.21 + T * 0.8, Math.cos(k * 0.3 - T * 2.4) * 0.22); q.setFromEuler(e);
-        this.tower.set(k, pos, q, Math.max(R * clamp(kk * 3) * (1 + Math.max(0, Math.sin(k * 0.5 - T * 4)) ** 6 * 0.15), 1e-4));
-      }
-      this.tower.commit();
+      const v = range(a.vis, 0.05, 1);
+      this.hg.group.position.set(a.x, a.y + Math.sin(T * 0.8) * a.h * 0.015, 0);
+      this.hg.group.scale.setScalar(Math.min(a.h / 5.1, a.w / 2.6));
+      this.hg.group.rotation.set(0.12 + P.y * 0.05 + D.y, T * 0.25 + D.x, easeInOut(range(a.vis, 0.1, 0.9)) * Math.PI * 2);
+      this.hg.update(T, v, 1 + kick * 3);
     }
     // cassettes — drop in, then the stacks breathe and the block turns a full circle
     const b = this.box('tracks');
@@ -67,26 +61,27 @@ export class Data extends Chapter {
       this.cGroup.position.set(b.x, b.y - b.h * 0.12 + Math.sin(T * 0.9) * b.h * 0.02, 0);
       this.cGroup.scale.setScalar(b.w * 0.25);
       this.cGroup.rotation.set(0.62 + Math.sin(T * 0.5) * 0.08 + P.y * 0.06 + D.y, -0.62 + Math.sin(T * 0.35) * 0.35 + D.x, Math.sin(T * 0.4) * 0.05);
-      const v = range(b.vis, 0.05, 1);
+      const v = range(b.vis, 0.05, 1), B = this.burst('tracks');
       for (const m of this.cas) {
         const u = m.userData, k = easeOutBack(clamp((v * 1.2 - u.o / this.casN) / 0.15));
         const lift = Math.max(0, Math.sin(T * 2.2 - u.col * 0.7)) ** 3 * 0.08 * (u.k + 1) * (1 + kick * 2);
         m.position.copy(u.home); m.position.y += (1 - k) * 3 + lift;
+        if (B) { m.position.x += u.home.x * 2.2 * B + Math.sin(u.o * 3.1) * B; m.position.z += u.home.z * 2.4 * B + Math.cos(u.o * 2.3) * B; m.position.y += (0.6 + u.k * 0.5) * B * 2; }
         m.scale.setScalar(Math.max(clamp(k * 2), 1e-4));
-        m.rotation.set((1 - k) * 0.8 + Math.sin(T * 1.7 + u.o) * 0.03, u.ry + Math.sin(T * 1.1 + u.o * 0.5) * 0.06, 0);
+        m.rotation.set((1 - k) * 0.8 + Math.sin(T * 1.7 + u.o) * 0.03 + B * Math.sin(u.o) * 3, u.ry + Math.sin(T * 1.1 + u.o * 0.5) * 0.06 + B * u.o * 0.4, B * Math.cos(u.o) * 2);
       }
     }
     // planet — assembles from chaos, spins 360° with the scroll and breathes like a speaker
     const c = this.box('artists');
     if (c) {
       D = this.grab('artists');
-      const R = c.w * 0.38, v = easeOut(range(c.vis, 0.05, 0.95));
+      const R = c.w * 0.38, v = easeOut(range(c.vis, 0.05, 0.95)), B = this.burst('artists');
       this.sphere.group.position.set(c.x, c.y, 0);
       this.sphere.group.rotation.set(0.2 + Math.sin(T * 0.4) * 0.2 + D.y, T * 0.45 + p * Math.PI * 2 + D.x, Math.sin(T * 0.3) * 0.1);
       this.sph.forEach((s, i) => {
         const breathe = 1 + Math.sin(T * 2.6 + s.d.y * 4 + s.ph * 0.2) * (0.05 + kick * 0.12) + (s.big ? 0.06 : 0);
-        pos.copy(s.from).lerp(s.d, v).multiplyScalar(R * breathe);
-        this.q2.setFromAxisAngle(s.d, T * 0.8 + s.ph); q.copy(s.q).premultiply(this.q2);
+        pos.copy(s.from).lerp(s.d, v).multiplyScalar(R * breathe * (1 + B * (1.2 + (i % 7) * 0.25)));
+        this.q2.setFromAxisAngle(s.d, T * 0.8 + s.ph + B * 6); q.copy(s.q).premultiply(this.q2);
         this.sphere.set(i, pos, q, R * s.s * clamp(v * 1.4));
       });
       this.sphere.commit();

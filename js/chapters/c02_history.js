@@ -37,14 +37,16 @@ export class History extends Chapter {
     const s = this.box('h2016');
     if (s) {
       D = this.grab('h2016');
-      const R = s.w * 0.33;
+      const R = s.w * 0.33, B = this.burst('h2016');
       this.stack.group.position.set(s.x - s.w * 0.02, s.y - s.h * 0.08, 0);
       this.stack.group.rotation.set(0.5 + Math.sin(T * 0.6) * 0.1 + P.y * 0.06 + D.y, T * 0.35 + D.x + (1 - easeOut(s.vis)) * Math.PI * 2, Math.sin(T * 0.8) * 0.08);
       for (let k = 0; k < 9; k++) {
         const kk = easeOutBack(clamp((s.vis * 1.25 - k / 9 * 0.8) / 0.25));
         const fan = Math.sin(T * 1.4 - k * 0.5) * (0.5 + kick);
         this.pos.set(Math.cos(T * 0.9 + k * 0.7) * R * 0.09 * k / 8, -R * 0.35 + k * R * (0.085 + 0.02 * Math.max(0, Math.sin(T * 1.6 - k * 0.6))) + (1 - kk) * R * 2.2, Math.sin(T * 0.9 + k * 0.7) * R * 0.09 * k / 8);
-        this.e.set(fan * 0.12, k * 0.4 + T * (0.6 + k * 0.08), fan * 0.08); this.q.setFromEuler(this.e);
+        const ba = k * 2.4;                                                    // click: every record flies its own way
+        this.pos.x += Math.cos(ba) * R * 1.6 * B; this.pos.z += Math.sin(ba) * R * 1.2 * B; this.pos.y += (k - 4) * R * 0.25 * B;
+        this.e.set(fan * 0.12 + B * k * 0.7, k * 0.4 + T * (0.6 + k * 0.08) + B * 3, fan * 0.08 + B * (k % 2 ? 1 : -1)); this.q.setFromEuler(this.e);
         this.stack.set(k, this.pos, this.q, Math.max(R * Math.min(1, kk + 0.001), 1e-4));
       }
       this.stack.commit();

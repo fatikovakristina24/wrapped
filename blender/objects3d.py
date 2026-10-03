@@ -497,7 +497,7 @@ def c_story():
 
 def c_social():
     setup(2880, 2200, 110, env_strength=0.5); rig(0.6)
-    mic = microphone(None, loc=(0, 0, 0.6), rot=(math.radians(-24), math.radians(14), 0), scale=2.3)
+    mic = microphone(None, loc=(0, 0, 0.4), rot=(math.radians(-24), math.radians(14), 0), scale=1.5)
     rng = random.Random(21)
     spots = [(-8.5, 7, 3.2), (8.5, 6, 3.5), (-6.5, 2, -3.5), (7.0, 1, -3.8), (-12, 14, -1), (13, 15, 0.5), (1, 12, 6.0), (-3.5, 4, 5.0), (4.0, 4, -6.0), (-10, 9, 6.5), (11, 8, -6.5)]
     for k, (x, y, z) in enumerate(spots):
@@ -557,5 +557,69 @@ def c_minutes():
     camera((3, -24, 6.5), (0, 0, 0.0), 55)
     render('data_minutes')
 
-SCENES = dict(minutes=c_minutes, hero=c_hero, ring365=c_ring365, history=c_history, data=c_data, lab=c_lab, story=c_story, social=c_social, algo=c_algo, final=c_final, swatches=c_swatches, exports=c_exports, vinyl=p_vinyl, cassette=p_cassette, speaker=p_speaker, mic=p_mic, headphones=p_headphones)
+def c_yearrec():
+    """01 — the record of the year: 365 day-bars standing on a spinning record + tonearm."""
+    setup(2880, 2160, 120, env_strength=0.25); rig(0.6)
+    vals = year_values(); top = max(range(365), key=lambda i: vals[i])
+    root = empty('yr', (0, 0.6, -1.2), (math.radians(14), 0, math.radians(-12)), 1.0)
+    rec = vinyl(root, scale=4.6, name='bigrec')
+    R0 = 4.6 * 0.83
+    for i in range(365):
+        a = math.pi / 2 - 2 * math.pi * i / 365
+        v = vals[i]; h = 0.2 + v * 2.1
+        m = 'pearl_bar' if i == top else ('ultra' if v > 0.55 else 'chrome')
+        b = box('bar%d' % i, (0.05, 0.13, h), 'white' if i == top else ('ultra' if v > 0.55 else 'chrome'), (R0 * math.cos(a), R0 * math.sin(a), 0.06 + h / 2), root, bevel=0.01)
+        b.rotation_euler = (0, 0, a)
+    # tonearm
+    base = cyl('arm_base', 0.42, 0.35, 'chrome_brushed', (5.6, 3.2, 0.2), root, 64, bevel=0.03)
+    tube('arm', [(5.6, 3.2, 0.5), (4.6, 0.9, 0.55), (3.3, -1.4, 0.45)], 0.07, 'chrome', root)
+    box('head', (0.5, 0.28, 0.12), 'ultra', (3.25, -1.5, 0.38), root, bevel=0.03)
+    cyl('weight', 0.22, 0.4, 'black_gloss', (5.9, 3.9, 0.55), root, 48, bevel=0.03).rotation_euler = (math.radians(70), 0, math.radians(25))
+    camera((0, -15.5, 8.5), (0, 0.4, -0.4), 40)
+    render('year_record')
+
+def c_hourglass():
+    """03 minutes — an hourglass where tiny records fall instead of sand."""
+    setup(1200, 2400, 160, glass=True, env_strength=0.5); rig(0.6)
+    root = empty('hg', (0, 0, 0), (math.radians(8), 0, math.radians(-6)), 1.0)
+    prof = [(0.13, 0.0), (0.35, 0.25), (0.8, 0.75), (1.05, 1.35), (1.0, 1.9), (0.7, 2.25), (0.05, 2.32)]
+    full = [(r, -z) for r, z in reversed(prof)] + prof
+    lathe('glass', full, 128, 'glass', root)
+    for z in (2.42, -2.42):
+        cyl('cap', 1.22, 0.16, 'chrome', (0, 0, z), root, 96, bevel=0.03)
+    for k in range(3):
+        a = k * 2 * math.pi / 3 + 0.4
+        cyl('post', 0.05, 4.7, 'chrome', (1.17 * math.cos(a), 1.17 * math.sin(a), 0), root, 24)
+    rng = random.Random(9)
+    def disc(p, s, lab):
+        vinyl_fast(Matrix.Translation(Vector(p)) @ Euler((rng.uniform(-0.6, 0.6), rng.uniform(-0.6, 0.6), rng.uniform(0, 6))).to_matrix().to_4x4() @ Matrix.Diagonal((s, s, s, 1)), lab)
+    M = root.matrix_world
+    for i in range(70):   # top: what's left of the year
+        z = rng.uniform(0.35, 1.5); rr = (z - 0.2) * 0.62 * math.sqrt(rng.random())
+        a = rng.uniform(0, 6.28); disc(M @ Vector((rr * math.cos(a), rr * math.sin(a), z)), 0.15, 'ultra_matte' if rng.random() < .6 else 'white')
+    for i in range(14):   # the stream through the neck
+        z = 0.3 - i * 0.12; disc(M @ Vector((rng.uniform(-0.04, 0.04), rng.uniform(-0.04, 0.04), z)), 0.1, 'ultra_matte')
+    for i in range(110):  # bottom: minutes already listened
+        z = -2.2 + rng.random() ** 1.6 * 1.0; rr = (1 - (z + 2.2) / 1.1) * 0.95 * math.sqrt(rng.random())
+        a = rng.uniform(0, 6.28); disc(M @ Vector((rr * math.cos(a), rr * math.sin(a), z)), 0.15, 'ultra_matte' if rng.random() < .55 else ('white' if rng.random() < .5 else 'black_matte'))
+    camera((0, -14, 1.2), (0, 0, 0), 50)
+    render('hourglass')
+
+def c_lab2():
+    """04 — speaker specimen inside a vortex of records with sound rings leaving the cone."""
+    setup(2000, 2400, 128, env_strength=0.5); rig(0.65)
+    d = Vector((0.18, -0.62, 0.76)); rq = d.to_track_quat('Z', 'Y').to_euler()
+    speaker_driver(None, loc=(0, 0, 0.3), rot=rq, scale=1.7, explode=1.5, name='lab')
+    rng = random.Random(5)
+    for i in range(48):
+        a = rng.uniform(0, 6.28); r = 3.2 + rng.random() * 2.6
+        loc = Vector((math.cos(a) * r, rng.uniform(-1.5, 2.5), math.sin(a) * r * 1.3))
+        vinyl_fast(M_of(loc, Euler((rng.uniform(0, 6), rng.uniform(0, 6), 0)).to_matrix().to_4x4(), rng.uniform(0.25, 0.55)), 'ultra_matte' if rng.random() < .7 else 'white')
+    for k in range(4):   # sound rings
+        t = torus('ring%d' % k, 1.6 + k * 0.9, 0.025, 'ultra', (0, 0, 0))
+        t.rotation_euler = rq; t.location = Vector((0, 0, 0.3)) + d * (1.9 + k * 0.7)
+    camera((0, -18, 1.0), (0, 0, 0), 50)
+    render('lab_vortex')
+
+SCENES = dict(yearrec=c_yearrec, hourglass=c_hourglass, lab2=c_lab2, minutes=c_minutes, hero=c_hero, ring365=c_ring365, history=c_history, data=c_data, lab=c_lab, story=c_story, social=c_social, algo=c_algo, final=c_final, swatches=c_swatches, exports=c_exports, vinyl=p_vinyl, cassette=p_cassette, speaker=p_speaker, mic=p_mic, headphones=p_headphones)
 reset(); SCENES[SCENE]()
