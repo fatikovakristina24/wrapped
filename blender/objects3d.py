@@ -559,10 +559,6 @@ def c_final():
         t.scale = (4.2 + k * 0.55, 1.9 + k * 0.35, 1); t.rotation_euler = (math.radians(70 + k * 12), math.radians(k * 25 - 40), math.radians(k * 63))
         a = rr.uniform(0, 6.28); sp = Matrix.Rotation(t.rotation_euler.z, 4, 'Z') @ Matrix.Rotation(t.rotation_euler.y, 4, 'Y') @ Matrix.Rotation(t.rotation_euler.x, 4, 'X') @ Vector((math.cos(a) * t.scale.x, math.sin(a) * t.scale.y, 0, 1))
         bpy.ops.mesh.primitive_uv_sphere_add(radius=0.07, location=sp.xyz); assign(bpy.context.active_object, 'spark')
-    for i in range(260):
-        a = rr.uniform(0, 6.28); r = rr.uniform(2.2, 7.5)
-        bpy.ops.mesh.primitive_ico_sphere_add(radius=rr.uniform(0.012, 0.04), subdivisions=1, location=(math.cos(a) * r, math.sin(a) * r * 0.6 + rr.uniform(-1, 1), rr.uniform(-2.5, 2.5)))
-        assign(bpy.context.active_object, 'spark' if rr.random() < .4 else 'glow')
     rng = random.Random(4)
     for i in range(9):
         loc = Vector((rng.uniform(-8, 8), rng.uniform(1, 9), rng.uniform(-4, 4)))
@@ -678,7 +674,7 @@ def c_gift():
     render('gift_2026')
 
 def c_algo2():
-    """07 — a smoky grey cassette being scanned; smooth tape spills out; data pixels rise out of it."""
+    """07 — a smoky grey cassette; smooth tape spills out; data pixels rise out of it."""
     setup(2880, 2000, 128, glass=True, env_strength=0.6); rig(0.6, cold=True)
     cas = cassette(None, loc=(-1.0, 0, 1.4), rot=(math.radians(68), math.radians(-10), math.radians(-14)), scale=2.6, shell='smoke', tape='clay_dark', name='grey')
     for o in cas.children:
@@ -695,10 +691,6 @@ def c_algo2():
         s = (0.05 + rng.random() * 0.11) * math.sin(h * math.pi)
         b = box('px%d' % i, (s, s, s), 'clay' if rng.random() < .55 else ('white' if rng.random() < .3 else 'clay_dark'), (-1.0 + math.cos(a) * r, math.sin(a) * r * 0.6, 1.0 + h * 6.5))
         b.rotation_euler = (rng.uniform(0, 6), rng.uniform(0, 6), 0)
-    frame = []
-    for (x, y) in ((-3.6, -2.4), (3.6, -2.4), (3.6, 2.4), (-3.6, 2.4), (-3.6, -2.4)):
-        frame.append((-1.0 + x, y, 2.0))
-    tube('scan', frame, 0.018, 'white')
     camera((-1.5, -14.5, 6.5), (0.0, 0, 0.6), 42)
     render('algo_cassette')
 

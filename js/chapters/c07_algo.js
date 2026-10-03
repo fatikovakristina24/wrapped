@@ -1,4 +1,4 @@
-// 07 — the algorithm's view: a cold, smoky cassette is being scanned; its tape spills out and writhes,
+// 07 — the algorithm's view: a cold, smoky cassette; its tape spills out and writhes,
 // and the data it holds rises out of it as grey pixels. Everything here moves at half speed.
 import * as THREE from 'three';
 import { Chapter } from '../world.js';
@@ -29,12 +29,6 @@ export class Algo extends Chapter {
       const c = r(); this.px.setColorAt(i, new THREE.Color(c < 0.12 ? 0xf3f3f0 : c < 0.55 ? 0xc9ccd1 : 0x6e747a));
       return { a: r() * 6.283, rad: 0.3 + r() * 1.8, ph: r(), sp: 0.04 + r() * 0.06, s: 0.025 + r() * 0.05, spin: r() * 6, w: (r() - 0.5) * 2 };
     });
-    // scanner: a thin frame + faint plane sweeping over the cassette
-    const plane = new THREE.PlaneGeometry(3.4, 2.3);
-    this.scan = new THREE.Group(); this.group.add(this.scan);
-    this.scan.add(new THREE.Mesh(plane, new THREE.MeshBasicMaterial({ color: 0xdfe1e4, transparent: true, opacity: 0.06, side: THREE.DoubleSide, depthWrite: false })));
-    this.scan.add(new THREE.LineSegments(new THREE.EdgesGeometry(plane), new THREE.LineBasicMaterial({ color: 0xf3f3f0, transparent: true, opacity: 0.7 })));
-    this.scan.rotation.x = -Math.PI / 2;
     this.m = new THREE.Matrix4(); this.q = new THREE.Quaternion(); this.e = new THREE.Euler(); this.p = new THREE.Vector3(); this.s = new THREE.Vector3();
   }
   update(p, info, dt) {
@@ -64,9 +58,5 @@ export class Algo extends Chapter {
       this.s.setScalar(Math.max(s, 1e-4)); this.m.compose(this.p, this.q, this.s); this.px.setMatrixAt(i, this.m);
     });
     this.px.instanceMatrix.needsUpdate = true;
-    // the scanner sweeps up and down across the cassette
-    const sw = Math.sin(T * 1.1);
-    this.scan.position.set(0, sw * 1.1, 0);
-    this.scan.rotation.z = Math.sin(T * 0.4) * 0.1;
   }
 }
