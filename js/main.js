@@ -83,9 +83,17 @@ function runTyper(el) {
 
 // ---------- reveal: text, bars, cards, counters ----------
 const revealers = sections.map(s => [...s.querySelectorAll('.inner .rv, .inner .shape, .inner .card')]);
-function reveal(i, vh) {
-  for (const el of revealers[i]) {
-    const r = el.getBoundingClientRect();
+let revealPos = [];                                  // per element: top / bottom relative to its untransformed column
+function measureReveal() {
+  revealPos = sections.map((s, i) => {
+    const inner = s.querySelector('.inner'), ir = inner.getBoundingClientRect();
+    return revealers[i].map(el => { const r = el.getBoundingClientRect(); return [r.top - ir.top, r.bottom - ir.top]; });
+  });
+}
+function reveal(i, vh, base, ty) {
+  const pos = revealPos[i];
+  for (let j = 0; j < revealers[i].length; j++) {
+    const el = revealers[i][j], r = { top: base + ty + pos[j][0], bottom: base + ty + pos[j][1] };
     const isIn = r.top < vh * 0.9 && r.bottom > -vh * 0.2;
     if (isIn && !el.classList.contains('in')) {
       el.classList.add('in');
@@ -120,9 +128,14 @@ async function start() {
   catch (e) { console.error(e); goStatic(); return; }
 
   const C = [Hero, Ring, History, Data, Lab, Story, Social, Algo, Final].map((K, i) => new K(world, sections[i]));
-  window.__wrapped = { world };                                  // handy for debugging in the console
+  // warm-up: compile every shader and upload every texture now, so a chapter never stutters the first time it appears
+  const R = world.renderer;
+  for (const c of C) c.scene.traverse(o => { const ms = o.material ? [].concat(o.material) : []; for (const m of ms) for (const v of Object.values(m)) if (v && v.isTexture) R.initTexture(v); });
+  try { await Promise.all(C.map(c => R.compileAsync(c.scene, c.camera))); } catch (e) { C.forEach(c => R.compile(c.scene, c.camera)); }
+  window.__wrapped = { world, C };                                  // handy for debugging in the console
   const scroller = new Scroller(sections);
-  const layout = () => { world.resize(); C.forEach(c => c.resize()); scroller.layout(); bulks.forEach(sizeCanvas); };
+  const layout = () => { world.resize(); C.forEach(c => c.resize()); scroller.layout(); bulks.forEach(b => { sizeCanvas(b); b.drawn = -1; }); measureReveal();
+    const em = bulks.find(b => b.kind === 'emblem'); if (em) em.rel = em.el.getBoundingClientRect().top - scroller.secs[8].inner.getBoundingClientRect().top; };
   layout();
   addEventListener('resize', layout);
 
@@ -139,6 +152,8 @@ async function start() {
   const hud = document.querySelector('.hud-num');
   const strip = bulks.find(b => b.kind === 'strip'), signal = bulks.find(b => b.kind === 'signal'), emblem = bulks.find(b => b.kind === 'emblem');
   let last = performance.now(), emblemAmt = 0;
+  const emblemSec = scroller.secs[8];
+  const drawStrip = a => { if (strip && Math.abs(a - strip.drawn) > 0.002) { strip.drawn = a; drawBulk(strip, 0, a); } };
   const loop = now => {
     const dt = Math.min(0.05, (now - last) / 1000); last = now;
     lenis.raf(now);
@@ -148,14 +163,15 @@ async function start() {
     const layers = [];
     for (const f of frame) {
       const i = f.s.i, ch = C[i];
-      reveal(i, scroller.vh);
-      ch.update(f.p, { travel: f.s.travel, sp: f.sp, intro: f.intro, v: lenis.velocity, strip: a => strip && drawBulk(strip, now / 1000, a) }, dt);
+      reveal(i, scroller.vh, f.s.base, f.s.inner._ty || 0);
+      ch.update(f.p, { travel: f.s.travel, sp: f.sp, intro: f.intro, v: lenis.velocity, strip: drawStrip }, dt);
       const top = f.role === 'b' ? 1 - f.t : 0, bottom = f.role === 'a' ? 1 - f.t : 1;
       layers.push({ chapter: ch, top, bottom });
       if (i === 0 && signal) drawBulk(signal, now / 1000);
       if (i === 8 && emblem) {
-        const r = emblem.el.getBoundingClientRect(); const target = Math.min(1, Math.max(0, (innerHeight - r.top) / (innerHeight * 0.7)));
-        emblemAmt += (target - emblemAmt) * Math.min(1, dt * 3); drawBulk(emblem, now / 1000, emblemAmt);
+        const top = emblemSec.base + (emblemSec.inner._ty || 0) + emblem.rel, target = Math.min(1, Math.max(0, (innerHeight - top) / (innerHeight * 0.7)));
+        emblemAmt += (target - emblemAmt) * Math.min(1, dt * 3);
+        if (Math.round(emblemAmt * 365) !== emblem.drawn) { emblem.drawn = Math.round(emblemAmt * 365); drawBulk(emblem, 0, emblemAmt); }
       }
     }
     world.render(layers);

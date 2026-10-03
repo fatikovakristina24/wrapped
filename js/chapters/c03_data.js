@@ -68,8 +68,11 @@ export class Data extends Chapter {
     let D;
     const q = this.q, pos = this.pos, e = this.e;
     // hourglass — tiny records fall like sand; it turns a full circle as it scrolls in
+    // parts of this tall chapter that are off screen are not drawn at all (the glass cassettes force a second scene pass)
+    const Hs = this.world.h, near = (top, bottom, m = 150) => bottom > -m && top < Hs + m;
     const a = this.box('minutes');
-    if (a) {
+    this.hg.group.visible = !!a && near(a.top, a.bottom);
+    if (a && this.hg.group.visible) {
       D = this.grab('minutes');
       const v = range(a.vis, 0.05, 1);
       this.hg.group.position.set(a.x, a.y + Math.sin(T * 0.8) * a.h * 0.015, 0);
@@ -79,9 +82,12 @@ export class Data extends Chapter {
     }
     // cassettes and records drifting behind the text; a clicked one arcs over to its new spot, flipping once
     const vp = this.viewport(), U = vp.w / 1440, Wp = this.world.w, cz = this.camera.position.z;
-    if (!this.kept || this.kept.w !== Wp || (this.frame = (this.frame || 0) + 1) % 30 === 0) this.keepOut();
+    if (!this.kept || this.kept.w !== Wp || (this.frame = (this.frame || 0) + 1) % 180 === 0) this.keepOut();
     for (const key of ['tracks', 'artists']) {
-      const c = this.box(key); if (!c) continue;
+      const c = this.box(key), mid = c && (c.top + c.bottom) / 2, half = c && (c.bottom - c.top) * 0.6 + 120;
+      const show = !!c && near(mid - half, mid + half);
+      for (const f of this.floaters) if (f.key === key) f.m.visible = show;
+      if (!show) continue;
       const v = easeOut(range(c.vis, 0.05, 0.9)), H = c.h * 1.15, rects = this.kept[key].map(q => [q[0], q[1] + c.top, q[2], q[3] + c.top]);
       if (!this.kept[key + 'Placed']) { this.kept[key + 'Placed'] = 1; for (const f of this.floaters) if (f.key === key) { const s0 = this.freeSpot(f); f.at.copy(s0); f.from.copy(s0); f.to.copy(s0); } }
       for (const f of this.floaters) {
@@ -107,7 +113,8 @@ export class Data extends Chapter {
     }
     // genre ring — stacks rise, then pulse like an equaliser while the ring turns
     const d = this.box('genres');
-    if (d) {
+    this.genre.group.visible = !!d && near(d.top, d.bottom);
+    if (d && this.genre.group.visible) {
       D = this.grab('genres');
       const R = d.w * 0.33, v = easeOut(range(d.vis, 0.05, 0.9));
       this.genre.group.position.set(d.x, d.y - d.h * 0.06, 0);
