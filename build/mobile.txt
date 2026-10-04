@@ -1,6 +1,7 @@
 # Figma 414 layout export: chapter|state|type|desk x|desk y|desk w|mob x|mob y|mob w|mob h|mob font|fixed width|visible|mobile text
 #H 896,1016,1732,2590,1478,3472,1395,985,1478
 #S 474,522,522,522,619
+#K 0.5
 0|-1|B|48|830|1344|20|800|374|19.5||0|1|
 0|-1|I|-80|-70|1650|-700|-20|1728|1080||0|1|
 0|-1|T|36|214|1232|16|300|308|46|58|0|1|

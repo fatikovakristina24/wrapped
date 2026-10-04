@@ -2,8 +2,9 @@
 Usage: python3 serve.py  ->  http://localhost:4173"""
 import functools, http.server, os, sys, webbrowser, threading
 
-ROOT = sys.argv[1] if len(sys.argv) > 1 else os.path.dirname(os.path.abspath(__file__))
-PORT = 4173
+args = [a for a in sys.argv[1:] if not a.startswith('--')]
+ROOT = args[0] if args else os.path.dirname(os.path.abspath(__file__))
+PORT = int(os.environ.get('PORT') or next((a.split('=')[1] for a in sys.argv if a.startswith('--port=')), 4173))
 
 class Handler(http.server.SimpleHTTPRequestHandler):
     extensions_map = {**http.server.SimpleHTTPRequestHandler.extensions_map,

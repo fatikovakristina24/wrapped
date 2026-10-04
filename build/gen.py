@@ -1,6 +1,7 @@
 """Builds site/index.html from the Figma layout export (build/ch_*.json).
 Desktop layout = exact Figma coordinates in design units (1 unit = 100vw/1440).
-Mobile layout = the 414 Figma frames (build/mobile.txt), 1 unit = 100vw/414, matched to the same nodes."""
+Phone layout = the 414 Figma frames (build/mobile.txt, 1 unit = 100vw/414), tablet = the 768 frames (build/tablet.txt, 1 unit = 100vw/768),
+both matched to the same nodes; CSS picks one by viewport width."""
 import json, glob, html, os, re
 import mobile
 
@@ -25,23 +26,30 @@ COUNTER = re.compile(r'^(×)?(\d[\d ]*)(×|%| ч)?$')
 
 
 CUR = {'ch': 0, 'st': -1}
-HUB = next(r for r in mobile.REC if r['ch'] == 6 and r['t'] == 'E')
-HX, HY = HUB['mx'] + 7, HUB['my'] + 7                  # the "you" dot of 06 on mobile; network + shared frames scale 0.5 around it
+L = mobile.LAYOUTS
 
 
 def mob(it):
-    """(extra classes, extra style) that place this item on the 414 layout, or hide it there."""
-    r = mobile.find(CUR['ch'], CUR['st'], it)
-    if not r or not r['vis']:
-        return ' mh', ''
-    st = f";--mx:{r['mx']};--my:{r['my']};--mw:{r['mw']};--mh:{r['mh']}"
-    cls = ' m'
-    if r['fs']:
-        st += f";--mf:{r['fs']}"
-        if r['fixed']: cls += ' mw'
-    if it['t'] == 'F':
-        st += f";--mk:{r['mw'] / it['w']:.4f}"
-    return cls, st, r
+    """(extra classes, extra style, records) that place this item on the phone (m) and tablet (q) layouts, or hide it there."""
+    cls, st, recs = '', '', {}
+    for p, lay in L.items():
+        r = lay.find(CUR['ch'], CUR['st'], it)
+        if not r or not r['vis']:
+            cls += f' {p}h'; continue
+        recs[p] = r
+        st += f";--{p}x:{r['mx']};--{p}y:{r['my']};--{p}w:{r['mw']};--{p}h:{r['mh']}"
+        cls += f' {p}'
+        if r['fs']:
+            st += f";--{p}f:{r['fs']}"
+            if r['fixed']: cls += f' {p}w'
+        if it['t'] == 'F':
+            st += f";--{p}k:{r['mw'] / it['w']:.4f}"
+    return cls, st, recs
+
+
+def net(x, y):
+    """06 network / shared frames: desktop point -> both narrow layouts (scaled around the hub)."""
+    return ''.join(f";--{p}lx:{lay.HX + (x - 700) * lay.K:.1f};--{p}ly:{lay.HY + (y - 1150) * lay.K:.1f}" for p, lay in L.items())
 
 
 def esc(s):
@@ -85,9 +93,8 @@ def text(it, extra_cls='', nested=False):
         attrs = f' data-to="{m.group(2).replace(" ", "")}" data-pre="{m.group(1) or ""}" data-suf="{m.group(3) or ""}" data-sep="{1 if " " in m.group(2) else 0}"'
     if extra_cls:
         cls.append(extra_cls)
-    mc, ms, mr = ('', '', None) if nested else (mob(it) + (None,))[:3]
-    cls.append(mc.strip()) if mc.strip() else None
-    if mc.strip() == 'm mw' or mc.strip() == 'm': cls[-1:] = mc.split()
+    mc, ms, mr = ('', '', {}) if nested else mob(it)
+    cls += mc.split()
     style = (f"--x:{it['x']};--y:{it['y']};--w:{it['w']};--z:{z};--mz:{mobile_px(z)}px;"
              f"--lh:{it['lh'] / 100 if it['lh'] else 1.2};--ls:{it['ls'] / 100}em;font-weight:{WEIGHT.get(sty, 400)};color:{color(it.get('c'))}"
              + (f";text-align:{it['al'].lower()};width:calc({it['w']} * var(--u))" if it.get('al') in ('CENTER', 'RIGHT') else '') + ms)
@@ -100,8 +107,9 @@ def text(it, extra_cls='', nested=False):
         inner = ''.join(f'<span class="ln"><span>{esc(line)}</span></span>' for line in s.split('\n'))
     else:
         inner = esc(s)
-    if mr and mr['ms']:                                  # the 414 frame says it differently (→ becomes ↓)
-        inner = f'<span class="dt">{inner}</span><span class="mt">{esc(mr["ms"])}</span>'
+    alt = next((r['ms'] for r in mr.values() if r['ms']), '')
+    if alt:                                              # the narrow frames say it differently (→ becomes ↓)
+        inner = f'<span class="dt">{inner}</span><span class="mt">{esc(alt)}</span>'
     if s.startswith('минут ....'):
         cls.append('typer')
     return f'<div class="{" ".join(cls)}" style="{style}"{attrs}>{inner}</div>'
@@ -120,7 +128,7 @@ def shape(it, cls_extra=''):
         cls.append('hbar')
     if cls_extra:
         cls.append(cls_extra)
-    mc, ms = mob(it)[:2]
+    mc, ms, _ = mob(it)
     cls += mc.split()
     st = ''
     if it.get('st'):
@@ -129,7 +137,7 @@ def shape(it, cls_extra=''):
 
 
 def anchor(key, it, cls=''):
-    mc, ms = mob(dict(it, t='I'))[:2]
+    mc, ms, _ = mob(dict(it, t='I'))
     return (f'<div class="it a3d {cls}{mc}" data-a3d="{key}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">'
             f'<img class="poster" src="assets/posters/{POSTER[key]}.png" alt="" loading="lazy" decoding="async"></div>')
 
@@ -144,8 +152,7 @@ def render_items(items, chapter):
         elif t in ('R', 'E'):
             out.append(shape(it))
         elif t == 'L':
-            mx, my = HX + (it['x'] - 700) * .5, HY + (it['y'] - 1150) * .5
-            out.append(f'<div class="it link" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--r:{-it["rot"]}deg;--mlx:{mx};--mly:{my}"></div>')
+            out.append(f'<div class="it link" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--r:{-it["rot"]}deg{net(it["x"], it["y"])}"></div>')
         elif t == 'I':
             for frag, key in ANCHORS:
                 if frag in it['name']:
@@ -154,7 +161,7 @@ def render_items(items, chapter):
         elif t == 'B':
             for frag, key in BULK.items():
                 if it['name'].startswith(frag):
-                    mc, ms = mob(it)[:2]
+                    mc, ms, _ = mob(it)
                     out.append(f'<div class="it bulk{mc}" data-bulk="{key}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}"><canvas></canvas></div>')
         elif t == 'F' and it.get('name') == 'share':
             kids = []
@@ -163,11 +170,10 @@ def render_items(items, chapter):
                     kids.append(f'<img class="it share-img" style="--x:{k["x"]};--y:{k["y"]};--w:{k["w"]};--h:{k["h"]}" src="assets/posters/year_record.png" alt="" loading="lazy">')
                 else:
                     kids.append(text(k, nested=True).replace(' rv', ''))
-            mx, my = HX + (it['cx'] - 700) * .5, HY + (it['cy'] - 1150) * .5
-            out.append(f'<div class="it share" style="--cx:{it["cx"]};--cy:{it["cy"]};--w:{it["w"]};--h:{it["h"]};--rot:{-it["rot"]}deg;--mcx:{mx};--mcy:{my};background:{color(it["c"])}">{"".join(kids)}</div>')
+            out.append(f'<div class="it share" style="--cx:{it["cx"]};--cy:{it["cy"]};--w:{it["w"]};--h:{it["h"]};--rot:{-it["rot"]}deg{net(it["cx"], it["cy"])};background:{color(it["c"])}">{"".join(kids)}</div>')
         elif t == 'F' and it.get('name') == 'Story composition':
             kids = ''.join(text(k, nested=True) for k in it['kids'])
-            mc, ms = mob(it)[:2]
+            mc, ms, _ = mob(it)
             out.append(f'<div class="it card{mc}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]};background:{color(it["c"])}{ms}">{kids}<div class="card-bar"></div></div>')
     return '\n'.join(out)
 
@@ -190,14 +196,14 @@ for idx, name in enumerate(ORDER):
             kids = render_items(s['kids'], name)
             if k == 4:
                 kids += anchor('result', {'x': 620, 'y': 40, 'w': 840, 'h': 630}, 'result')
-            st.append(f'<div class="state" data-state="{k}" style="--msh:{mobile.SH[k]}">{kids}</div>')
+            st.append(f'<div class="state" data-state="{k}" style="--msh:{L["m"].SH[k]};--qsh:{L["q"].SH[k]}">{kids}</div>')
         CUR['st'] = -1
         states_html = f'<div class="states">{"".join(st)}</div>'
         items = intro
     body = render_items(items, name)
     sections.append(
         f'<section class="ch" id="chapter-{num}" data-ch="{idx}" aria-label="Глава {num}">\n'
-        f'<div class="stage"><div class="inner" style="--h:{h};--mih:{mobile.H[idx]}">\n{body}\n</div>{states_html}</div>\n</section>')
+        f'<div class="stage"><div class="inner" style="--h:{h};--mih:{L["m"].H[idx]};--qih:{L["q"].H[idx]}">\n{body}\n</div>{states_html}</div>\n</section>')
 
 template = open(os.path.join(HERE, 'template.html'), encoding='utf-8').read()
 out = template.replace('<!--CHAPTERS-->', '\n'.join(sections))
