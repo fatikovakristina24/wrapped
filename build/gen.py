@@ -23,7 +23,7 @@ POSTER = {'hero': 'hero_vinyl', 'ring': 'year_record', 'h2015': 'history_2015', 
           'story': 'story_tape', 'social': 'social_mic', 'track': 'hero_vinyl', 'algo': 'algo_cassette', 'final': 'final_glass_vinyl', 'result': 'gift_2026'}
 BULK = {'Year signal': 'signal', 'Year strip': 'strip', 'Emblem': 'emblem'}
 # the author's own material: a Spotify track for the player, and screenshots of her real Wrapped
-SPOTIFY_TRACK = ''                                     # e.g. '4uLU6hMCjMI75M1A2tKUQC' — from the track's share link
+SPOTIFY_TRACK = '6OfaJIzuRmtCD1pJ5a8dN4'                                     # e.g. '4uLU6hMCjMI75M1A2tKUQC' — from the track's share link
 SHOTS = {0: 'assets/wrapped/cover.png', 3: 'assets/wrapped/track.png'}
 COUNTER = re.compile(r'^(×)?(\d[\d ]*)(×|%| ч)?$')
 
@@ -178,7 +178,8 @@ def render_items(items, chapter):
             mc, ms, _ = mob(it); src = SHOTS.get(CUR['ch'], '')
             inner = (f'<img src="{src}" alt="Скриншот моего Spotify Wrapped" loading="lazy">' if src and os.path.exists(os.path.join(SITE, src))
                      else f'<span>{esc(it["s"])}</span>')
-            out.append(f'<div class="it box slot{mc}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{inner}</div>')
+            has = src and os.path.exists(os.path.join(SITE, src))
+            out.append(f'<div class="it box slot{" shot" if has else ""}{mc}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{inner}</div>')
         elif t == 'X':                                   # official Spotify embed; the page reads fine without it
             mc, ms, _ = mob(it)
             body = (f'<div class="embed-host" data-uri="spotify:track:{SPOTIFY_TRACK}"></div>' if SPOTIFY_TRACK

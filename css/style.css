@@ -63,6 +63,7 @@ body.gl .a3d .poster { opacity: 0; }
 .slot { border: 1.5px dashed rgba(243, 243, 240, .35); border-radius: calc(18 * var(--u)); background: var(--ink-2); display: flex; align-items: center; justify-content: center; overflow: hidden; }
 .slot span { font-family: 'Onest', sans-serif; font-size: max(10px, calc(15 * var(--u))); line-height: 1.4; color: var(--steel); white-space: pre-line; padding: 12%; }
 .slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.slot.shot { border: 1px solid rgba(243, 243, 240, .18); }
 .embed { border-radius: calc(12 * var(--u)); background: #282828; overflow: hidden; pointer-events: auto; display: flex; align-items: center; }
 .embed-host, .embed iframe { width: 100%; height: 100%; border: 0; }
 .embed-wait { font-family: 'Onest', sans-serif; font-size: max(12px, calc(18 * var(--u))); color: #b3b3b3; padding: 0 6%; }
