@@ -58,8 +58,24 @@ body.gl .a3d .poster { opacity: 0; }
 .states { position: absolute; inset: 0; pointer-events: none; }
 .state { position: absolute; left: 0; width: 100%; top: calc(50vh - 440 * var(--u)); height: calc(880 * var(--u)); visibility: hidden; }
 
-/* ---------- reveals ---------- */
-.rv { opacity: 0; transform: translate3d(0, calc(28 * var(--u)), 0); transition: opacity 1s var(--ease-out), transform 1.2s var(--ease-out); }
+/* ---------- the personal episode: a real Wrapped screenshot, the Spotify player, the reader's own track ---------- */
+.box { width: calc(var(--w) * var(--u)); height: calc(var(--h) * var(--u)); }
+.slot { border: 1.5px dashed rgba(243, 243, 240, .35); border-radius: calc(18 * var(--u)); background: var(--ink-2); display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.slot span { font-family: 'Onest', sans-serif; font-size: max(10px, calc(15 * var(--u))); line-height: 1.4; color: var(--steel); white-space: pre-line; padding: 12%; }
+.slot img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.embed { border-radius: calc(12 * var(--u)); background: #282828; overflow: hidden; pointer-events: auto; display: flex; align-items: center; }
+.embed-host, .embed iframe { width: 100%; height: 100%; border: 0; }
+.embed-wait { font-family: 'Onest', sans-serif; font-size: max(12px, calc(18 * var(--u))); color: #b3b3b3; padding: 0 6%; }
+.field { pointer-events: auto; background: var(--ink-2); border: 1px solid rgba(243, 243, 240, .25); border-radius: calc(10 * var(--u)); color: var(--white);
+  font: 400 max(14px, calc(20 * var(--u)))/1.4 'Onest', sans-serif; padding: calc(18 * var(--u)) calc(20 * var(--u)); resize: none; outline: none; }
+.field:focus { border-color: var(--ultra-l); }
+.field::placeholder { color: var(--steel); }
+.btn { pointer-events: auto; background: var(--ultra); color: var(--white); border: 0; border-radius: 999px; cursor: pointer;
+  font: 500 max(11px, calc(15 * var(--u)))/1 'Unbounded', sans-serif; letter-spacing: .04em; text-transform: uppercase; }
+.btn:hover { background: #3a45ff; }
+
+/* ---------- reveals (calm: short travel, slow fade) ---------- */
+.rv { opacity: 0; transform: translate3d(0, calc(12 * var(--u)), 0); transition: opacity 1.4s var(--ease-out), transform 1.4s var(--ease-out); }
 .rv.in { opacity: 1; transform: none; }
 .title.rv, .title.rv.in { opacity: 1; transform: none; }
 .title .ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
@@ -112,6 +128,11 @@ body.static #chapters { pointer-events: auto; }
   html:not(.desk) .m.t.mw { width: calc(var(--mw) * var(--mu)) !important; white-space: pre-line; }
   html:not(.desk) .m.shape, html:not(.desk) .m.a3d, html:not(.desk) .m.bulk { width: calc(var(--mw) * var(--mu)); height: max(1px, calc(var(--mh) * var(--mu))); }
   html:not(.desk) .m.outline { width: calc(var(--mw) * var(--mu)); height: calc(var(--mw) * var(--mu) * .1665); }
+  html:not(.desk) .m.box { width: calc(var(--mw) * var(--mu)); height: calc(var(--mh) * var(--mu)); }
+  html:not(.desk) .m.field { font-size: max(14px, calc(14 * var(--mu))); padding: calc(12 * var(--mu)) calc(14 * var(--mu)); }
+  html:not(.desk) .m.btn { font-size: calc(12 * var(--mu)); }
+  html:not(.desk) .m.slot span { font-size: calc(10 * var(--mu)); }
+  html:not(.desk) .m.embed .embed-wait { font-size: calc(12 * var(--mu)); }
   html:not(.desk) .m.card { --u: calc(var(--mu) * var(--mk)); }
   html:not(.desk) .link { left: calc(var(--mlx) * var(--mu)); top: calc(var(--mly) * var(--mu)); width: calc(var(--w) * var(--mu) * 0.5); }
   html:not(.desk) .share { --u: calc(var(--mu) * 0.5); left: calc(var(--mlx) * var(--mu)); top: calc(var(--mly) * var(--mu)); }
@@ -131,6 +152,11 @@ body.static #chapters { pointer-events: auto; }
   html:not(.desk) .q.t.qw { width: calc(var(--qw) * var(--qu)) !important; white-space: pre-line; }
   html:not(.desk) .q.shape, html:not(.desk) .q.a3d, html:not(.desk) .q.bulk { width: calc(var(--qw) * var(--qu)); height: max(1px, calc(var(--qh) * var(--qu))); }
   html:not(.desk) .q.outline { width: calc(var(--qw) * var(--qu)); height: calc(var(--qw) * var(--qu) * .1665); }
+  html:not(.desk) .q.box { width: calc(var(--qw) * var(--qu)); height: calc(var(--qh) * var(--qu)); }
+  html:not(.desk) .q.field { font-size: max(14px, calc(21.0 * var(--qu))); padding: calc(18.0 * var(--qu)) calc(21.0 * var(--qu)); }
+  html:not(.desk) .q.btn { font-size: calc(18.0 * var(--qu)); }
+  html:not(.desk) .q.slot span { font-size: calc(15.0 * var(--qu)); }
+  html:not(.desk) .q.embed .embed-wait { font-size: calc(18.0 * var(--qu)); }
   html:not(.desk) .q.card { --u: calc(var(--qu) * var(--qk)); }
   html:not(.desk) .link { left: calc(var(--qlx) * var(--qu)); top: calc(var(--qly) * var(--qu)); width: calc(var(--w) * var(--qu) * 0.75); }
   html:not(.desk) .share { --u: calc(var(--qu) * 0.75); left: calc(var(--qlx) * var(--qu)); top: calc(var(--qly) * var(--qu)); }

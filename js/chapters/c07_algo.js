@@ -1,5 +1,5 @@
-// 07 — the algorithm's view: a cold, smoky cassette; its tape spills out and writhes,
-// and the data it holds rises out of it as grey pixels. Everything here moves at half speed.
+// 07 — data ≠ memory: the algorithm lifts data out of the cassette (grey pixels rise and leave), the tape — memory — stays.
+// Everything here moves slowly, so the text beside it can be read.
 import * as THREE from 'three';
 import { Chapter } from '../world.js';
 import { model, find, Ribbon, rng, clamp, range, damp } from '../lib/kit.js';
@@ -22,7 +22,7 @@ export class Algo extends Chapter {
     this.group.add(this.tape.mesh);
     this.idx = this.tape.geo.index.count; this.f = 0;
     // data pixels rising out of the cassette
-    const r = rng(31), N = 260;
+    const r = rng(31), N = 90;
     this.px = new THREE.InstancedMesh(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshPhysicalMaterial({ color: 0xffffff, roughness: 0.35, metalness: 0.2 }), N);
     this.px.frustumCulled = false; this.group.add(this.px);
     this.pix = Array.from({ length: N }, (_, i) => {
@@ -34,12 +34,12 @@ export class Algo extends Chapter {
   update(p, info, dt) {
     this.t += dt;
     const b = this.box('algo'); if (!b) return;
-    const W = this.world, P = W.pointer, D = this.grab('algo'), T = this.t * 0.5;     // half speed
+    const W = this.world, P = W.pointer, D = this.grab('algo'), T = this.t * 0.3;     // slow: the text beside it is being read
     const u = b.w * 0.24;
-    this.group.position.set(b.x - b.w * 0.08, b.y + b.h * 0.22 + Math.sin(T * 0.8) * u * 0.05, 0);
+    this.group.position.set(b.x - b.w * 0.08, b.y + b.h * 0.22 + Math.sin(T * 0.8) * u * 0.02, 0);
     this.group.scale.setScalar(u);
-    this.group.rotation.set(0.15 + Math.sin(T * 0.5) * 0.08 + P.y * 0.05 + D.y, -0.15 + T * 0.25 + p * Math.PI + D.x, Math.sin(T * 0.4) * 0.05);
-    this.cas.rotation.set(1.18 + Math.sin(T * 0.7) * 0.08, -0.1 + Math.sin(T * 0.45) * 0.25, -0.16);
+    this.group.rotation.set(0.15 + D.y, -0.15 + Math.sin(T * 0.3) * 0.12 + D.x, 0);   // almost still: no turns while reading
+    this.cas.rotation.set(1.18, -0.1 + Math.sin(T * 0.45) * 0.06, -0.16);
     this.cas.scale.setScalar(1.3);
     this.f = damp(this.f, range(b.vis * 0.6 + p * 0.6, 0.1, 1), 2, dt);
     this.tape.geo.setDrawRange(0, Math.floor(this.idx * clamp(this.f) / 6) * 6);

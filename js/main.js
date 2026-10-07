@@ -115,6 +115,32 @@ function goStatic() {
   bulks.forEach(b => { sizeCanvas(b); drawBulk(b, 0, 1); });
 }
 
+// ---------- the reader's own track (kept only in this browser) + the Spotify player ----------
+function setupPersonal() {
+  const KEY = 'wrapped.myTrack';
+  let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+  const fields = [...document.querySelectorAll('.field[data-k]')];
+  fields.forEach(f => { if (saved[f.dataset.k]) f.value = saved[f.dataset.k]; });
+  const btn = document.querySelector('[data-save]');
+  if (btn) {
+    const label = btn.textContent;
+    btn.addEventListener('click', () => {
+      const v = {}; fields.forEach(f => { v[f.dataset.k] = f.value.trim(); });
+      try { localStorage.setItem(KEY, JSON.stringify(v)); btn.textContent = 'Сохранено — только у вас'; }
+      catch (e) { btn.textContent = 'Не получилось сохранить'; }
+      setTimeout(() => { btn.textContent = label; }, 2600);
+    });
+  }
+  window.__track = { playing: false };                    // the record of chapter 03 turns only while this is true
+  const host = document.querySelector('.embed-host');
+  if (host) {
+    window.onSpotifyIframeApiReady = api => api.createController(host, { uri: host.dataset.uri, width: '100%', height: host.parentElement.clientHeight },
+      c => c.addListener('playback_update', e => { window.__track.playing = !e.data.isPaused; }));
+    const s = document.createElement('script'); s.src = 'https://open.spotify.com/embed/iframe-api/v1'; s.async = true; document.head.appendChild(s);
+  }
+}
+setupPersonal();
+
 async function start() {
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   let world;

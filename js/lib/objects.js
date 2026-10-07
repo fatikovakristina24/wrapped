@@ -31,14 +31,14 @@ export class YearRecord {
   }
   /** a: 0..1 how much of the year is built, kick: scroll energy, burst: click explosion */
   update(dt, t, a, kick = 0, burst = 0) {
-    this.ang -= dt * (0.55 + kick * 3);
+    this.ang -= dt * (this.calm ? 0.1 : 0.55 + kick * 3);
     this.spinner.rotation.y = this.ang;
     this.arm.rotation.y = -0.06 * Math.sin(t * 0.7) - a * 0.05;
     for (let i = 0; i < 365; i++) {
       const th = Math.PI / 2 - 2 * Math.PI * i / 365;
       const on = easeOut(clamp((a - i / 365 * 0.85) / 0.15));
       const v = this.vals[i];
-      const live = 0.82 + 0.18 * Math.sin(t * 4 - i * 0.21) * Math.sin(t * 1.3 + i * 0.05) + kick * 0.25;   // it plays
+      const live = this.calm ? 1 : 0.82 + 0.18 * Math.sin(t * 4 - i * 0.21) * Math.sin(t * 1.3 + i * 0.05) + kick * 0.25;   // it plays
       const h = (0.05 + v * 0.42) * live * on;
       const r = 0.83 + burst * (0.6 + v * 0.8);
       this.p.set(Math.cos(th) * r, burst * v * 0.9 * Math.sin(i * 7.1) ** 2, Math.sin(th) * r);

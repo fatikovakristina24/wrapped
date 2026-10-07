@@ -14,14 +14,17 @@ for f in sorted(glob.glob(os.path.join(HERE, 'ch_*.json'))):
 
 ORDER = ['00_HERO', '01_365_DAYS', '02_HISTORY', '03_DATA', '04_VISUAL_LANGUAGE', '05_STORYTELLING', '06_SOCIAL', '07_ALGORITHM', '08_FINAL']
 WEIGHT = {'Black': 900, 'ExtraBold': 800, 'Bold': 700, 'SemiBold': 600, 'Medium': 500, 'Regular': 400, 'Light': 300, 'ExtraLight': 200, 'Thin': 100}
-ANCHORS = [('hero_ring (back)', 'hero'), ('ring365 (back)', 'ring'), ('history_2015', 'h2015'), ('history_2016', 'h2016'),
+ANCHORS = [('my_track', 'track'), ('hero_ring (back)', 'hero'), ('ring365 (back)', 'ring'), ('history_2015', 'h2015'), ('history_2016', 'h2016'),
            ('history_now', 'hnow'), ('data_minutes', 'minutes'), ('data_tracks', 'tracks'), ('data_artists', 'artists'),
            ('data_genres', 'genres'), ('lab_speaker', 'lab'), ('story_path (intro', 'story'), ('social_spread', 'social'),
            ('algo_broken', 'algo'), ('final_memory', 'final')]
 POSTER = {'hero': 'hero_vinyl', 'ring': 'year_record', 'h2015': 'history_2015', 'h2016': 'history_2016', 'hnow': 'history_now',
           'minutes': 'hourglass', 'tracks': 'data_tracks', 'artists': 'data_artists', 'genres': 'data_genres', 'lab': 'lab_vortex',
-          'story': 'story_tape', 'social': 'social_mic', 'algo': 'algo_cassette', 'final': 'final_glass_vinyl', 'result': 'gift_2026'}
+          'story': 'story_tape', 'social': 'social_mic', 'track': 'hero_vinyl', 'algo': 'algo_cassette', 'final': 'final_glass_vinyl', 'result': 'gift_2026'}
 BULK = {'Year signal': 'signal', 'Year strip': 'strip', 'Emblem': 'emblem'}
+# the author's own material: a Spotify track for the player, and screenshots of her real Wrapped
+SPOTIFY_TRACK = ''                                     # e.g. '4uLU6hMCjMI75M1A2tKUQC' — from the track's share link
+SHOTS = {0: 'assets/wrapped/cover.png', 3: 'assets/wrapped/track.png'}
 COUNTER = re.compile(r'^(×)?(\d[\d ]*)(×|%| ч)?$')
 
 
@@ -171,6 +174,24 @@ def render_items(items, chapter):
                 else:
                     kids.append(text(k, nested=True).replace(' rv', ''))
             out.append(f'<div class="it share" style="--cx:{it["cx"]};--cy:{it["cy"]};--w:{it["w"]};--h:{it["h"]};--rot:{-it["rot"]}deg{net(it["cx"], it["cy"])};background:{color(it["c"])}">{"".join(kids)}</div>')
+        elif t == 'S':                                   # a real Wrapped screenshot (or its empty slot until it arrives)
+            mc, ms, _ = mob(it); src = SHOTS.get(CUR['ch'], '')
+            inner = (f'<img src="{src}" alt="Скриншот моего Spotify Wrapped" loading="lazy">' if src and os.path.exists(os.path.join(SITE, src))
+                     else f'<span>{esc(it["s"])}</span>')
+            out.append(f'<div class="it box slot{mc}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{inner}</div>')
+        elif t == 'X':                                   # official Spotify embed; the page reads fine without it
+            mc, ms, _ = mob(it)
+            body = (f'<div class="embed-host" data-uri="spotify:track:{SPOTIFY_TRACK}"></div>' if SPOTIFY_TRACK
+                    else '<span class="embed-wait">Здесь будет плеер Spotify с треком «Висхолдинг»</span>')
+            out.append(f'<div class="it box embed{mc}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{body}</div>')
+        elif t == 'Q':                                   # the reader's own track — kept only in this browser
+            mc, ms, _ = mob(it); key = 'episode' if it['h'] > 100 else 'track'
+            tag = (f'<textarea class="it box field{mc}" data-k="{key}" placeholder="{esc(it["s"])}" rows="3"' if key == 'episode'
+                   else f'<input class="it box field{mc}" data-k="{key}" placeholder="{esc(it["s"])}" maxlength="120"')
+            out.append(tag + f' style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}" aria-label="{esc(it["s"])}">' + ('</textarea>' if key == 'episode' else ''))
+        elif t == 'Btn':
+            mc, ms, _ = mob(it)
+            out.append(f'<button type="button" class="it box btn{mc}" data-save style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{esc(it["s"])}</button>')
         elif t == 'F' and it.get('name') == 'Story composition':
             kids = ''.join(text(k, nested=True) for k in it['kids'])
             mc, ms, _ = mob(it)
