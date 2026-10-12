@@ -65,7 +65,8 @@ def typo(s):
     """No hanging prepositions: a short word sticks to the next one, a dash sticks to the word before it."""
     s = NOHANG.sub(lambda m: m.group(1) + ('\u00a0' if len(m.group(1)) == 1 or m.group(1).lower() in SHORT else ' '), s)
     s = NOHANG.sub(lambda m: m.group(1) + ('\u00a0' if len(m.group(1)) == 1 or m.group(1).lower() in SHORT else ' '), s)   # chains: «и в»
-    return re.sub(r' (?=[—–])', '\u00a0', s)
+    s = re.sub(r' (?=[—–])', '\u00a0', s)
+    return re.sub(r'(?<=[—–]) ', '\u00a0', s)                     # and never leaves a dash at the end of a line
 
 
 def esc(s):
