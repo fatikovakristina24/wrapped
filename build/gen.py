@@ -55,8 +55,21 @@ def net(x, y):
     return ''.join(f";--{p}lx:{lay.HX + (x - 700) * lay.K:.1f};--{p}ly:{lay.HY + (y - 1150) * lay.K:.1f}" for p, lay in L.items())
 
 
+SHORT = {'в', 'во', 'на', 'с', 'со', 'к', 'ко', 'у', 'о', 'об', 'от', 'до', 'по', 'за', 'из', 'без', 'для', 'при', 'про', 'над', 'под', 'а', 'и',
+         'но', 'или', 'не', 'ни', 'что', 'как', 'же', 'ли', 'бы', 'я', 'мы', 'он', 'она', 'мой', 'моя', 'это', 'его', 'её', 'их', 'то', 'так', 'уже',
+         'ещё', 'всё', 'год'}
+NOHANG = re.compile(r'(?<![A-Za-zА-Яа-яЁё])([A-Za-zА-Яа-яЁё]{1,3}) (?=\S)')
+
+
+def typo(s):
+    """No hanging prepositions: a short word sticks to the next one, a dash sticks to the word before it."""
+    s = NOHANG.sub(lambda m: m.group(1) + ('\u00a0' if len(m.group(1)) == 1 or m.group(1).lower() in SHORT else ' '), s)
+    s = NOHANG.sub(lambda m: m.group(1) + ('\u00a0' if len(m.group(1)) == 1 or m.group(1).lower() in SHORT else ' '), s)   # chains: «и в»
+    return re.sub(r' (?=[—–])', '\u00a0', s)
+
+
 def esc(s):
-    return html.escape(s, quote=False)
+    return html.escape(typo(s), quote=False)
 
 
 def mobile_px(z):
