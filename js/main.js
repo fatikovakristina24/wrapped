@@ -41,11 +41,11 @@ function drawBulk(b, t, amt = 1) {
     for (let i = 0; i < n; i++) {
       const v = VALS[i], h = (0.05 + v * 0.95) * base * 0.92, x = i * bw;
       const grad = g.createLinearGradient(0, base - h, 0, base);
-      if (v > 0.82) { grad.addColorStop(0, '#1F2BFF'); grad.addColorStop(1, 'rgba(31,43,255,.35)'); }
+      if (v > 0.82) { grad.addColorStop(0, '#1ED760'); grad.addColorStop(1, 'rgba(30,215,96,.35)'); }
       else { grad.addColorStop(0, 'rgba(201,204,209,.75)'); grad.addColorStop(1, 'rgba(138,143,152,.15)'); }
       g.fillStyle = grad; g.fillRect(x + bw * 0.18, base - h, bw * 0.64, h);
     }
-    g.strokeStyle = '#A9B2FF'; g.lineWidth = 1.6 * b.d; g.beginPath();      // weekly average
+    g.strokeStyle = '#9BF0B7'; g.lineWidth = 1.6 * b.d; g.beginPath();      // weekly average
     for (let i = 0; i < n; i++) {
       let s = 0, c = 0; for (let k = Math.max(0, i - 3); k <= Math.min(364, i + 3); k++) { s += VALS[k]; c++; }
       const y = base - (0.05 + s / c * 0.95) * base * 0.92, x = (i + 0.5) * bw;
@@ -60,7 +60,7 @@ function drawBulk(b, t, amt = 1) {
     for (let d = 0; d < 365; d++) {
       const a = -Math.PI / 2 + d / 365 * Math.PI * 2, v = VALS[d], on = d < n;
       const rr = R + Math.sin(d / 365 * Math.PI * 4) * R * 0.05, s = (1.6 + v * 4) * b.d;
-      g.fillStyle = !on ? 'rgba(243,243,240,.08)' : v > 0.9 ? '#1F2BFF' : 'rgba(243,243,240,.75)';
+      g.fillStyle = !on ? 'rgba(243,243,240,.08)' : v > 0.9 ? '#1ED760' : 'rgba(243,243,240,.75)';
       g.beginPath(); g.arc(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, s / 2, 0, Math.PI * 2); g.fill();
     }
     g.font = `500 ${13 * b.d}px Unbounded`; g.fillStyle = '#F3F3F0'; g.textAlign = 'center';

@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const C = { ink: 0x0a0a0b, white: 0xf3f3f0, silver: 0xc9ccd1, steel: 0x8a8f98, ultra: 0x1f2bff, ultraL: 0xa9b2ff };
+export const C = { ink: 0x0a0a0b, white: 0xf3f3f0, silver: 0xc9ccd1, steel: 0x8a8f98, ultra: 0x1ed760, ultraL: 0x9bf0b7 };
 
 // ---------- easing / math ----------
 export const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -88,7 +88,7 @@ export function materials() {
   const P = o => new THREE.MeshPhysicalMaterial(o);
   const grooves = groovesTexture();
   MATS = {
-    vinyl: P({ color: 0x050506, roughness: 0.26, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.12, bumpMap: grooves, bumpScale: 0.9, sheen: 0.55, sheenRoughness: 0.35, sheenColor: new THREE.Color(0x3a42a0) }),
+    vinyl: P({ color: 0x050506, roughness: 0.26, metalness: 0.0, clearcoat: 1, clearcoatRoughness: 0.12, bumpMap: grooves, bumpScale: 0.9, sheen: 0.55, sheenRoughness: 0.35, sheenColor: new THREE.Color(0x1f7a45) }),
     chrome: P({ color: 0xeef0f3, metalness: 1, roughness: 0.05, clearcoat: 0.4 }),
     chrome_brushed: P({ color: 0xd6d8da, metalness: 1, roughness: 0.26 }),
     ultra: P({ color: C.ultra, roughness: 0.24, clearcoat: 1, clearcoatRoughness: 0.04, emissive: C.ultra, emissiveIntensity: 0.18 }),
@@ -98,12 +98,12 @@ export function materials() {
     white: P({ color: C.white, roughness: 0.3, clearcoat: 0.6 }),
     black_gloss: P({ color: 0x0b0b0c, roughness: 0.14, clearcoat: 1, clearcoatRoughness: 0.03 }),
     black_matte: P({ color: 0x141416, roughness: 0.7 }),
-    rubber: P({ color: 0x18181a, roughness: 0.55, sheen: 0.6, sheenColor: new THREE.Color(0x333344) }),
+    rubber: P({ color: 0x18181a, roughness: 0.55, sheen: 0.6, sheenColor: new THREE.Color(0x2c3a31) }),
     smoke: P({ color: 0xc9ccd1, metalness: 0, roughness: 0.06, transmission: 1, thickness: 0.35, ior: 1.49, transparent: true }),
-    speaker_cone: P({ color: 0x111113, roughness: 0.45, sheen: 0.5, sheenColor: new THREE.Color(0x30304a) }),
+    speaker_cone: P({ color: 0x111113, roughness: 0.45, sheen: 0.5, sheenColor: new THREE.Color(0x24382c) }),
     grille: P({ color: 0xcfd2d6, metalness: 1, roughness: 0.2 }),
     tape: P({ color: 0x2a2320, metalness: 0.3, roughness: 0.3 }),
-    glass: P({ color: 0xeef0ff, metalness: 0, roughness: 0.03, transmission: 1, thickness: 0.6, ior: 1.45, iridescence: 0.6, iridescenceIOR: 1.35, clearcoat: 1, transparent: true }),
+    glass: P({ color: 0xeefff4, metalness: 0, roughness: 0.03, transmission: 1, thickness: 0.6, ior: 1.45, iridescence: 0.6, iridescenceIOR: 1.35, clearcoat: 1, transparent: true }),
     clay: P({ color: 0xd3d6d8, roughness: 0.62 }),
     clay_dark: P({ color: 0x8e959a, roughness: 0.55 }),
   };

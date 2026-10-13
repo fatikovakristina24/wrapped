@@ -13,7 +13,7 @@ HDRI = '/Applications/Blender.app/Contents/Resources/5.0/datafiles/studiolights/
 def lin(h):
     h = h.lstrip('#'); c = [int(h[i:i+2], 16) / 255 for i in (0, 2, 4)]
     return tuple(((x + 0.055) / 1.055) ** 2.4 if x > 0.04045 else x / 12.92 for x in c) + (1,)
-ULTRA, ULTRA_L, WHITE = '#1F2BFF', '#A9B2FF', '#F3F3F0'
+ULTRA, ULTRA_L, WHITE = '#1ED760', '#9BF0B7', '#F3F3F0'
 
 # ------------------------------------------------------------------ scene
 def reset():
@@ -111,7 +111,7 @@ def mat(name):
     elif name == 'clay_dark': m = principled(name, Base_Color=lin('#8E959A'), Roughness=0.55)
     elif name == 'smoke': m = principled(name, Base_Color=lin('#C9CCD1'), Transmission_Weight=1, Roughness=0.05, IOR=1.49)
     elif name == 'smoke_ultra': m = principled(name, Base_Color=lin('#8C95FF'), Transmission_Weight=1, Roughness=0.08, IOR=1.49)
-    elif name == 'glass': m = principled(name, Base_Color=lin('#EEF0FF'), Transmission_Weight=1, Roughness=0.03, IOR=1.45, Thin_Film_Thickness=380, Thin_Film_IOR=1.35)
+    elif name == 'glass': m = principled(name, Base_Color=lin('#EEFFF4'), Transmission_Weight=1, Roughness=0.03, IOR=1.45, Thin_Film_Thickness=380, Thin_Film_IOR=1.35)
     elif name == 'tape': m = principled(name, Base_Color=lin('#2A2320'), Metallic=0.3, Roughness=0.3)
     elif name == 'tape_ultra': m = principled(name, Base_Color=lin('#1A1E6E'), Metallic=0.4, Roughness=0.25)
     elif name == 'vinyl':

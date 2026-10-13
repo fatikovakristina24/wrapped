@@ -13,9 +13,9 @@ function studio() {
   panel(10, 6, 0xffffff, 3.2, [0, 9, 4]);          // big top softbox
   panel(3, 10, 0xffffff, 2.4, [-9, 1, 3]);         // tall strip left
   panel(5, 5, 0xffffff, 1.6, [8, 3, 6]);           // key right
-  panel(1.2, 12, 0x1f2bff, 6, [9, 0, -4]);         // ultramarine strip
-  panel(12, 1.2, 0xa9b2ff, 3, [0, -7, -3]);        // pale ultramarine floor line
-  panel(4, 4, 0x1f2bff, 4, [-6, -4, -8]);          // blue glow behind
+  panel(1.2, 12, 0x1ed760, 6, [9, 0, -4]);         // ultramarine strip
+  panel(12, 1.2, 0x9bf0b7, 3, [0, -7, -3]);        // pale ultramarine floor line
+  panel(4, 4, 0x1ed760, 4, [-6, -4, -8]);          // blue glow behind
   return s;
 }
 
@@ -127,8 +127,8 @@ export class Chapter {
     const add = (color, intensity, w, h, pos) => { const l = new THREE.RectAreaLight(color, intensity, w, h); l.position.set(...pos); l.lookAt(0, 0, 0); this.scene.add(l); return l; };
     this.key = add(0xffffff, 4.5, 10, 10, [7, 9, 13]);
     add(0xffffff, 3.2, 2, 16, [-13, 0, 7]);                           // long strip -> chrome highlight line
-    this.rimA = add(cold ? 0xc9ccd1 : 0x1f2bff, cold ? 3 : 11, 12, 12, [-10, 6, -8]);
-    this.rimB = add(cold ? 0xb9c3cc : 0xa9b2ff, cold ? 2 : 6, 12, 12, [11, -7, -6]);
+    this.rimA = add(cold ? 0xc9ccd1 : 0x1ed760, cold ? 3 : 11, 12, 12, [-10, 6, -8]);
+    this.rimB = add(cold ? 0xb9c3cc : 0x9bf0b7, cold ? 2 : 6, 12, 12, [11, -7, -6]);
     const d = new THREE.DirectionalLight(0xffffff, 0.7); d.position.set(4, 6, 10); this.scene.add(d);
   }
   resize() {

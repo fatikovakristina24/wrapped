@@ -2,7 +2,7 @@
    Design units: 1u = 1px of the 1440 Figma frame (scales with the viewport). */
 :root {
   --ink: #0A0A0B; --ink-2: #141416; --white: #F3F3F0; --silver: #C9CCD1; --steel: #8A8F98;
-  --ultra: #1F2BFF; --ultra-l: #A9B2FF;
+  --ultra: #1ED760; --ultra-l: #9BF0B7;
   --u: calc(100vw / 1440);
   --ease-out: cubic-bezier(.16, 1, .3, 1);
 }
@@ -10,7 +10,7 @@
 html { background: var(--ink); scrollbar-width: none; }
 html::-webkit-scrollbar { display: none; }
 body { background: var(--ink); color: var(--white); font-family: 'Onest', system-ui, sans-serif; -webkit-font-smoothing: antialiased; overflow-x: hidden; }
-::selection { background: var(--ultra); color: var(--white); }
+::selection { background: var(--ultra); color: var(--ink); }
 
 /* ---------- layers ---------- */
 #gl { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; display: block; }
@@ -71,9 +71,9 @@ body.gl .a3d .poster { opacity: 0; }
   font: 400 max(14px, calc(20 * var(--u)))/1.4 'Onest', sans-serif; padding: calc(18 * var(--u)) calc(20 * var(--u)); resize: none; outline: none; }
 .field:focus { border-color: var(--ultra-l); }
 .field::placeholder { color: var(--steel); }
-.btn { pointer-events: auto; background: var(--ultra); color: var(--white); border: 0; border-radius: 999px; cursor: pointer;
+.btn { pointer-events: auto; background: var(--ultra); color: var(--ink); border: 0; border-radius: 999px; cursor: pointer;
   font: 500 max(11px, calc(15 * var(--u)))/1 'Unbounded', sans-serif; letter-spacing: .04em; text-transform: uppercase; }
-.btn:hover { background: #3a45ff; }
+.btn:hover { background: #3be477; }
 
 /* ---------- reveals (calm: short travel, slow fade) ---------- */
 .rv { opacity: 0; transform: translate3d(0, calc(12 * var(--u)), 0); transition: opacity 1.4s var(--ease-out), transform 1.4s var(--ease-out); }
