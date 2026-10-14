@@ -124,9 +124,15 @@ function setupPersonal() {
   const btn = document.querySelector('[data-save]');
   if (btn) {
     const label = btn.textContent;
+    const note = [...document.querySelectorAll('#chapter-08 .t')].find(t => t.textContent.startsWith('Ответ сохраняется'));
+    const status = when => { if (!note) return;
+      note.textContent = `Сохранено ${when}. Запись осталась только в этом браузере: я её не вижу и нигде не публикую. Вернитесь на страницу — она будет на месте.`;
+      note.style.color = 'var(--ultra-l)'; };
+    if (saved.track || saved.episode) status(saved.at ? new Date(saved.at).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : 'раньше');
     btn.addEventListener('click', () => {
-      const v = {}; fields.forEach(f => { v[f.dataset.k] = f.value.trim(); });
-      try { localStorage.setItem(KEY, JSON.stringify(v)); btn.textContent = 'Сохранено — только у вас'; }
+      const v = { at: Date.now() }; fields.forEach(f => { v[f.dataset.k] = f.value.trim(); });
+      if (!v.track && !v.episode) { btn.textContent = 'Сначала напишите трек'; setTimeout(() => { btn.textContent = label; }, 2200); return; }
+      try { localStorage.setItem(KEY, JSON.stringify(v)); btn.textContent = 'Сохранено ✓'; status(new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })); }
       catch (e) { btn.textContent = 'Не получилось сохранить'; }
       setTimeout(() => { btn.textContent = label; }, 2600);
     });
