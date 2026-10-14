@@ -138,9 +138,10 @@ function setupPersonal() {
     });
   }
   // two readings of a peak: the reader guesses first, then opens my memory
-  const cues = [...document.querySelectorAll('.cue')], veils = [...document.querySelectorAll('.veil')];
-  veils.forEach((v, i) => { const open = () => { v.classList.add('open'); cues[i] && cues[i].classList.add('gone'); };
-    v.addEventListener('click', open); cues[i] && cues[i].addEventListener('click', open); });
+  document.querySelectorAll('.veil').forEach(v => {
+    const cue = document.querySelector(`.cue[data-ep="${v.dataset.ep}"]`);     // each question belongs to its own episode
+    const open = () => { v.classList.add('open'); cue && cue.classList.add('gone'); };
+    v.addEventListener('click', open); cue && cue.addEventListener('click', open); });
   // the cassette on the way out: the reader's track + caption become a cassette insert (J-card) to keep
   const card = document.querySelector('[data-card]');
   if (card) card.addEventListener('click', () => {

@@ -108,8 +108,9 @@ def text(it, extra_cls='', nested=False):
         cls.append('cnt')
         attrs = f' data-to="{m.group(2).replace(" ", "")}" data-pre="{m.group(1) or ""}" data-suf="{m.group(3) or ""}" data-sep="{1 if " " in m.group(2) else 0}"'
     nm = it.get('name', '')
-    if nm.startswith('Diary / prompt'): cls.append('cue')                       # 'two readings of a peak': guess first…
-    if nm in ('Diary / text 02', 'Diary / text 03', 'Diary / text 04'): cls.append('veil')   # …then open the memory
+    ep = ''
+    if nm.startswith('Diary / prompt'): cls.append('cue'); ep = nm[-2:]          # 'two readings of a peak': guess first…
+    if nm in ('Diary / text 02', 'Diary / text 03', 'Diary / text 04'): cls.append('veil'); ep = nm[-2:]   # …then open the memory
     if extra_cls:
         cls.append(extra_cls)
     mc, ms, mr = ('', '', {}) if nested else mob(it)
@@ -131,6 +132,7 @@ def text(it, extra_cls='', nested=False):
         inner = f'<span class="dt">{inner}</span><span class="mt">{esc(alt)}</span>'
     if s.startswith('минут ....'):
         cls.append('typer')
+    if ep: attrs += f' data-ep="{ep}"'
     return f'<div class="{" ".join(cls)}" style="{style}"{attrs}>{inner}</div>'
 
 
