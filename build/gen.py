@@ -208,9 +208,9 @@ def render_items(items, chapter):
             tag = (f'<textarea class="it box field{mc}" data-k="{key}" placeholder="{esc(it["s"])}" rows="3"' if key == 'episode'
                    else f'<input class="it box field{mc}" data-k="{key}" placeholder="{esc(it["s"])}" maxlength="120"')
             out.append(tag + f' style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}" aria-label="{esc(it["s"])}">' + ('</textarea>' if key == 'episode' else ''))
-        elif t == 'TL':                                  # the reader's own top-5, filled in by main.js
+        elif t == 'RC':                                  # the reader's favourite-track card, filled in by main.js
             mc, ms, _ = mob(it)
-            out.append(f'<div class="it box mylist{mc}" aria-live="polite" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}"></div>')
+            out.append(f'<div class="it box rcard{mc}" aria-live="polite" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}"></div>')
         elif t == 'Btn':
             mc, ms, _ = mob(it)
             act = 'data-card' if it.get('name') == 'Button / card' else 'data-save'

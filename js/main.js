@@ -117,35 +117,25 @@ function goStatic() {
 
 // ---------- the reader's own track (kept only in this browser) + the Spotify player ----------
 function setupPersonal() {
-  // the reader's own top-5 by memory: tracks are added one by one and kept only in this browser
-  const KEY = 'wrapped.myTop', MAX = 5;
-  let list = []; try { list = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
+  // the reader's favourite track: a card like mine, but filled in by memory; nothing is stored or sent
   const fields = [...document.querySelectorAll('.field[data-k]')];
   const fTrack = fields.find(f => f.dataset.k === 'track'), fWhy = fields.find(f => f.dataset.k === 'episode');
-  const box = document.querySelector('.mylist'), btn = document.querySelector('[data-save]');
+  const card = document.querySelector('.rcard'), btn = document.querySelector('[data-save]');
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const store = () => { try { localStorage.setItem(KEY, JSON.stringify(list)); return true; } catch (e) { return false; } };
-  const render = () => {
-    if (!box) return;
-    let h = '<div class="ml-label">Ваш топ-5 по памяти</div>';
-    for (let i = 0; i < MAX; i++) {
-      const it = list[i];
-      h += `<div class="ml-row${it ? ' on' : ''}"><span class="ml-n">0${i + 1}</span>` + (it
-        ? `<span class="ml-t"><a href="https://open.spotify.com/search/${encodeURIComponent(it.track)}" target="_blank" rel="noopener">${esc(it.track)}</a>${it.why ? `<em>${esc(it.why)}</em>` : ''}</span><button type="button" class="ml-x" data-i="${i}" aria-label="Убрать трек">×</button>`
-        : `<span class="ml-t ml-empty">${i === list.length ? (i === 0 ? 'Здесь появится ваш первый трек' : 'Следующий трек') : '—'}</span>`) + '</div>';
-    }
-    box.innerHTML = h;
-    if (btn) btn.textContent = list.length >= MAX ? 'Топ-5 собран' : 'Добавить в мой топ-5';
+  const draw = (track, why) => {
+    if (!card) return;
+    card.classList.toggle('on', !!track);
+    card.innerHTML = `<div class="rc-label">Ваш любимый трек</div><div class="rc-disc"></div>`
+      + `<div class="rc-track">${track ? esc(track) : 'Название трека'}</div>`
+      + `<div class="rc-why">${why ? esc(why) : track ? '' : 'Здесь будут ваши слова о том, с чем или с кем он связан.'}</div>`
+      + `<div class="rc-foot">по памяти · без счётчика</div>`;
   };
-  if (box) box.addEventListener('click', e => { const x = e.target.closest('.ml-x'); if (!x) return; list.splice(+x.dataset.i, 1); store(); render(); });
   if (btn) btn.addEventListener('click', () => {
     const track = (fTrack && fTrack.value.trim()) || '', why = (fWhy && fWhy.value.trim()) || '';
-    if (list.length >= MAX) { btn.textContent = 'Уберите трек, чтобы добавить новый'; setTimeout(render, 2200); return; }
-    if (!track) { btn.textContent = 'Сначала напишите трек'; setTimeout(render, 2000); fTrack && fTrack.focus(); return; }
-    list.push({ track, why }); if (!store()) { btn.textContent = 'Не получилось сохранить'; return; }
-    fTrack.value = ''; if (fWhy) fWhy.value = ''; render();
+    if (!track) { btn.textContent = 'Сначала напишите трек'; setTimeout(() => { btn.textContent = 'Показать карточку'; }, 2000); fTrack && fTrack.focus(); return; }
+    draw(track, why);
   });
-  render();
+  draw('', '');
   // two readings of a peak: the reader guesses first, then opens my memory
   document.querySelectorAll('.veil').forEach(v => {
     const cue = document.querySelector(`.cue[data-ep="${v.dataset.ep}"]`);     // each question belongs to its own episode
