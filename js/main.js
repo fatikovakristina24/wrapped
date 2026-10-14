@@ -142,32 +142,6 @@ function setupPersonal() {
     const cue = document.querySelector(`.cue[data-ep="${v.dataset.ep}"]`);     // each question belongs to its own episode
     const open = () => { v.classList.add('open'); cue && cue.classList.add('gone'); };
     v.addEventListener('click', open); cue && cue.addEventListener('click', open); });
-  // the cassette on the way out: the reader's track + caption become a cassette insert (J-card) to keep
-  const card = document.querySelector('[data-card]');
-  if (card) card.addEventListener('click', () => {
-    const v = {}; fields.forEach(f => { v[f.dataset.k] = f.value.trim(); });
-    if (!v.track) { const l = card.textContent; card.textContent = 'Сначала напишите трек'; setTimeout(() => { card.textContent = l; }, 2200); return; }
-    const W = 1500, H = 1000, c = document.createElement('canvas'); c.width = W; c.height = H; const g = c.getContext('2d');
-    g.fillStyle = '#0A0A0B'; g.fillRect(0, 0, W, H);
-    g.fillStyle = '#1ED760'; g.fillRect(0, 0, W, 18); g.fillRect(0, H - 220, W, 2);
-    g.strokeStyle = 'rgba(243,243,240,.25)'; g.lineWidth = 2; g.strokeRect(1, 1, W - 2, H - 2);
-    [[W * 0.62, 'rgba(243,243,240,.18)'], [W * 0.8, 'rgba(243,243,240,.18)']].forEach(([x, col]) => { g.strokeStyle = col; g.setLineDash([10, 10]); g.beginPath(); g.moveTo(x, 18); g.lineTo(x, H - 220); g.stroke(); });
-    g.setLineDash([]);
-    g.fillStyle = '#9BF0B7'; g.font = '500 30px Unbounded'; g.fillText('МОЙ ТРЕК ГОДА · SIDE A', 70, 110);
-    g.fillStyle = '#F3F3F0'; g.font = '700 68px Unbounded';
-    const wrap = (text, x, y, maxW, lh, maxLines) => { const words = text.split(/\s+/); let line = '', n = 0;
-      for (const w of words) { const t = line ? line + ' ' + w : w; if (g.measureText(t).width > maxW && line) { g.fillText(line, x, y); y += lh; line = w; if (++n >= maxLines - 1) { line = words.slice(words.indexOf(w)).join(' '); while (g.measureText(line + '…').width > maxW) line = line.slice(0, -1); g.fillText(line + (line.length < t.length ? '…' : ''), x, y); return y + lh; } } else line = t; }
-      if (line) { g.fillText(line, x, y); y += lh; } return y; };
-    let y = wrap(v.track, 70, 210, W * 0.62 - 120, 82, 3);
-    g.fillStyle = '#C9CCD1'; g.font = '400 34px Onest';
-    wrap(v.episode || 'Без подписи — трек и так помнит всё сам.', 70, y + 40, W * 0.62 - 120, 50, 7);
-    g.fillStyle = '#F3F3F0'; g.font = '200 84px Unbounded'; g.fillText('2026', W * 0.62 + 50, 200);
-    g.fillStyle = '#8A8F98'; g.font = '400 28px Onest'; g.fillText('чистая сторона —', W * 0.62 + 50, 300); g.fillText('для следующего года', W * 0.62 + 50, 340);
-    g.save(); g.translate(W * 0.8 + 70, H - 260); g.rotate(-Math.PI / 2); g.fillStyle = '#9BF0B7'; g.font = '500 30px Unbounded'; g.fillText(v.track.slice(0, 32).toUpperCase(), 0, 0); g.restore();
-    g.fillStyle = '#F3F3F0'; g.font = '500 30px Unbounded'; g.fillText('SPOTIFY WRAPPED · МУЗЫКАЛЬНЫЙ ДНЕВНИК', 70, H - 120);
-    g.fillStyle = '#8A8F98'; g.font = '400 26px Onest'; g.fillText('Вкладыш к кассете из лонгрида Кристины Фатиковой', 70, H - 72);
-    const a = document.createElement('a'); a.download = 'vkladysh-kassety.png'; a.href = c.toDataURL('image/png'); document.body.appendChild(a); a.click(); a.remove();
-  });
   window.__track = { playing: false };                    // the record of chapter 03 turns only while this is true
   const host = document.querySelector('.embed-host');
   if (host) {
