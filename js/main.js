@@ -117,26 +117,35 @@ function goStatic() {
 
 // ---------- the reader's own track (kept only in this browser) + the Spotify player ----------
 function setupPersonal() {
-  const KEY = 'wrapped.myTrack';
-  let saved = {}; try { saved = JSON.parse(localStorage.getItem(KEY) || '{}'); } catch (e) {}
+  // the reader's own top-5 by memory: tracks are added one by one and kept only in this browser
+  const KEY = 'wrapped.myTop', MAX = 5;
+  let list = []; try { list = JSON.parse(localStorage.getItem(KEY) || '[]'); } catch (e) {}
   const fields = [...document.querySelectorAll('.field[data-k]')];
-  fields.forEach(f => { if (saved[f.dataset.k]) f.value = saved[f.dataset.k]; });
-  const btn = document.querySelector('[data-save]');
-  if (btn) {
-    const label = btn.textContent;
-    const note = [...document.querySelectorAll('#chapter-08 .t')].find(t => t.textContent.startsWith('Ответ сохраняется'));
-    const status = when => { if (!note) return;
-      note.textContent = `Сохранено ${when}. Запись осталась только в этом браузере: я её не вижу и нигде не публикую. Вернитесь на страницу — она будет на месте.`;
-      note.style.color = 'var(--ultra-l)'; };
-    if (saved.track || saved.episode) status(saved.at ? new Date(saved.at).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' }) : 'раньше');
-    btn.addEventListener('click', () => {
-      const v = { at: Date.now() }; fields.forEach(f => { v[f.dataset.k] = f.value.trim(); });
-      if (!v.track && !v.episode) { btn.textContent = 'Сначала напишите трек'; setTimeout(() => { btn.textContent = label; }, 2200); return; }
-      try { localStorage.setItem(KEY, JSON.stringify(v)); btn.textContent = 'Сохранено ✓'; status(new Date().toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })); }
-      catch (e) { btn.textContent = 'Не получилось сохранить'; }
-      setTimeout(() => { btn.textContent = label; }, 2600);
-    });
-  }
+  const fTrack = fields.find(f => f.dataset.k === 'track'), fWhy = fields.find(f => f.dataset.k === 'episode');
+  const box = document.querySelector('.mylist'), btn = document.querySelector('[data-save]');
+  const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const store = () => { try { localStorage.setItem(KEY, JSON.stringify(list)); return true; } catch (e) { return false; } };
+  const render = () => {
+    if (!box) return;
+    let h = '<div class="ml-label">Ваш топ-5 по памяти</div>';
+    for (let i = 0; i < MAX; i++) {
+      const it = list[i];
+      h += `<div class="ml-row${it ? ' on' : ''}"><span class="ml-n">0${i + 1}</span>` + (it
+        ? `<span class="ml-t"><a href="https://open.spotify.com/search/${encodeURIComponent(it.track)}" target="_blank" rel="noopener">${esc(it.track)}</a>${it.why ? `<em>${esc(it.why)}</em>` : ''}</span><button type="button" class="ml-x" data-i="${i}" aria-label="Убрать трек">×</button>`
+        : `<span class="ml-t ml-empty">${i === list.length ? (i === 0 ? 'Здесь появится ваш первый трек' : 'Следующий трек') : '—'}</span>`) + '</div>';
+    }
+    box.innerHTML = h;
+    if (btn) btn.textContent = list.length >= MAX ? 'Топ-5 собран' : 'Добавить в мой топ-5';
+  };
+  if (box) box.addEventListener('click', e => { const x = e.target.closest('.ml-x'); if (!x) return; list.splice(+x.dataset.i, 1); store(); render(); });
+  if (btn) btn.addEventListener('click', () => {
+    const track = (fTrack && fTrack.value.trim()) || '', why = (fWhy && fWhy.value.trim()) || '';
+    if (list.length >= MAX) { btn.textContent = 'Уберите трек, чтобы добавить новый'; setTimeout(render, 2200); return; }
+    if (!track) { btn.textContent = 'Сначала напишите трек'; setTimeout(render, 2000); fTrack && fTrack.focus(); return; }
+    list.push({ track, why }); if (!store()) { btn.textContent = 'Не получилось сохранить'; return; }
+    fTrack.value = ''; if (fWhy) fWhy.value = ''; render();
+  });
+  render();
   // two readings of a peak: the reader guesses first, then opens my memory
   document.querySelectorAll('.veil').forEach(v => {
     const cue = document.querySelector(`.cue[data-ep="${v.dataset.ep}"]`);     // each question belongs to its own episode
