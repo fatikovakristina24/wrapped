@@ -107,6 +107,9 @@ def text(it, extra_cls='', nested=False):
     if m and z >= 36:
         cls.append('cnt')
         attrs = f' data-to="{m.group(2).replace(" ", "")}" data-pre="{m.group(1) or ""}" data-suf="{m.group(3) or ""}" data-sep="{1 if " " in m.group(2) else 0}"'
+    nm = it.get('name', '')
+    if nm.startswith('Diary / prompt'): cls.append('cue')                       # 'two readings of a peak': guess first…
+    if nm in ('Diary / text 02', 'Diary / text 03', 'Diary / text 04'): cls.append('veil')   # …then open the memory
     if extra_cls:
         cls.append(extra_cls)
     mc, ms, mr = ('', '', {}) if nested else mob(it)
@@ -205,7 +208,8 @@ def render_items(items, chapter):
             out.append(tag + f' style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}" aria-label="{esc(it["s"])}">' + ('</textarea>' if key == 'episode' else ''))
         elif t == 'Btn':
             mc, ms, _ = mob(it)
-            out.append(f'<button type="button" class="it box btn{mc}" data-save style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{esc(it["s"])}</button>')
+            act = 'data-card' if it.get('name') == 'Button / card' else 'data-save'
+            out.append(f'<button type="button" class="it box btn{" ghost" if act == "data-card" else ""}{mc}" {act} style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{esc(it["s"])}</button>')
         elif t == 'F' and it.get('name') == 'Story composition':
             kids = ''.join(text(k, nested=True) for k in it['kids'])
             mc, ms, _ = mob(it)
