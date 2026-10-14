@@ -124,11 +124,13 @@ function setupPersonal() {
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   const draw = (track, why) => {
     if (!card) return;
+    const [name, artist] = track.split(/\s+[—–-]\s+/);           // «Исполнитель — Трек» or just a title
+    const title = artist ? artist : name, by = artist ? name : '';
     card.classList.toggle('on', !!track);
-    card.innerHTML = `<div class="rc-label">Ваш любимый трек</div><div class="rc-disc"></div>`
-      + `<div class="rc-track">${track ? esc(track) : 'Название трека'}</div>`
-      + `<div class="rc-why">${why ? esc(why) : track ? '' : 'Здесь будут ваши слова о том, с чем или с кем он связан.'}</div>`
-      + `<div class="rc-foot">по памяти · без счётчика</div>`;
+    card.innerHTML = `<div class="rc-label">Ваш любимый трек</div><div class="rc-disc"><i></i></div>`
+      + `<div class="rc-track">${track ? esc(title) : 'Название трека'}</div>`
+      + `<div class="rc-by">${track ? esc(by) : 'Исполнитель'}</div>`
+      + `<div class="rc-why">${why ? '«' + esc(why) + '»' : track ? '' : 'Здесь будут ваши слова о том, с чем или с кем он связан.'}</div>`;
   };
   if (btn) btn.addEventListener('click', () => {
     const track = (fTrack && fTrack.value.trim()) || '', why = (fWhy && fWhy.value.trim()) || '';
