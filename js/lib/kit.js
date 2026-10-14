@@ -19,6 +19,8 @@ export function rng(seed = 7) { // mulberry32
 }
 
 /** Listening minutes per day — seasons, weekends, December build-up, a few obsessive days. */
+// the music diary: [first day, last day, how much denser the listening was] — day 0 = 1 January
+export const DIARY = [[50, 58, 0.32], [103, 109, 0.42], [190, 204, 0.3], [243, 254, 0.26]];
 export function yearValues(n = 365, seed = 7) {
   const r = rng(seed), v = [];
   for (let d = 0; d < n; d++) {
@@ -27,6 +29,7 @@ export function yearValues(n = 365, seed = 7) {
     if (d % 7 >= 5) b += 0.12;
     if (d > 330) b += 0.2 * (d - 330) / 35;
     if (r() < 0.05) b += 0.25 + r() * 0.25;
+    for (const [a0, a1, k] of DIARY) if (d >= a0 && d <= a1) b += k;      // the weeks of the music diary
     v.push(Math.max(0.06, b + (r() - 0.5) * 0.12));
   }
   const mx = Math.max(...v);
