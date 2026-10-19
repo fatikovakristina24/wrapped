@@ -110,7 +110,7 @@ def text(it, extra_cls='', nested=False):
     nm = it.get('name', '')
     ep = ''
     if nm.startswith('Diary / prompt'): cls.append('cue'); ep = nm[-2:]          # 'two readings of a peak': guess first…
-    if nm in ('Diary / text 02', 'Diary / text 03', 'Diary / text 04'): cls.append('veil'); ep = nm[-2:]   # …then open the memory
+    if nm == 'Diary / text 03': cls.append('veil'); ep = nm[-2:]   # …then open the memory (one peak only)
     if extra_cls:
         cls.append(extra_cls)
     mc, ms, mr = ('', '', {}) if nested else mob(it)
@@ -192,9 +192,9 @@ def render_items(items, chapter):
                 else:
                     kids.append(text(k, nested=True).replace(' rv', ''))
             out.append(f'<div class="it share" style="--cx:{it["cx"]};--cy:{it["cy"]};--w:{it["w"]};--h:{it["h"]};--rot:{-it["rot"]}deg{net(it["cx"], it["cy"])};background:{color(it["c"])}">{"".join(kids)}</div>')
-        elif t == 'S':                                   # a real Wrapped screenshot (or its empty slot until it arrives)
+        elif t == 'S':                                   # my track-of-the-year card (or its empty slot until it arrives)
             mc, ms, _ = mob(it); src = SHOTS.get(CUR['ch'], '')
-            inner = (f'<img src="{src}" alt="Скриншот моего Spotify Wrapped" loading="lazy">' if src and os.path.exists(os.path.join(SITE, src))
+            inner = (f'<img src="{src}" alt="Моя карточка трека года по выгрузке Spotify на 15 октября 2026" loading="lazy">' if src and os.path.exists(os.path.join(SITE, src))
                      else f'<span>{esc(it["s"])}</span>')
             has = src and os.path.exists(os.path.join(SITE, src))
             out.append(f'<div class="it box slot{" shot" if has else ""}{mc}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{inner}</div>')
@@ -204,7 +204,7 @@ def render_items(items, chapter):
                     else '<span class="embed-wait">Здесь будет плеер Spotify с треком «Висхолдинг»</span>')
             out.append(f'<div class="it box embed{mc}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{body}</div>')
         elif t == 'Q':                                   # the reader's own track — kept only in this browser
-            mc, ms, _ = mob(it); key = 'episode' if it['h'] > 100 else 'track'
+            mc, ms, _ = mob(it); key = it.get('name', '').split('/')[-1].strip() or 'track'
             tag = (f'<textarea class="it box field{mc}" data-k="{key}" placeholder="{esc(it["s"])}" rows="3"' if key == 'episode'
                    else f'<input class="it box field{mc}" data-k="{key}" placeholder="{esc(it["s"])}" maxlength="120"')
             out.append(tag + f' style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}" aria-label="{esc(it["s"])}">' + ('</textarea>' if key == 'episode' else ''))
@@ -213,8 +213,8 @@ def render_items(items, chapter):
             out.append(f'<div class="it box rcard{mc}" aria-live="polite" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}"></div>')
         elif t == 'Btn':
             mc, ms, _ = mob(it)
-            act = 'data-card' if it.get('name') == 'Button / card' else 'data-save'
-            out.append(f'<button type="button" class="it box btn{" ghost" if act == "data-card" else ""}{mc}" {act} style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{esc(it["s"])}</button>')
+            act = 'data-download' if it.get('name') == 'Button / download' else 'data-save'
+            out.append(f'<button type="button" class="it box btn{" ghost" if act == "data-download" else ""}{mc}" {act} style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{esc(it["s"])}</button>')
         elif t == 'F' and it.get('name') == 'Story composition':
             kids = ''.join(text(k, nested=True) for k in it['kids'])
             mc, ms, _ = mob(it)

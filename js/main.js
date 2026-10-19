@@ -1,7 +1,7 @@
 import Lenis from 'lenis';
 import { World } from './world.js';
 import { Scroller } from './scroll.js';
-import { loadModels, yearValues } from './lib/kit.js';
+import { loadModels, yearValues, CUT } from './lib/kit.js';
 import { Hero } from './chapters/c00_hero.js';
 import { Ring } from './chapters/c01_ring.js';
 import { History } from './chapters/c02_history.js';
@@ -38,16 +38,25 @@ function drawBulk(b, t, amt = 1) {
     const months = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК'];
     for (let m = 0; m < 12; m++) if (m % 2 === 0) { g.fillStyle = 'rgba(243,243,240,.035)'; g.fillRect(md[m] / 365 * W, 0, (md[m + 1] - md[m]) / 365 * W, base); }
     const bw = W / 365;
-    for (let i = 0; i < n; i++) {
+    const nd = Math.min(n, CUT);
+    if (n > CUT) {                                  // after the export: the rest of the year is still empty
+      const x0 = CUT * bw; g.fillStyle = 'rgba(243,243,240,.025)'; g.fillRect(x0, 0, W - x0, base);
+      g.fillStyle = 'rgba(243,243,240,.5)'; g.fillRect(x0, base * 0.06, b.d, base * 0.94);
+      g.font = `${10 * b.d}px Unbounded`; g.fillStyle = '#C9CCD1'; g.textBaseline = 'top';
+      if (W - x0 > 190 * b.d) { g.fillText('15.10 — ВЫГРУЗКА', x0 + 8 * b.d, base * 0.06); g.fillStyle = '#8A8F98'; g.fillText('ДАЛЬШЕ ГОД ЕЩЁ НЕ ПРОШЁЛ', x0 + 8 * b.d, base * 0.06 + 16 * b.d); }
+      else g.fillText('15.10', x0 + 4 * b.d, base * 0.06);                 // narrow screens: the date only
+      g.textBaseline = 'alphabetic';
+    }
+    for (let i = 0; i < nd; i++) {
       const v = VALS[i], h = (0.05 + v * 0.95) * base * 0.92, x = i * bw;
       const grad = g.createLinearGradient(0, base - h, 0, base);
       if (v > 0.82) { grad.addColorStop(0, '#1ED760'); grad.addColorStop(1, 'rgba(30,215,96,.35)'); }
       else { grad.addColorStop(0, 'rgba(201,204,209,.75)'); grad.addColorStop(1, 'rgba(138,143,152,.15)'); }
       g.fillStyle = grad; g.fillRect(x + bw * 0.18, base - h, bw * 0.64, h);
     }
-    g.strokeStyle = '#9BF0B7'; g.lineWidth = 1.6 * b.d; g.beginPath();      // weekly average
-    for (let i = 0; i < n; i++) {
-      let s = 0, c = 0; for (let k = Math.max(0, i - 3); k <= Math.min(364, i + 3); k++) { s += VALS[k]; c++; }
+    g.strokeStyle = '#1ED760'; g.lineWidth = 1.6 * b.d; g.beginPath();      // weekly average
+    for (let i = 0; i < nd; i++) {
+      let s = 0, c = 0; for (let k = Math.max(0, i - 3); k <= Math.min(CUT - 1, i + 3); k++) { s += VALS[k]; c++; }
       const y = base - (0.05 + s / c * 0.95) * base * 0.92, x = (i + 0.5) * bw;
       i ? g.lineTo(x, y) : g.moveTo(x, y);
     }
@@ -58,13 +67,13 @@ function drawBulk(b, t, amt = 1) {
   } else if (b.kind === 'emblem') {                // 08: the year closes, dot by dot
     const n = Math.round(365 * amt), cx = W / 2, cy = H / 2, R = Math.min(W, H) * 0.4;
     for (let d = 0; d < 365; d++) {
-      const a = -Math.PI / 2 + d / 365 * Math.PI * 2, v = VALS[d], on = d < n;
+      const a = -Math.PI / 2 + d / 365 * Math.PI * 2, v = VALS[d], on = d < Math.min(n, CUT);
       const rr = R + Math.sin(d / 365 * Math.PI * 4) * R * 0.05, s = (1.6 + v * 4) * b.d;
       g.fillStyle = !on ? 'rgba(243,243,240,.08)' : v > 0.9 ? '#1ED760' : 'rgba(243,243,240,.75)';
       g.beginPath(); g.arc(cx + Math.cos(a) * rr, cy + Math.sin(a) * rr, s / 2, 0, Math.PI * 2); g.fill();
     }
     g.font = `500 ${13 * b.d}px Unbounded`; g.fillStyle = '#F3F3F0'; g.textAlign = 'center';
-    g.fillText(`${String(n).padStart(3, '0')} / 365`, cx, cy + 5 * b.d);
+    g.fillText(`${String(Math.min(n, CUT)).padStart(3, '0')} / 365`, cx, cy + 5 * b.d);
   }
 }
 
@@ -118,26 +127,68 @@ function goStatic() {
 // ---------- the reader's own track (kept only in this browser) + the Spotify player ----------
 function setupPersonal() {
   // the reader's favourite track: a card like mine, but filled in by memory; nothing is stored or sent
-  const fields = [...document.querySelectorAll('.field[data-k]')];
-  const fTrack = fields.find(f => f.dataset.k === 'track'), fWhy = fields.find(f => f.dataset.k === 'episode');
-  const card = document.querySelector('.rcard'), btn = document.querySelector('[data-save]');
+  const field = k => document.querySelector(`.field[data-k="${k}"]`);
+  const fArtist = field('artist'), fTrack = field('track'), fWhy = field('episode');
+  const card = document.querySelector('.rcard'), btn = document.querySelector('[data-save]'), dl = document.querySelector('[data-download]');
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-  const draw = (track, why) => {
-    if (!card) return;
-    const [name, artist] = track.split(/\s+[—–-]\s+/);           // «Исполнитель — Трек» or just a title
-    const title = artist ? artist : name, by = artist ? name : '';
-    card.classList.toggle('on', !!track);
-    card.innerHTML = `<div class="rc-label">Ваш любимый трек</div><div class="rc-disc"><i></i></div>`
-      + `<div class="rc-track">${track ? esc(title) : 'Название трека'}</div>`
-      + `<div class="rc-by">${track ? esc(by) : 'Исполнитель'}</div>`
-      + `<div class="rc-why">${why ? '«' + esc(why) + '»' : track ? '' : 'Здесь будут ваши слова о том, с чем или с кем он связан.'}</div>`;
+  let cur = null;
+  const fit = (el, max, min, lines) => {                   // shrink the type until it fits: nothing gets cut with «…»
+    let z = max; el.style.fontSize = '';
+    const base = parseFloat(getComputedStyle(el).fontSize), k = base / max;
+    const over = () => lines ? el.scrollHeight > lines * parseFloat(getComputedStyle(el).lineHeight) + 1 : el.scrollHeight > el.clientHeight + 1;
+    while (z > min && over()) { z -= 0.5; el.style.fontSize = `${z * k}px`; }
   };
+  const draw = d => {
+    if (!card) return;
+    card.classList.toggle('on', !!d);
+    card.innerHTML = `<div class="rc-label">Ваш любимый трек</div><div class="rc-disc"><i></i></div>`
+      + `<div class="rc-track">${d ? esc(d.track) : 'Трек'}</div>`
+      + `<div class="rc-by">${d ? esc(d.artist) : 'Исполнитель'}</div>`
+      + `<div class="rc-why">${d ? (d.why ? '«' + esc(d.why) + '»' : '') : 'Здесь будет ваше воспоминание: с чем или с кем связан этот трек.'}</div>`;
+    if (d) { fit(card.querySelector('.rc-track'), 26, 14, 3); fit(card.querySelector('.rc-by'), 15, 11, 2); fit(card.querySelector('.rc-why'), 14, 10); }
+    if (dl) dl.disabled = !d;
+  };
+  const hint = (msg, el) => { btn.textContent = msg; setTimeout(() => { btn.textContent = 'Показать карточку'; }, 2000); el && el.focus(); };
   if (btn) btn.addEventListener('click', () => {
-    const track = (fTrack && fTrack.value.trim()) || '', why = (fWhy && fWhy.value.trim()) || '';
-    if (!track) { btn.textContent = 'Сначала напишите трек'; setTimeout(() => { btn.textContent = 'Показать карточку'; }, 2000); fTrack && fTrack.focus(); return; }
-    draw(track, why);
+    const v = el => (el && el.value.trim()) || '';
+    const d = { artist: v(fArtist), track: v(fTrack), why: v(fWhy) };
+    if (!d.artist) return hint('Напишите исполнителя', fArtist);
+    if (!d.track) return hint('Напишите трек', fTrack);
+    cur = d; draw(d);
   });
-  draw('', '');
+  // the finished card goes home with the reader as a PNG, drawn the same way as on the page
+  const wrap = (g, text, w) => { const out = []; let line = '';
+    for (const word of text.split(/\s+/)) { const t = line ? line + ' ' + word : word; if (g.measureText(t).width > w && line) { out.push(line); line = word; } else line = t; }
+    if (line) out.push(line); return out; };
+  if (dl) dl.addEventListener('click', async () => {
+    if (!cur) return; await document.fonts.ready;
+    const S = 3.6, W = 300 * S, H = 533 * S, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+    const g = cv.getContext('2d'), P = 24 * S, TW = W - 2 * P;
+    g.fillStyle = '#0c0c0e'; g.fillRect(0, 0, W, H);
+    const cx = W / 2, cy = (64 + 60) * S, R = 60 * S;
+    const glow = g.createRadialGradient(cx, cy, 0, cx, cy, 190 * S); glow.addColorStop(0, 'rgba(30,215,96,.42)'); glow.addColorStop(.5, 'rgba(30,215,96,.08)'); glow.addColorStop(1, 'rgba(30,215,96,0)');
+    g.fillStyle = glow; g.fillRect(0, 0, W, H);
+    g.fillStyle = '#111114'; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.fill();
+    g.strokeStyle = 'rgba(243,243,240,.08)'; g.lineWidth = S * .6;
+    for (let r = R * .42; r < R; r += 3 * S) { g.beginPath(); g.arc(cx, cy, r, 0, 7); g.stroke(); }
+    g.fillStyle = '#1ED760'; g.beginPath(); g.arc(cx, cy, R * .3, 0, 7); g.fill();
+    g.fillStyle = '#0c0c0e'; g.beginPath(); g.arc(cx, cy, 3.5 * S, 0, 7); g.fill();
+    g.textBaseline = 'top'; g.fillStyle = '#F3F3F0'; g.font = `500 ${9 * S}px Unbounded`; g.letterSpacing = `${.54 * S}px`;
+    g.fillText('ВАШ ЛЮБИМЫЙ ТРЕК', P, 28 * S); g.letterSpacing = '0px';
+    let y = 214 * S, z = 26, lines;
+    do { g.font = `700 ${z * S}px Unbounded`; lines = wrap(g, cur.track, TW); z -= 1; } while (lines.length > 3 && z > 14);
+    for (const l of lines) { g.fillText(l, P, y); y += (z + 1) * 1.1 * S; }
+    y += 6 * S; g.fillStyle = '#C9CCD1'; g.font = `400 ${15 * S}px Onest`;
+    for (const l of wrap(g, cur.artist, TW).slice(0, 2)) { g.fillText(l, P, y); y += 19.5 * S; }
+    y += 16 * S; g.fillStyle = 'rgba(243,243,240,.14)'; g.fillRect(P, y, TW, S); y += 14 * S;
+    if (cur.why) {
+      let wz = 14, wl; const room = H - 30 * S - y;
+      do { g.font = `400 ${wz * S}px Onest`; wl = wrap(g, '«' + cur.why + '»', TW); wz -= .5; } while (wl.length * (wz + .5) * 1.45 * S > room && wz > 9);
+      g.fillStyle = '#F3F3F0'; for (const l of wl) { g.fillText(l, P, y); y += (wz + .5) * 1.45 * S; }
+    }
+    const a = document.createElement('a'); a.download = 'moy-lyubimyy-trek.png'; a.href = cv.toDataURL('image/png'); a.click();
+  });
+  draw(null);
   // two readings of a peak: the reader guesses first, then opens my memory
   document.querySelectorAll('.veil').forEach(v => {
     const cue = document.querySelector(`.cue[data-ep="${v.dataset.ep}"]`);     // each question belongs to its own episode

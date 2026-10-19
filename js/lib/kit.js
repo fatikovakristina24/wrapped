@@ -2,7 +2,7 @@
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 
-export const C = { ink: 0x0a0a0b, white: 0xf3f3f0, silver: 0xc9ccd1, steel: 0x8a8f98, ultra: 0x1ed760, ultraL: 0x9bf0b7 };
+export const C = { ink: 0x0a0a0b, white: 0xf3f3f0, silver: 0xc9ccd1, steel: 0x8a8f98, ultra: 0x1ed760, ultraL: 0x4fdf86 };
 
 // ---------- easing / math ----------
 export const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
@@ -20,6 +20,8 @@ export function rng(seed = 7) { // mulberry32
 
 /** Listening minutes per day — seasons, weekends, December build-up, a few obsessive days. */
 // the music diary: [first day, last day, how much denser the listening was] — day 0 = 1 January
+// the data stops at the export: 1 January — 15 October 2026 = 288 days, the rest of the year has not happened yet
+export const CUT = 288;
 export const DIARY = [[50, 58, 0.32], [103, 109, 0.42], [190, 204, 0.3], [243, 254, 0.26]];
 export function yearValues(n = 365, seed = 7) {
   const r = rng(seed), v = [];
@@ -32,8 +34,9 @@ export function yearValues(n = 365, seed = 7) {
     for (const [a0, a1, k] of DIARY) if (d >= a0 && d <= a1) b += k;      // the weeks of the music diary
     v.push(Math.max(0.06, b + (r() - 0.5) * 0.12));
   }
-  const mx = Math.max(...v);
-  return v.map(x => x / mx);
+  v[106] = Math.max(...v.slice(0, CUT)) * 1.04;                       // 16 April, the album week: the real peak (350 min)
+  const mx = Math.max(...v.slice(0, CUT));
+  return v.map(x => Math.min(1, x / mx));
 }
 
 // ---------- vinyl grooves (procedural bump, Blender had them as a shader) ----------

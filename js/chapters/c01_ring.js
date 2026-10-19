@@ -1,15 +1,15 @@
-// 01 — the record of the year: 365 day-bars grow as you scroll, while the counter runs to 365.
+// 01 — the record of the year: 365 day-bars grow as you scroll, while the counter runs to the export date (288 days).
 // One move only: the year builds up. The record turns slowly; drag spins it, a click blows the year apart.
 import { Chapter } from '../world.js';
-import { yearValues, range, easeOut, damp } from '../lib/kit.js';
+import { yearValues, range, easeOut, damp, CUT } from '../lib/kit.js';
 import { YearRecord } from '../lib/objects.js';
 
 export class Ring extends Chapter {
   constructor(world, el) {
     super(world, el);
-    this.rec = new YearRecord(yearValues()); this.rec.calm = true;
+    this.rec = new YearRecord(yearValues()); this.rec.calm = true; this.rec.cut = CUT;
     this.scene.add(this.rec.group);
-    this.num = [...el.querySelectorAll('.t')].find(t => t.textContent.trim() === '365');
+    this.num = [...el.querySelectorAll('.t')].find(t => t.textContent.trim() === String(CUT));
     if (this.num) this.num.classList.remove('cnt');
     this.a = 0;
   }
@@ -24,7 +24,7 @@ export class Ring extends Chapter {
     g.scale.setScalar(R);
     g.rotation.set(0.5 + D.y, -0.3 + D.x, 0);
     this.rec.update(dt, T, this.a, 0, this.burst('ring'));
-    if (this.num) this.num.textContent = String(Math.round(365 * this.a)).padStart(3, '0');
+    if (this.num) this.num.textContent = String(Math.round(CUT * this.a)).padStart(3, '0');
     info.strip && info.strip(this.a);
   }
 }

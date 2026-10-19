@@ -2,7 +2,7 @@
    Design units: 1u = 1px of the 1440 Figma frame (scales with the viewport). */
 :root {
   --ink: #0A0A0B; --ink-2: #141416; --white: #F3F3F0; --silver: #C9CCD1; --steel: #8A8F98;
-  --ultra: #1ED760; --ultra-l: #9BF0B7;
+  --ultra: #1ED760; --ultra-l: #1ED760;
   --u: calc(100vw / 1440);
   --ease-out: cubic-bezier(.16, 1, .3, 1);
 }
@@ -83,23 +83,23 @@ body.gl .a3d .poster { opacity: 0; }
 .btn.ghost:hover { background: rgba(30, 215, 96, .1); }
 
 .rcard { --k: 1; --p: calc(var(--k) * var(--u)); pointer-events: auto; position: relative; display: flex; flex-direction: column; padding: calc(28 * var(--p)) calc(24 * var(--p)) calc(26 * var(--p)); border-radius: calc(4 * var(--p)); overflow: hidden;
-  background: radial-gradient(circle at 50% 36%, rgba(30, 215, 96, .16), transparent 58%), #0c0c0e; box-shadow: inset 0 0 0 1px rgba(243, 243, 240, .12); }
-.rcard.on { background: radial-gradient(circle at 50% 36%, rgba(30, 215, 96, .42), rgba(30, 215, 96, .08) 46%, transparent 70%), #0c0c0e; }
+  background: radial-gradient(circle at 50% 23%, rgba(30, 215, 96, .16), transparent 50%), #0c0c0e; box-shadow: inset 0 0 0 1px rgba(243, 243, 240, .12); }
+.rcard.on { background: radial-gradient(circle at 50% 23%, rgba(30, 215, 96, .4), rgba(30, 215, 96, .08) 40%, transparent 62%), #0c0c0e; }
 .rc-label { font: 500 calc(9 * var(--p))/1.2 'Unbounded', sans-serif; letter-spacing: .06em; text-transform: uppercase; color: var(--white); }
-.rc-disc { width: calc(212 * var(--p)); aspect-ratio: 1; margin: calc(30 * var(--p)) auto 0; border-radius: 50%; position: relative;
-  background: radial-gradient(circle, transparent 30%, rgba(243, 243, 240, .06) 30.5%, transparent 31.5%, transparent 44%, rgba(243, 243, 240, .07) 44.5%, transparent 45.5%, transparent 58%, rgba(243, 243, 240, .06) 58.5%, transparent 59.5%),
-    repeating-radial-gradient(circle, #17171a 0 1px, #0e0e10 1px 3px); box-shadow: 0 calc(18 * var(--p)) calc(40 * var(--p)) rgba(0, 0, 0, .6), inset 0 0 0 1px rgba(243, 243, 240, .1); }
+.rc-disc { width: calc(120 * var(--p)); aspect-ratio: 1; flex: none; margin: calc(25 * var(--p)) auto 0; border-radius: 50%; position: relative;
+  background: repeating-radial-gradient(circle, #17171a 0 1px, #0e0e10 1px 3px); box-shadow: 0 calc(14 * var(--p)) calc(30 * var(--p)) rgba(0, 0, 0, .6), inset 0 0 0 1px rgba(243, 243, 240, .1); }
 .rc-disc::before { content: ''; position: absolute; inset: 0; border-radius: 50%; background: conic-gradient(from 200deg, transparent 0 20%, rgba(243, 243, 240, .14) 26%, transparent 32% 70%, rgba(243, 243, 240, .08) 76%, transparent 82%); }
-.rc-disc i { position: absolute; inset: 35%; border-radius: 50%; background: radial-gradient(circle, #0c0c0e 0 7%, #3a3d42 7.5% 100%); transition: background .6s; }
+.rc-disc i { position: absolute; inset: 35%; border-radius: 50%; background: radial-gradient(circle, #0c0c0e 0 10%, #3a3d42 11% 100%); transition: background .6s; }
 .rcard.on .rc-disc { animation: rcspin 8s linear infinite; }
-.rcard.on .rc-disc i { background: radial-gradient(circle, #0c0c0e 0 7%, var(--ultra) 7.5% 100%); }
+.rcard.on .rc-disc i { background: radial-gradient(circle, #0c0c0e 0 10%, var(--ultra) 11% 100%); }
 @keyframes rcspin { to { transform: rotate(360deg); } }
-.rc-track { margin-top: auto; font: 700 calc(24 * var(--p))/1.1 'Unbounded', sans-serif; letter-spacing: -.02em; color: rgba(243, 243, 240, .35); overflow-wrap: anywhere; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.rc-track { margin-top: calc(30 * var(--p)); flex: none; font: 700 calc(26 * var(--p))/1.1 'Unbounded', sans-serif; letter-spacing: -.02em; color: rgba(243, 243, 240, .35); overflow-wrap: anywhere; hyphens: auto; }
 .rcard.on .rc-track { color: var(--white); }
-.rc-by { margin-top: calc(6 * var(--p)); font: 400 calc(14 * var(--p))/1.3 'Onest', sans-serif; color: var(--steel); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.3em; }
+.rc-by { margin-top: calc(6 * var(--p)); flex: none; font: 400 calc(15 * var(--p))/1.3 'Onest', sans-serif; color: var(--steel); overflow-wrap: anywhere; }
 .rcard.on .rc-by { color: var(--silver); }
-.rc-why { margin-top: calc(16 * var(--p)); padding-top: calc(14 * var(--p)); border-top: 1px solid rgba(243, 243, 240, .14); min-height: calc(72 * var(--p)); font: 400 calc(13 * var(--p))/1.45 'Onest', sans-serif; color: var(--steel); overflow-wrap: anywhere; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 4; -webkit-box-orient: vertical; }
+.rc-why { margin-top: calc(16 * var(--p)); padding-top: calc(14 * var(--p)); border-top: 1px solid rgba(243, 243, 240, .14); flex: 1; min-height: 0; font: 400 calc(14 * var(--p))/1.45 'Onest', sans-serif; color: var(--steel); overflow-wrap: anywhere; overflow: hidden; }
 .rcard.on .rc-why { color: var(--white); }
+.btn:disabled { opacity: .35; cursor: default; }
 
 /* ---------- reveals (calm: short travel, slow fade) ---------- */
 .rv { opacity: 0; transform: translate3d(0, calc(12 * var(--u)), 0); transition: opacity 1.4s var(--ease-out), transform 1.4s var(--ease-out); }
@@ -160,7 +160,7 @@ body.static #chapters { pointer-events: auto; }
   html:not(.desk) .m.btn { font-size: calc(12 * var(--mu)); }
   html:not(.desk) .m.slot span { font-size: calc(10 * var(--mu)); }
   html:not(.desk) .m.embed .embed-wait { font-size: calc(12 * var(--mu)); }
-  html:not(.desk) .m.rcard { --u: var(--mu); --k: .6667; }
+  html:not(.desk) .m.rcard { --u: var(--mu); --k: 1; }
   html:not(.desk) .m.card { --u: calc(var(--mu) * var(--mk)); }
   html:not(.desk) .link { left: calc(var(--mlx) * var(--mu)); top: calc(var(--mly) * var(--mu)); width: calc(var(--w) * var(--mu) * 0.5); }
   html:not(.desk) .share { --u: calc(var(--mu) * 0.5); left: calc(var(--mlx) * var(--mu)); top: calc(var(--mly) * var(--mu)); }
