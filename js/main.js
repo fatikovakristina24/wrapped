@@ -43,8 +43,8 @@ function drawBulk(b, t, amt = 1) {
       const x0 = CUT * bw; g.fillStyle = 'rgba(243,243,240,.025)'; g.fillRect(x0, 0, W - x0, base);
       g.fillStyle = 'rgba(243,243,240,.5)'; g.fillRect(x0, base * 0.06, b.d, base * 0.94);
       g.font = `${10 * b.d}px Unbounded`; g.fillStyle = '#C9CCD1'; g.textBaseline = 'top';
-      if (W - x0 > 190 * b.d) { g.fillText('15.10 — ВЫГРУЗКА', x0 + 8 * b.d, base * 0.06); g.fillStyle = '#8A8F98'; g.fillText('ДАЛЬШЕ ГОД ЕЩЁ НЕ ПРОШЁЛ', x0 + 8 * b.d, base * 0.06 + 16 * b.d); }
-      else g.fillText('15.10', x0 + 4 * b.d, base * 0.06);                 // narrow screens: the date only
+      if (W - x0 > 190 * b.d) { g.fillText('26.10 — ВЫГРУЗКА', x0 + 8 * b.d, base * 0.06); g.fillStyle = '#8A8F98'; g.fillText('ДАЛЬШЕ ГОД ЕЩЁ НЕ ПРОШЁЛ', x0 + 8 * b.d, base * 0.06 + 16 * b.d); }
+      else g.fillText('26.10', x0 + 4 * b.d, base * 0.06);                 // narrow screens: the date only
       g.textBaseline = 'alphabetic';
     }
     for (let i = 0; i < nd; i++) {

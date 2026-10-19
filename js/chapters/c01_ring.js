@@ -1,4 +1,4 @@
-// 01 — the record of the year: 365 day-bars grow as you scroll, while the counter runs to the export date (288 days).
+// 01 — the record of the year: 365 day-bars grow as you scroll, while the counter runs to the export date (299 days).
 // One move only: the year builds up. The record turns slowly; drag spins it, a click blows the year apart.
 import { Chapter } from '../world.js';
 import { yearValues, range, easeOut, damp, CUT } from '../lib/kit.js';

@@ -194,7 +194,7 @@ def render_items(items, chapter):
             out.append(f'<div class="it share" style="--cx:{it["cx"]};--cy:{it["cy"]};--w:{it["w"]};--h:{it["h"]};--rot:{-it["rot"]}deg{net(it["cx"], it["cy"])};background:{color(it["c"])}">{"".join(kids)}</div>')
         elif t == 'S':                                   # my track-of-the-year card (or its empty slot until it arrives)
             mc, ms, _ = mob(it); src = SHOTS.get(CUR['ch'], '')
-            inner = (f'<img src="{src}" alt="Моя карточка трека года по выгрузке Spotify на 15 октября 2026" loading="lazy">' if src and os.path.exists(os.path.join(SITE, src))
+            inner = (f'<img src="{src}" alt="Моя карточка трека года по выгрузке Spotify на 26 октября 2026" loading="lazy">' if src and os.path.exists(os.path.join(SITE, src))
                      else f'<span>{esc(it["s"])}</span>')
             has = src and os.path.exists(os.path.join(SITE, src))
             out.append(f'<div class="it box slot{" shot" if has else ""}{mc}" style="--x:{it["x"]};--y:{it["y"]};--w:{it["w"]};--h:{it["h"]}{ms}">{inner}</div>')

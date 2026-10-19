@@ -20,8 +20,8 @@ export function rng(seed = 7) { // mulberry32
 
 /** Listening minutes per day — seasons, weekends, December build-up, a few obsessive days. */
 // the music diary: [first day, last day, how much denser the listening was] — day 0 = 1 January
-// the data stops at the export: 1 January — 15 October 2026 = 288 days, the rest of the year has not happened yet
-export const CUT = 288;
+// the data stops at the export: 1 January — 26 October 2026 = 299 days (export of 27 October), the rest of the year has not happened yet
+export const CUT = 299;
 export const DIARY = [[50, 58, 0.32], [103, 109, 0.42], [190, 204, 0.3], [243, 254, 0.26]];
 export function yearValues(n = 365, seed = 7) {
   const r = rng(seed), v = [];
