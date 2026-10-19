@@ -98,6 +98,8 @@ def mat(name):
         base = name[4:]; col = {'ultra': lin(ULTRA), 'ultra_matte': lin(ULTRA), 'white': lin(WHITE), 'black_matte': lin('#2a2a30'), 'clay': lin('#D3D6D8'), 'clay_dark': lin('#8E959A')}.get(base, lin(WHITE))
         MATS[name] = textured(name, 'label.png', col, 0.45, (0.67, 0.67)); return MATS[name]
     if name == 'sticker': MATS[name] = textured(name, 'sticker.png', (1, 1, 1, 1), 0.4, (1.7, 0.22)); return MATS[name]
+    if name == 'sticker_tee': MATS[name] = textured(name, 'sticker_tee.png', (1, 1, 1, 1), 0.4, (1.7, 0.22)); return MATS[name]
+    if name == 'sticker_tee_low': MATS[name] = textured(name, 'sticker_tee_low.png', (1, 1, 1, 1), 0.4, (1.7, 0.12)); return MATS[name]
     if name == 'sticker_low': MATS[name] = textured(name, 'sticker_low.png', (1, 1, 1, 1), 0.4, (1.7, 0.12)); return MATS[name]
     if name == 'chrome': m = principled(name, Base_Color=lin('#E9EAEC'), Metallic=1, Roughness=0.06)
     elif name == 'chrome_brushed': m = principled(name, Base_Color=lin('#D6D8DA'), Metallic=1, Roughness=0.25, Anisotropic=0.8)
@@ -110,6 +112,7 @@ def mat(name):
     elif name == 'clay': m = principled(name, Base_Color=lin('#D3D6D8'), Roughness=0.6)
     elif name == 'clay_dark': m = principled(name, Base_Color=lin('#8E959A'), Roughness=0.55)
     elif name == 'smoke': m = principled(name, Base_Color=lin('#C9CCD1'), Transmission_Weight=1, Roughness=0.05, IOR=1.49)
+    elif name == 'frost': m = principled(name, Base_Color=lin('#DDE1E6'), Transmission_Weight=0.7, Roughness=0.2, IOR=1.45, Coat_Weight=1, Coat_Roughness=0.05)
     elif name == 'smoke_ultra': m = principled(name, Base_Color=lin('#8C95FF'), Transmission_Weight=1, Roughness=0.08, IOR=1.49)
     elif name == 'glass': m = principled(name, Base_Color=lin('#EEFFF4'), Transmission_Weight=1, Roughness=0.03, IOR=1.45, Thin_Film_Thickness=380, Thin_Film_IOR=1.35)
     elif name == 'tape': m = principled(name, Base_Color=lin('#2A2320'), Metallic=0.3, Roughness=0.3)
@@ -240,6 +243,8 @@ def export_glb(name, root):
     bpy.ops.export_scene.gltf(filepath=os.path.join(d, name + '.glb'), use_selection=True, export_apply=True, export_format='GLB')
 
 def render(name):
+    if 'blend' in ARGS:                                     # editable source instead of a render
+        bpy.ops.file.pack_all(); bpy.ops.wm.save_as_mainfile(filepath=os.path.join(OUT, name + '.blend')); return
     sc = bpy.context.scene; sc.render.filepath = os.path.join(OUT, ('_prev_' if PREVIEW else '') + name); bpy.ops.render.render(write_still=True)
 
 # ------------------------------------------------------------------ OBJECTS
@@ -700,5 +705,58 @@ def c_algo2():
     camera((-1.5, -14.5, 6.5), (0.0, 0, 0.6), 42)
     render('algo_cassette')
 
-SCENES = dict(algo2=c_algo2, gift=c_gift, yearrec=c_yearrec, hourglass=c_hourglass, lab2=c_lab2, minutes=c_minutes, hero=c_hero, ring365=c_ring365, history=c_history, data=c_data, lab=c_lab, story=c_story, social=c_social, algo=c_algo, final=c_final, swatches=c_swatches, exports=c_exports, vinyl=p_vinyl, cassette=p_cassette, speaker=p_speaker, mic=p_mic, headphones=p_headphones)
+
+def c_tee():
+    """T-shirt (back, DTG): the cassette of the year; data pixels leave upwards and turn green, the tape spills down."""
+    setup(3543, 4252, 160, transparent=False, env_strength=0.55, cam_bg='#0A0A0B')
+    area((6, -10, 8), (0, 0, 0.5), 1500, '#FFFFFF', 8)
+    area((0, 3, 14), (0, 0, 0), 1200, '#FFFFFF', 14)
+    area((-10, 5, 2), (0, 0, 0), 3200, ULTRA, 7)
+    area((10, 6, -2), (0, 0, 0), 2400, ULTRA, 7)
+    area((-9, -6, -4), (0, 0, -2), 500, '#FFFFFF', 3, 12)
+    cas = cassette(None, loc=(0, 0, 0.6), rot=(math.radians(80), math.radians(-6), math.radians(-11)), scale=3.05, shell='frost', tape='tape', name='tee')
+    for o in cas.children:
+        if o.name.startswith('tee_label_low'): o.data.materials.clear(); o.data.materials.append(mat('sticker_tee_low'))
+        elif o.name.startswith('tee_label') and 'band' not in o.name: o.data.materials.clear(); o.data.materials.append(mat('sticker_tee'))
+    pts = []
+    for i in range(1200):                      # the tape leaves the cassette and coils down into a loose spiral
+        t = i / 1199; a = t * math.pi * 7; r = 0.3 + 2.35 * math.sin(math.pi * min(1, t * 1.08)) ** 0.7
+        pts.append((0.1 + math.cos(a) * r * 1.2, 0.2 + math.sin(a) * r * 0.42, -1.3 - 3.3 * t + 0.28 * math.sin(a * 1.6)))
+    ribbon('tape', pts, 0.24, 'chrome_brushed', up=(0, 0, 1), thick=0.006)
+    rng = random.Random(26)
+    for i in range(340):                       # data pixels: grey-white at the cassette, green as they fly away
+        h = rng.random() ** 0.9
+        a = rng.uniform(0, 6.28); r = (0.2 + rng.random() * 2.9) * (0.25 + h * 0.85)
+        s = (0.06 + rng.random() * 0.16) * (0.5 + 0.7 * math.sin(h * math.pi))
+        m = 'ultra' if rng.random() < 0.1 + 0.85 * h else 'white'
+        b = box('px%d' % i, (s, s, s), m, (math.cos(a) * r * 1.2, 0.6 + math.sin(a) * r * 0.55, 2.45 + h * 2.75))
+        b.rotation_euler = (rng.uniform(0, 6), rng.uniform(0, 6), rng.uniform(0, 6))
+    for i in range(14):                        # a few big ones close to the viewer, for depth
+        h = rng.uniform(0.25, 0.95); s = rng.uniform(0.22, 0.38)
+        b = box('big%d' % i, (s, s, s), 'ultra' if rng.random() < 0.75 else 'white', (rng.uniform(-2.3, 2.3), rng.uniform(-4.0, -2.5), 2.4 + h * 2.1))
+        b.rotation_euler = (rng.uniform(0, 6), rng.uniform(0, 6), rng.uniform(0, 6))
+    camera((0, -17, 0.85), (0, 0, 0.5), 53)
+    render('tee_cassette')
+
+def c_tee_chest():
+    """T-shirt (chest, DTG): a small cassette, a few pixels already leaving."""
+    setup(1063, 1063, 160, transparent=False, env_strength=0.55, cam_bg='#0A0A0B')
+    area((6, -10, 8), (0, 0, 0.5), 1500, '#FFFFFF', 8)
+    area((0, 3, 14), (0, 0, 0), 1200, '#FFFFFF', 14)
+    area((-10, 5, 2), (0, 0, 0), 3200, ULTRA, 7)
+    area((10, 6, -2), (0, 0, 0), 2400, ULTRA, 7)
+    cas = cassette(None, loc=(0, 0, -0.35), rot=(math.radians(82), math.radians(-4), math.radians(-9)), scale=1.9, shell='frost', tape='tape', name='tee')
+    for o in cas.children:
+        if o.name.startswith('tee_label_low'): o.data.materials.clear(); o.data.materials.append(mat('sticker_tee_low'))
+        elif o.name.startswith('tee_label') and 'band' not in o.name: o.data.materials.clear(); o.data.materials.append(mat('sticker_tee'))
+    rng = random.Random(8)
+    for i in range(46):
+        h = rng.random(); a = rng.uniform(0, 6.28); r = (0.2 + rng.random() * 1.6) * (0.3 + h * 0.8)
+        sz = (0.07 + rng.random() * 0.13) * (0.6 + 0.6 * math.sin(h * math.pi))
+        b = box('px%d' % i, (sz, sz, sz), 'ultra' if rng.random() < 0.2 + 0.75 * h else 'white', (0.4 + math.cos(a) * r, 0.4 + math.sin(a) * r * 0.5, 0.95 + h * 1.25))
+        b.rotation_euler = (rng.uniform(0, 6), rng.uniform(0, 6), rng.uniform(0, 6))
+    camera((0, -7.2, 0.45), (0.05, 0, 0.32), 50)
+    render('tee_chest')
+
+SCENES = dict(tee=c_tee, tee_chest=c_tee_chest, algo2=c_algo2, gift=c_gift, yearrec=c_yearrec, hourglass=c_hourglass, lab2=c_lab2, minutes=c_minutes, hero=c_hero, ring365=c_ring365, history=c_history, data=c_data, lab=c_lab, story=c_story, social=c_social, algo=c_algo, final=c_final, swatches=c_swatches, exports=c_exports, vinyl=p_vinyl, cassette=p_cassette, speaker=p_speaker, mic=p_mic, headphones=p_headphones)
 reset(); SCENES[SCENE]()
