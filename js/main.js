@@ -132,6 +132,9 @@ function setupPersonal() {
   const card = document.querySelector('.rcard'), btn = document.querySelector('[data-save]'), dl = document.querySelector('[data-download]');
   const esc = s => s.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
   let cur = null;
+  // no hanging prepositions or dashes in what the reader writes either (same rule as the page text)
+  const SHORT = /(^|[\s«„(])(в|во|на|с|со|к|ко|у|о|об|от|до|по|за|из|без|для|при|про|над|под|а|и|но|не|ни|же|ли|бы|[а-яёa-z]) /gi;
+  const nb = t => t.replace(SHORT, '$1$2\u00a0').replace(SHORT, '$1$2\u00a0').replace(/ ([—–]) /g, '\u00a0$1\u00a0').replace(/ - /g, '\u00a0—\u00a0');
   const fit = (el, max, min, lines) => {                   // shrink the type until it fits: nothing gets cut with «…»
     let z = max; el.style.fontSize = '';
     const base = parseFloat(getComputedStyle(el).fontSize), k = base / max;
@@ -144,7 +147,7 @@ function setupPersonal() {
     card.innerHTML = `<div class="rc-label">Ваш любимый трек</div><div class="rc-disc"><i></i></div>`
       + `<div class="rc-track">${d ? esc(d.track) : 'Трек'}</div>`
       + `<div class="rc-by">${d ? esc(d.artist) : 'Исполнитель'}</div>`
-      + `<div class="rc-why">${d ? (d.why ? '«' + esc(d.why) + '»' : '') : 'Здесь будет ваше воспоминание: с чем или с кем связан этот трек.'}</div>`;
+      + `<div class="rc-why">${d ? (d.why ? '«' + esc(nb(d.why)) + '»' : '') : 'Здесь будет ваше воспоминание: с\u00a0чем или с\u00a0кем связан этот трек.'}</div>`;
     if (d) { fit(card.querySelector('.rc-track'), 26, 14, 3); fit(card.querySelector('.rc-by'), 15, 11, 2); fit(card.querySelector('.rc-why'), 14, 10); }
     if (dl) dl.disabled = !d;
   };
