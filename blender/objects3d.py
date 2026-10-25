@@ -758,5 +758,27 @@ def c_tee_chest():
     camera((0, -7.2, 0.45), (0.05, 0, 0.32), 50)
     render('tee_chest')
 
-SCENES = dict(tee=c_tee, tee_chest=c_tee_chest, algo2=c_algo2, gift=c_gift, yearrec=c_yearrec, hourglass=c_hourglass, lab2=c_lab2, minutes=c_minutes, hero=c_hero, ring365=c_ring365, history=c_history, data=c_data, lab=c_lab, story=c_story, social=c_social, algo=c_algo, final=c_final, swatches=c_swatches, exports=c_exports, vinyl=p_vinyl, cassette=p_cassette, speaker=p_speaker, mic=p_mic, headphones=p_headphones)
+def c_cover():
+    """Card cover: data pixels bursting out of the print over the flat lay, seen from above (transparent)."""
+    W, H = 1254, 1680
+    setup(W, H, 96, transparent=True, env_strength=0.6)
+    area((-6, 6, 14), (0, 0, 0), 2600, '#FFFFFF', 6)
+    area((8, -4, 10), (0, 0, 0), 900, '#FFFFFF', 10)
+    area((0, 0, -6), (0, 0, 0), 300, ULTRA, 8)
+    rng = random.Random(41); ox, oy = 700, 520
+    px = lambda x, y: ((x - W / 2) / 100, -(y - H / 2) / 100)
+    for i in range(170):
+        t = rng.random() ** 0.75
+        a = math.radians(rng.uniform(-158, -22)); d = 30 + t * 980
+        x, y = ox + math.cos(a) * d + rng.gauss(0, 30), oy + math.sin(a) * d * 1.05 + rng.gauss(0, 30)
+        if not (-40 < x < W + 40 and -60 < y < H): continue
+        sz = (9 + t * 58 + rng.random() * 12) / 100
+        q = rng.random(); m = 'white' if q < 0.72 else 'ultra'   # mostly white: green would vanish on the green paper
+        b = box('cv%d' % i, (sz, sz, sz), m, (*px(x, y), sz))
+        b.rotation_euler = (rng.uniform(0, 6), rng.uniform(0, 6), rng.uniform(0, 6))
+    cd = bpy.data.cameras.new('cam'); cd.type = 'ORTHO'; cd.ortho_scale = H / 100; cd.sensor_fit = 'VERTICAL'
+    cam = bpy.data.objects.new('cam', cd); bpy.context.scene.collection.objects.link(cam); cam.location = (0, 0, 30); bpy.context.scene.camera = cam
+    render('cover_burst')
+
+SCENES = dict(cover=c_cover, tee=c_tee, tee_chest=c_tee_chest, algo2=c_algo2, gift=c_gift, yearrec=c_yearrec, hourglass=c_hourglass, lab2=c_lab2, minutes=c_minutes, hero=c_hero, ring365=c_ring365, history=c_history, data=c_data, lab=c_lab, story=c_story, social=c_social, algo=c_algo, final=c_final, swatches=c_swatches, exports=c_exports, vinyl=p_vinyl, cassette=p_cassette, speaker=p_speaker, mic=p_mic, headphones=p_headphones)
 reset(); SCENES[SCENE]()
