@@ -74,7 +74,7 @@ export class Scroller {
       }
       st.style.clipPath = clip;
       let introFade = 1, introShift = 0;
-      if (f.sp !== null && f.sp > -1) { const k = clamp(f.sp + 0.35); introFade = 1 - k; introShift = -k * vh * 0.25; }
+      if (f.sp !== null && f.sp > -1) { const k = clamp((f.sp + 0.6) / 0.6); introFade = 1 - k; introShift = -k * vh * 0.25; }   // the intro is gone before the first Wrapped screen wipes in
       const ty = -f.innerY + shift + introShift;
       f.s.inner._ty = ty;                                // read by reveal / 3D anchors instead of getBoundingClientRect
       f.s.inner.style.transform = `translate3d(0, ${ty.toFixed(2)}px, 0)`;
