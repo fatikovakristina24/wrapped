@@ -56,6 +56,7 @@ body.gl .a3d .poster { opacity: 0; }
 
 /* 05 — sticky states */
 .states { position: absolute; inset: 0; pointer-events: none; }
+.stage:not(.on) .state { visibility: hidden !important; }   /* a chapter that left the screen takes its last Wrapped screen with it */
 .state { position: absolute; left: 0; width: 100%; top: calc(50vh - 440 * var(--u)); height: calc(880 * var(--u)); visibility: hidden; }
 
 /* ---------- the personal episode: a real Wrapped screenshot, the Spotify player, the reader's own track ---------- */

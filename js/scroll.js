@@ -17,6 +17,10 @@ export class Scroller {
     let y = 0;
     this.secs.forEach((s, i) => {
       s.innerH = s.inner.offsetHeight;
+      if (s.states.length) {                             // the Wrapped screens live outside .inner: travel only over what is really there
+        const bottom = Math.max(...[...s.inner.children].map(c => c.offsetTop + c.offsetHeight));
+        s.innerH = Math.min(s.innerH, bottom + vh * 0.15);
+      }
       s.base = s.inner.getBoundingClientRect().top - (s.inner._ty || 0);   // inner top without its translate
       s.travel = Math.max(0, s.innerH - vh);
       s.hs = i === 0 ? 0 : vh * 0.1;                     // a breath after the wipe
@@ -82,14 +86,15 @@ export class Scroller {
     const n = s.states.length;
     s.states.forEach((el, k) => {
       const local = sp - k;
-      const visible = local > -0.0001 && (local < 1 || k === n - 1) && sp > -0.65;
+      const visible = local > (k ? -0.2 : -0.0001) && (local < 1 || k === n - 1) && sp > -0.65;   // the next screen starts while the previous one leaves
       el.style.visibility = visible ? 'visible' : 'hidden';
       if (!visible) { el.classList.remove('in'); el.querySelectorAll('.rv').forEach(r => r.classList.remove('in')); return; }
-      const enter = ease(clamp(local / 0.22));
+      const enter = k ? ease(clamp((local + 0.2) / 0.4)) : ease(clamp(local / 0.22));
       const exit = k === n - 1 ? 0 : ease(clamp((local - 0.8) / 0.2));
-      el.style.clipPath = `inset(${((1 - enter) * 100).toFixed(2)}% 0 0 0)`;
-      el.style.transform = `translate3d(0, ${(-exit * this.vh * 0.2 + shift).toFixed(1)}px, 0)`;
-      el.style.opacity = 1 - exit;
+      // the first screen wipes in; the next ones fade up while the previous one leaves, so there is never an empty frame
+      el.style.clipPath = k ? 'none' : `inset(${((1 - enter) * 100).toFixed(2)}% 0 0 0)`;
+      el.style.transform = `translate3d(0, ${(-exit * this.vh * 0.2 + (k ? (1 - enter) * this.vh * 0.08 : 0) + shift).toFixed(1)}px, 0)`;
+      el.style.opacity = k ? Math.min(enter, 1 - exit) : 1 - exit;
       if (enter > 0.2) el.querySelectorAll('.rv').forEach(r => r.classList.add('in'));
     });
   }
