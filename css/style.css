@@ -71,7 +71,7 @@ body.gl .a3d .poster { opacity: 0; }
 .field { pointer-events: auto; background: var(--ink-2); border: 1px solid rgba(243, 243, 240, .25); border-radius: calc(10 * var(--u)); color: var(--white);
   font: 400 max(14px, calc(20 * var(--u)))/1.4 'Onest', sans-serif; padding: calc(18 * var(--u)) calc(20 * var(--u)); resize: none; outline: none; }
 .field:focus { border-color: var(--ultra-l); }
-.field::placeholder { color: var(--steel); }
+.field::placeholder { color: var(--steel); white-space: pre-wrap; overflow-wrap: break-word; }   /* some browsers keep a textarea placeholder on one line */
 .btn { pointer-events: auto; background: var(--ultra); color: var(--ink); border: 0; border-radius: 999px; cursor: pointer;
   font: 500 max(11px, calc(15 * var(--u)))/1 'Unbounded', sans-serif; letter-spacing: .04em; text-transform: uppercase; }
 .btn:hover { background: #3be477; }
