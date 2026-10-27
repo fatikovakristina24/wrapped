@@ -226,6 +226,7 @@ async function start() {
   try { await Promise.all(C.map(c => R.compileAsync(c.scene, c.camera))); } catch (e) { C.forEach(c => R.compile(c.scene, c.camera)); }
   window.__wrapped = { world, C };                                  // handy for debugging in the console
   const scroller = new Scroller(sections);
+  window.__wrapped.scroller = scroller;
   const layout = () => { world.resize(); C.forEach(c => c.resize()); scroller.layout(); bulks.forEach(b => { sizeCanvas(b); b.drawn = -1; }); measureReveal();
     const em = bulks.find(b => b.kind === 'emblem'); if (em) em.rel = em.el.getBoundingClientRect().top - scroller.secs[8].inner.getBoundingClientRect().top; };
   layout();
