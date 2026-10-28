@@ -106,7 +106,7 @@ body.gl .a3d .poster { opacity: 0; }
 .rv { opacity: 0; transform: translate3d(0, calc(12 * var(--u)), 0); transition: opacity 1.4s var(--ease-out), transform 1.4s var(--ease-out); }
 .rv.in { opacity: 1; transform: none; }
 .title.rv, .title.rv.in { opacity: 1; transform: none; }
-.title .ln { display: block; overflow: hidden; padding-bottom: .08em; margin-bottom: -.08em; }
+.title .ln { display: block; overflow: hidden; padding: 0 .12em .08em; margin: 0 -.12em -.08em; }   /* side room: wide glyphs (Ь) overhang their advance */
 .title .ln > span { display: inline-block; transform: translate3d(0, 110%, 0); transition: transform 1.3s var(--ease-out); }
 .title.in .ln > span { transform: none; }
 .title .ln:nth-child(2) > span { transition-delay: .09s; }
