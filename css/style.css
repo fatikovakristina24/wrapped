@@ -196,4 +196,25 @@ body.static #chapters { pointer-events: auto; }
   html:not(.desk) #loader { padding: 24px; }
   html:not(.desk) #hud { left: 40px; }
 }
+
+/* ---------- web ring at the very end ---------- */
+.ch:last-child .inner { --ring: 470; height: calc((var(--h) + var(--ring)) * var(--u)); }
+.ring { position: absolute; left: calc(48 * var(--u)); right: calc(48 * var(--u)); bottom: calc(120 * var(--u)); pointer-events: auto; z-index: 3;
+  display: flex; flex-direction: column; align-items: flex-start; gap: calc(26 * var(--u)); padding-top: calc(44 * var(--u)); border-top: 1px solid rgba(243, 243, 240, .15); }
+.ring-h { font: 500 calc(13 * var(--u))/1.2 'Unbounded', sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--ultra); margin-bottom: calc(6 * var(--u)); }
+.ring a { font: 400 calc(30 * var(--u))/1.35 'Onest', sans-serif; color: var(--white); text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: .22em; text-decoration-color: rgba(243, 243, 240, .45); transition: color .2s, text-decoration-color .2s; }
+.ring a:hover { color: var(--ultra); text-decoration-color: var(--ultra); }
+@media (max-width: 600px) {
+  html:not(.desk) .ch:last-child .inner { height: calc((var(--mih) + 350) * var(--mu)); }
+  html:not(.desk) .ring { left: calc(20 * var(--mu)); right: calc(20 * var(--mu)); bottom: calc(90 * var(--mu)); gap: calc(18 * var(--mu)); padding-top: calc(28 * var(--mu)); }
+  html:not(.desk) .ring-h { font-size: calc(11 * var(--mu)); }
+  html:not(.desk) .ring a { font-size: max(15px, calc(17 * var(--mu))); }
+}
+@media (min-width: 601px) and (max-width: 1024px) {
+  html:not(.desk) .ch:last-child .inner { height: calc((var(--qih) + 430) * var(--qu)); }
+  html:not(.desk) .ring { left: calc(40 * var(--qu)); right: calc(40 * var(--qu)); bottom: calc(110 * var(--qu)); gap: calc(26 * var(--qu)); padding-top: calc(40 * var(--qu)); }
+  html:not(.desk) .ring-h { font-size: calc(15 * var(--qu)); }
+  html:not(.desk) .ring a { font-size: calc(26 * var(--qu)); }
+}
+
 @media (prefers-reduced-motion: reduce) { #grain { animation: none; } }

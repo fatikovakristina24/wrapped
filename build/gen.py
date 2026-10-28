@@ -245,6 +245,11 @@ for idx, name in enumerate(ORDER):
         states_html = f'<div class="states">{"".join(st)}</div>'
         items = intro
     body = render_items(items, name)
+    if name == '08_FINAL':                               # web ring of the course: previous project, all projects, next project
+        body += ('\n<nav class="ring" aria-label="Веб-ринг"><div class="ring-h">Веб-ринг</div>'
+                 '<a href="https://karina156.github.io/long_1/">←&nbsp;Мы здесь не&nbsp;одни&nbsp;— Карина Манукян</a>'
+                 '<a href="https://conclaveobscurum.ru/soyalice/">Все проекты</a>'
+                 '<a href="https://lisabsns.github.io/sub-freedom/">Дыши. Остальное подождёт.&nbsp;— Елизавета Коневцева&nbsp;→</a></nav>')
     sections.append(
         f'<section class="ch" id="chapter-{num}" data-ch="{idx}" aria-label="Глава {num}">\n'
         f'<div class="stage"><div class="inner" style="--h:{h};--mih:{L["m"].H[idx]};--qih:{L["q"].H[idx]}">\n{body}\n</div>{states_html}</div>\n</section>')
